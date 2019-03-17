@@ -1,7 +1,10 @@
 %{
-#define YYSTYPE double
 #include "tokens.h"
 %}
+%option yylineno
+%option noyywrap
+
+%x MLINE_COMMENT
 
 white           [ \t]+
 digit           [0-9]
@@ -10,15 +13,10 @@ identifier      [a-zA-Z_][a-zA-Z0-9_]*
 float           {integer}[.]{digit}+([eE][+-]?{digit}+)?
 line_comment    "//"[^\n]*
 char            \'[^']\'
-error           .+
 string          \"[^"]*\"
 especial_char   ","|";"|":"|"("|")"|"["|"]"|"{"|"}"|"+"|"-"|"|"|"?"|"*"|"/"|"<"|">"|"="|"!"|"&"|"%"|"#"|"^"|"."|"$"
 
-%x MLINE_COMMENT
-
 %%
-
-{white}   { }
 
 {line_comment} { }
 
@@ -79,10 +77,15 @@ false return TK_LIT_FALSE;
 
 {identifier} { return TK_IDENTIFICADOR; }
 
-{error} { return TOKEN_ERRO; }
+{white}   { }
+
+\n { }
+
+[^ \n\t]+ { return TOKEN_ERRO; }
 
 %%
 
-int get_line_number () {
-  return 0;
+int get_line_number(void)
+{
+	return yylineno;
 }
