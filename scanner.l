@@ -5,14 +5,27 @@
 
 white           [ \t]+
 digit           [0-9]
-integer         {digit}+
+integer         -?{digit}+
 identifier      [a-zA-Z_][a-zA-Z0-9_]*
+float           {integer}[.]{digit}+([eE][+-]?{digit}+)?
 line_comment    "//"[^\n]*
+char            \'[^']\'
+error           .+
+string          \"[^"]*\"
+especial_char   ","|";"|":"|"("|")"|"["|"]"|"{"|"}"|"+"|"-"|"|"|"?"|"*"|"/"|"<"|">"|"="|"!"|"&"|"%"|"#"|"^"|"."|"$"
+
+%x MLINE_COMMENT
 
 %%
 
 {white}   { }
+
 {line_comment} { }
+
+"/*"                { BEGIN(MLINE_COMMENT); }
+<MLINE_COMMENT>"*/" { BEGIN(INITIAL); }
+<MLINE_COMMENT>\n   { }
+<MLINE_COMMENT>.    { }
 
 int return TK_PR_INT;
 float return TK_PR_FLOAT;
@@ -51,7 +64,22 @@ protected return TK_PR_PROTECTED;
 "%>%" return TK_OC_FORWARD_PIPE;
 "%|%" return TK_OC_BASH_PIPE;
 
+{integer} { return TK_LIT_INT; }
+
+{float}   { return TK_LIT_FLOAT; }
+
+{char}    { return TK_LIT_CHAR; }
+
+{string}  { return TK_LIT_STRING; }
+
+true  return TK_LIT_TRUE;
+false return TK_LIT_FALSE;
+
+{especial_char} { return (int) *yytext; }
+
 {identifier} { return TK_IDENTIFICADOR; }
+
+{error} { return TOKEN_ERRO; }
 
 %%
 
