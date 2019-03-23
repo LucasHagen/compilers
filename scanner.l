@@ -81,7 +81,7 @@ false return TK_LIT_FALSE;
 
 \n { }
 
-[^ \n\t]+ { return TOKEN_ERRO; }
+[^ \n\t,;:()\[\]{}+\-|?*/<>=!&%#^.$]+ { return TOKEN_ERRO; }
 
 %%
 
