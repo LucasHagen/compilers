@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Flex generated files
+*.out.c
