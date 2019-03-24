@@ -12,8 +12,8 @@ integer         -?{digit}+
 identifier      [a-zA-Z_][a-zA-Z0-9_]*
 float           {integer}[.]{digit}+([eE][+-]?{digit}+)?
 line_comment    "//"[^\n]*
-char            \'[^']\'
-string          \"([^"\n]|\\\")*\"
+char            \'([^'\n]|\\.)\'
+string          \"(([^"\n]|\\\")*[^\\\n])?\"
 especial_char   [,;:()\[\]{}+\-|?*/<>=!&%#^.$]
 
 %%
