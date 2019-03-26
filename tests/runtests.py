@@ -28,7 +28,7 @@ def runTest(main_exe, case_dir, gold_dir, file):
     return tokens == gold
 
 """
-=============================================
+    ==========    MAIN SCRIPT    ==========
 """
 
 script_path = Path(__file__).parent.absolute().as_posix()
@@ -38,6 +38,8 @@ dir_gold = script_path + "/test_golds"
 cases = getTestCasesNames(dir)
 passed = []
 invalid = []
+
+cases.sort()
 
 if (not isfile(main_exe)):
     print("ERROR! main.out does not exist or is in wrong directory!")

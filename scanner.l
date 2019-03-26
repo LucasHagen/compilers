@@ -20,10 +20,9 @@ especial_char   [,;:()\[\]{}+\-|?*/<>=!&%#^.$]
 
 {line_comment} { }
 
-"/*"                { BEGIN(MLINE_COMMENT); }
+"/*"               	{ BEGIN(MLINE_COMMENT); }
 <MLINE_COMMENT>"*/" { BEGIN(INITIAL); }
-<MLINE_COMMENT>\n   { }
-<MLINE_COMMENT>.    { }
+<MLINE_COMMENT>\n|. { }
 
 int return TK_PR_INT;
 float return TK_PR_FLOAT;
