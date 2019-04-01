@@ -11,17 +11,19 @@ digit           [0-9]
 integer         -?{digit}+
 identifier      [a-zA-Z_][a-zA-Z0-9_]*
 float           {integer}[.]{digit}+([eE][+-]?{digit}+)?
-line_comment    "//"[^\n]*
-char            \'([^'\n]|\\.)\'
-string          \"(([^"\n]|\\\")*[^\\\n])?\"
+line_comment    "//".*
+char            \'([^\'\n\\]|\\[abefnrtv\'\\?])\'
+char_error		\'([^\'\n\\]|\\.)*\'?
+string          \"([^\"\n\\]|\\[abefnrtv\"\\?])*\"
+string_error    \"([^\"\n\\]|\\.)*\"?
 especial_char   [,;:()\[\]{}+\-|?*/<>=!&%#^.$]
 
 %%
 
 {line_comment} { }
 
-"/*"               	{ BEGIN(MLINE_COMMENT); }
-<MLINE_COMMENT>"*/" { BEGIN(INITIAL); }
+"/*"                { BEGIN(MLINE_COMMENT); }
+<MLINE_COMMENT>"*/"	{ BEGIN(INITIAL); }
 <MLINE_COMMENT>\n|. { }
 
 int return TK_PR_INT;
@@ -65,9 +67,11 @@ protected return TK_PR_PROTECTED;
 
 {float}   { return TK_LIT_FLOAT; }
 
-{char}    { return TK_LIT_CHAR; }
+{char}    		{ return TK_LIT_CHAR; }
+{char_error}	{ return TOKEN_ERRO; }
 
-{string}  { return TK_LIT_STRING; }
+{string}     	{ return TK_LIT_STRING; }
+{string_error}  { return TOKEN_ERRO; }
 
 true  return TK_LIT_TRUE;
 false return TK_LIT_FALSE;
@@ -80,7 +84,9 @@ false return TK_LIT_FALSE;
 
 \n { }
 
-[^ \n\t,;:()\[\]{}+\-|?*/<>=!&%#^.$]+ { return TOKEN_ERRO; }
+. { return TOKEN_ERRO; }
+[^ \n\t,;:()\[\]{}+\-|?*/<>=!&%#^.$\"\']+ { return TOKEN_ERRO; }
+
 
 %%
 

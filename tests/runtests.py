@@ -11,9 +11,13 @@ def getTestCasesNames(dir):
     return files
 
 def readFile(dir, file):
-    f = open(dir + "/" + file, "r")
-    content = f.read()
-    f.close()
+    content = None
+
+    if isfile(dir + "/" + file):
+        f = open(dir + "/" + file, "r")
+        content = f.read()
+        f.close()
+
     return content
 
 def getTokens(main_exe, dir, file):
@@ -53,7 +57,10 @@ print("Individual Results:")
 for test in cases:
     result = runTest(main_exe, dir, dir_gold, test)
 
-    if result:
+    if not isfile(dir_gold + "/" + test):
+        invalid.append(test)
+        print(' - ', test, ': ', "ERROR (GOLD NOT FOUND)", sep='')
+    elif result:
         passed.append(test)
         print(' - ', test, ': ', "PASS", sep='')
     else:
