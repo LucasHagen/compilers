@@ -13,7 +13,7 @@ identifier      [a-zA-Z_][a-zA-Z0-9_]*
 float           {integer}[.]{digit}+([eE][+-]?{digit}+)?
 line_comment    "//".*
 char            \'([^\'\n\\]|\\[abefnrtv\'\\?])\'
-char_error		\'([^\'\n\\]|\\.)*\'?
+char_error		  \'([^\'\n\\]|\\.)*\'?
 string          \"([^\"\n\\]|\\[abefnrtv\"\\?])*\"
 string_error    \"([^\"\n\\]|\\.)*\"?
 especial_char   [,;:()\[\]{}+\-|?*/<>=!&%#^.$]
