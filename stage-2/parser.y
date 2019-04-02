@@ -1,5 +1,7 @@
 %{
+#include <stdio.h>
 
+extern int yylineno;
 /*
 	Authors:
 		- Gabriel Pakulski da Silva - 00274701
@@ -54,15 +56,21 @@ void yyerror (char const *s);
 %token TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
-%%
-
-programa: global_var
-
-type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING
-var: TK_IDENTIFICADOR type | TK_IDENTIFICADOR '[' TK_PR_INT ']' type
-static: TK_PR_STATIC
-static_var: static var
-
-global_var: var ';' | static_var ';'
+%start programa
 
 %%
+
+programa: global_var_list;
+
+type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
+var: TK_IDENTIFICADOR '[' TK_LIT_INT ']' type | TK_IDENTIFICADOR type | TK_IDENTIFICADOR '[' TK_LIT_INT ']' TK_PR_STATIC type | TK_IDENTIFICADOR TK_PR_STATIC type;
+
+global_var: var ';';
+
+global_var_list: global_var_list global_var | global_var;
+
+
+%%
+void yyerror (char const *s){
+	fprintf(stderr,"ERROR: line %d - %s\n", yylineno, s);
+}

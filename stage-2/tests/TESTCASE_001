@@ -1,1 +1,5 @@
-static int vetor[50];
+x int;
+vetor[50] float;
+xis[30] char;
+test static int;
+outro static char;

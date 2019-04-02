@@ -6,7 +6,7 @@
 		- Lucas Sonntag Hagen       - 00274698
 */
 
-#include "./../tokens.h"
+#include "parser.tab.h"
 
 %}
 %option yylineno
