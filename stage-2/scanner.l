@@ -1,5 +1,13 @@
 %{
+
+/*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
 #include "./../tokens.h"
+
 %}
 %option yylineno
 %option noyywrap

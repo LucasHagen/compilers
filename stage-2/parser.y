@@ -1,4 +1,11 @@
 %{
+
+/*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
 int yylex(void);
 void yyerror (char const *s);
 %}
