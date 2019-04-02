@@ -36,7 +36,7 @@ def runTest(main_exe, case_dir, gold_dir, file):
 """
 
 script_path = Path(__file__).parent.absolute().as_posix()
-main_exe = script_path + "/../main.out"
+main_exe = script_path + "/../etapa1"
 dir = script_path + "/test_cases"
 dir_gold = script_path + "/test_golds"
 cases = getTestCasesNames(dir)
@@ -46,7 +46,7 @@ invalid = []
 cases.sort()
 
 if (not isfile(main_exe)):
-    print("ERROR! main.out does not exist or is in wrong directory!")
+    print("ERROR! Executable does not exist or is in wrong directory!")
     print("Try running 'make'")
     exit()
 

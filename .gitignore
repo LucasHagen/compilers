@@ -33,3 +33,4 @@
 
 # Flex generated files
 *.out.c
+*.yy.c
