@@ -64,20 +64,22 @@ programa: global_var_list function_list;
 
 type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
 var: vector static type | TK_IDENTIFICADOR static type;
-vector: TK_IDENTIFICADOR '[' TK_LIT_INT ']';
+vector: TK_IDENTIFICADOR '[' arithmetic_expression ']';
 static: TK_PR_STATIC | %empty;
+
+arithmetic_expression: TK_LIT_INT
 
 global_var: var ';';
 global_var_list: global_var_list global_var | %empty;
 
-
 function_list: function_list function | %empty;
 function: header body;
-header: function_type function_name '(' parameters_list ')';
+header: function_type function_name '(' function_parameters ')';
 function_type: static type;
 function_name: TK_IDENTIFICADOR;
+function_parameters: %empty | parameters_list;
 parameters_list: parameters_list ',' parameter | parameter;
-parameter: parameter_type TK_IDENTIFICADOR | %empty;
+parameter: parameter_type TK_IDENTIFICADOR;
 parameter_type: type | TK_PR_CONST type;
 body: commands_block;
 

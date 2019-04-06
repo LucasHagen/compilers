@@ -34,3 +34,7 @@
 # Flex generated files
 *.out.c
 *.yy.c
+
+# Bison generated files
+*.tab.c
+*.tab.h
