@@ -3,3 +3,16 @@ vetor[50] float;
 xis[30] char;
 test static int;
 outro static char;
+
+int main() {
+    int x <= 10;
+    {
+        static const int y <= 20;
+        y = x;
+    };
+
+    funcaooo();
+    funcaaooo2(10, 20, true, x);
+
+    x[10] << 1;
+}

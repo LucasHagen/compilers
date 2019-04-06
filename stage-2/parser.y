@@ -86,21 +86,53 @@ body: commands_block;
 
 commands_block: '{' commands_list '}';
 commands_list: %empty | commands_list command ';' ;
-command: c_declare_variable | c_attr;
+command: commands_block | c_declare_variable | c_attr |
+		c_input | c_output | c_call_func | c_shift |
+		c_return | c_continue | c_break |
+		c_if | c_for | c_while;
 
 c_declare_variable: static const type TK_IDENTIFICADOR c_declare_variable_attr;
 c_declare_variable_attr: %empty | TK_OC_LE c_declare_attr_value;
 c_declare_attr_value: literal | TK_IDENTIFICADOR;
 
-c_attr: TK_IDENTIFICADOR c_attr_vector_access '=' expression;
-c_attr_vector_access: %empty | '[' arithmetic_expression ']';
+c_attr: TK_IDENTIFICADOR vector_access '=' expression;
+vector_access: %empty | '[' arithmetic_expression ']';
+
+c_input: TK_PR_INPUT expression;
+
+c_output: TK_PR_OUTPUT c_output_exp_list;
+c_output_exp_list: expression | c_output_exp_list ',' expression;
+
+c_call_func: TK_IDENTIFICADOR '(' c_call_parameters ')';
+c_call_parameters: %empty | c_call_list_exp;
+c_call_list_exp: expression | c_call_list_exp ',' expression;
+
+c_shift: TK_IDENTIFICADOR vector_access c_shift_symbol arithmetic_expression;
+c_shift_symbol: TK_OC_SR | TK_OC_SL;
+
+c_return: TK_PR_RETURN expression;
+
+c_continue: TK_PR_CONTINUE;
+
+c_break: TK_PR_BREAK;
+
+c_if: TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else;
+c_else: %empty | TK_PR_ELSE commands_block;
+
+c_for: TK_PR_FOR '(' c_for_command_list ':' expression ':' c_for_command_list ')' commands_block;
+c_for_command_list: c_for_no_comma | c_for_command_list ',' c_for_no_comma;
+c_for_no_comma: c_declare_variable | c_attr |
+		c_input | c_shift | c_return | c_continue | c_break |
+		c_if | c_while;
 
 
-expression: arithmetic_expression | logic_expression;
+c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
+
+expression: arithmetic_expression | logic_expression | TK_IDENTIFICADOR;
 arithmetic_expression: TK_LIT_INT | TK_LIT_FLOAT;
 logic_expression: TK_LIT_FALSE | TK_LIT_TRUE;
 
 %%
 void yyerror (char const *s){
-	fprintf(stderr,"ERROR: line %d\n", yylineno);
+	fprintf(stderr,"Error in line %d: '%s'\n", yylineno, s);
 }
