@@ -62,12 +62,13 @@ void yyerror (char const *s);
 
 programa: global_var_list function_list;
 
+literal: TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_STRING | TK_LIT_CHAR | TK_LIT_INT | TK_LIT_FLOAT;
+
 type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
 var: vector static type | TK_IDENTIFICADOR static type;
 vector: TK_IDENTIFICADOR '[' arithmetic_expression ']';
 static: TK_PR_STATIC | %empty;
-
-arithmetic_expression: TK_LIT_INT
+const: TK_PR_CONST | %empty;
 
 global_var: var ';';
 global_var_list: global_var_list global_var | %empty;
@@ -83,7 +84,21 @@ parameter: parameter_type TK_IDENTIFICADOR;
 parameter_type: type | TK_PR_CONST type;
 body: commands_block;
 
-commands_block: '{' '}' ';';
+commands_block: '{' commands_list '}';
+commands_list: %empty | commands_list command ';' ;
+command: c_declare_variable | c_attr;
+
+c_declare_variable: static const type TK_IDENTIFICADOR c_declare_variable_attr;
+c_declare_variable_attr: %empty | TK_OC_LE c_declare_attr_value;
+c_declare_attr_value: literal | TK_IDENTIFICADOR;
+
+c_attr: TK_IDENTIFICADOR c_attr_vector_access '=' expression;
+c_attr_vector_access: %empty | '[' arithmetic_expression ']';
+
+
+expression: arithmetic_expression | logic_expression;
+arithmetic_expression: TK_LIT_INT | TK_LIT_FLOAT;
+logic_expression: TK_LIT_FALSE | TK_LIT_TRUE;
 
 %%
 void yyerror (char const *s){
