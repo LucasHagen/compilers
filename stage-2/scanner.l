@@ -23,7 +23,6 @@ line_comment    "//"[^\n]*
 char            \'([^'\n]|\\.)\'
 string          \"(([^"\n]|\\\")*[^\\\n])?\"
 especial_char   [,;:()\[\]{}+\-|?*/<>=!&%#^.$]
-
 %%
 
 {line_comment} { }
@@ -69,6 +68,21 @@ protected return TK_PR_PROTECTED;
 "<<"  return TK_OC_SL;
 "%>%" return TK_OC_FORWARD_PIPE;
 "%|%" return TK_OC_BASH_PIPE;
+
+"!" return EXCLAMATION;
+"?" return QUESTION;
+"#" return HASHTAG;
+
+"+" return PLUS;
+"-" return MINUS;
+"*" return MULT;
+"/" return DIV;
+"%" return R_DIV;
+"|" return BIT_OR;
+"^" return EXP;
+">" return GREATER;
+"<" return LESS;
+
 
 {integer} { return TK_LIT_INT; }
 

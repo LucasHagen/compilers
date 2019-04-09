@@ -56,6 +56,34 @@ void yyerror (char const *s);
 %token TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
+%token EXCLAMATION
+%token QUESTION
+%token HASHTAG
+
+
+%token MINUS
+%token PLUS
+%token MULT
+%token DIV
+%token R_DIV
+%token BIT_OR
+%token EXP
+%token GREATER
+%token LESS
+%token LEFT_P
+%token RIGHT_P
+
+%precedence TK_PR_THEN
+%precedence TK_PR_ELSE
+
+%left TK_OC_EQ TK_OC_NE
+%left TK_OC_GE TK_OC_LE GREATER LESS
+%left TK_OC_SR TK_OC_SL
+%left PLUS MINUS
+%left MULT DIV R_DIV
+%left EXP
+%left QUESTION
+%right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
 %start programa
 
 %%
@@ -128,9 +156,33 @@ c_for_no_comma: c_declare_variable | c_attr |
 
 c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 
-expression: arithmetic_expression | logic_expression | TK_IDENTIFICADOR;
-arithmetic_expression: TK_LIT_INT | TK_LIT_FLOAT;
+expression_list: expression ';' expression_list | %empty;
+expression: arithmetic_expression | logic_expression | identifier | '(' expression ')';
+arithmetic_expression: 	operator bin_op operator | un_op operator | operator question_op;
 logic_expression: TK_LIT_FALSE | TK_LIT_TRUE;
+
+operator: identifier | num_lit | c_call_func;
+identifier: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' TK_LIT_INT ']';
+num_lit: TK_LIT_INT | TK_LIT_FLOAT;
+
+left_parenthesis: LEFT_P;
+right_parenthesis: RIGHT_P;
+
+un_op: PLUS %prec UPLUS | MINUS %prec UMINUS | EXCLAMATION | '&' %prec ADDRESS |
+ 			 MULT %prec POINTER | HASHTAG;
+question_op: QUESTION;
+bin_op: PLUS | MINUS | MULT | DIV |
+ 				R_DIV | BIT_OR | '&' | EXP |
+				GREATER | LESS |
+				TK_OC_LE |
+				TK_OC_GE |
+				TK_OC_EQ |
+				TK_OC_NE |
+				TK_OC_AND|
+				TK_OC_OR;
+
+ter_op: expression '?' expression ':' expression;
+
 
 %%
 void yyerror (char const *s){
