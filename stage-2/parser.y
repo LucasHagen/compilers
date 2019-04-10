@@ -88,20 +88,17 @@ void yyerror (char const *s);
 
 %%
 
-programa: global_var_list function_list;
-
+programa:  big_list;
+big_list: global_var big_list | function big_list | %empty;
 literal: TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_STRING | TK_LIT_CHAR | TK_LIT_INT | TK_LIT_FLOAT;
 
 type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
 var: vector static type | TK_IDENTIFICADOR static type;
-vector: TK_IDENTIFICADOR '[' arithmetic_expression ']';
+vector: TK_IDENTIFICADOR '[' expression ']';
 static: TK_PR_STATIC | %empty;
 const: TK_PR_CONST | %empty;
-
 global_var: var ';';
-global_var_list: global_var_list global_var | %empty;
 
-function_list: function_list function | %empty;
 function: header body;
 header: function_type function_name '(' function_parameters ')';
 function_type: static type;
@@ -124,7 +121,7 @@ c_declare_variable_attr: %empty | TK_OC_LE c_declare_attr_value;
 c_declare_attr_value: literal | TK_IDENTIFICADOR;
 
 c_attr: TK_IDENTIFICADOR vector_access '=' expression;
-vector_access: %empty | '[' arithmetic_expression ']';
+vector_access: %empty | '[' expression ']';
 
 c_input: TK_PR_INPUT expression;
 
@@ -135,7 +132,7 @@ c_call_func: TK_IDENTIFICADOR '(' c_call_parameters ')';
 c_call_parameters: %empty | c_call_list_exp;
 c_call_list_exp: expression | c_call_list_exp ',' expression;
 
-c_shift: TK_IDENTIFICADOR vector_access c_shift_symbol arithmetic_expression;
+c_shift: TK_IDENTIFICADOR vector_access c_shift_symbol expression;
 c_shift_symbol: TK_OC_SR | TK_OC_SL;
 
 c_return: TK_PR_RETURN expression;
@@ -156,21 +153,25 @@ c_for_no_comma: c_declare_variable | c_attr |
 
 c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 
-expression_list: expression ';' expression_list | %empty;
-expression: arithmetic_expression | logic_expression | identifier | '(' expression ')';
-arithmetic_expression: 	operator bin_op operator | un_op operator | operator question_op;
-logic_expression: TK_LIT_FALSE | TK_LIT_TRUE;
 
-operator: identifier | num_lit | c_call_func;
-identifier: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' TK_LIT_INT ']';
+
+expression: un_op simple_expression optional_expression | simple_expression optional_expression;
+
+simple_expression: operator | '(' expression ')';
+optional_expression: bin_op expression | '?' expression ':' expression | %empty;
+
+operator: identifier | lit | c_call_func;
+
+identifier: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' expression ']';
+
+lit: num_lit | char_lit | boolean;
 num_lit: TK_LIT_INT | TK_LIT_FLOAT;
-
-left_parenthesis: LEFT_P;
-right_parenthesis: RIGHT_P;
+char_lit: TK_LIT_CHAR | TK_LIT_STRING;
+boolean: TK_LIT_TRUE | TK_LIT_FALSE;
 
 un_op: PLUS %prec UPLUS | MINUS %prec UMINUS | EXCLAMATION | '&' %prec ADDRESS |
- 			 MULT %prec POINTER | HASHTAG;
-question_op: QUESTION;
+ 			 MULT %prec POINTER | HASHTAG | QUESTION;
+
 bin_op: PLUS | MINUS | MULT | DIV |
  				R_DIV | BIT_OR | '&' | EXP |
 				GREATER | LESS |
@@ -181,7 +182,6 @@ bin_op: PLUS | MINUS | MULT | DIV |
 				TK_OC_AND|
 				TK_OC_OR;
 
-ter_op: expression '?' expression ':' expression;
 
 
 %%
