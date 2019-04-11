@@ -1,8 +1,83 @@
+// Testing global variables:
 x int;
 vetor[50] float;
 xis[30] char;
 test static int;
 outro static char;
+var bool;
+var2 string;
+
+
+// Testing the function structure:
+int inc (int x){
+  return x + 1;
+}
+
+static float test1 () {
+}
+
+const char return_a () {
+  return 'a';
+}
+
+static const int do_nothing () {
+
+}
+
+int big_parameters_list (int x, float y, string z, char w) {
+
+}
+
+
+//Testing command blocks:
+int cm_ex () {
+  float x;
+  {
+    x = x + 1;
+      {
+        x = x * 2;
+      };
+      x = x + 2;
+  };
+  return x;
+}
+
+
+//Testing simple commands:
+
+int simple_commands () {
+  // Variable declaration:
+  int xis;
+  static float x;
+  static const float y <= 3.1415;
+
+  // Attribuition commands:
+  xis = 2;
+  vector[2] = xis * xis;
+
+  // I/O commands:
+  output("Digite um valor para xis");
+  input(&xis);
+
+  // Function call:
+  print_xis(xis);
+  print_xis(2*3*xis);
+
+  // Shift commands:
+  xis << 2;
+  xis << xis;
+  xis >> 10;
+  xis >> (xis + (x ^ 2));
+
+  // Return, break, continue:
+  return xis;
+  break;
+  continue;
+
+  // if, for, while:
+
+}
+
 
 int main() {
     int x <= 10;
