@@ -99,9 +99,10 @@ static: TK_PR_STATIC | %empty;
 const: TK_PR_CONST | %empty;
 global_var: var ';';
 
+
 function: header body;
 header: function_type function_name '(' function_parameters ')';
-function_type: static type;
+function_type: static const type;
 function_name: TK_IDENTIFICADOR;
 function_parameters: %empty | parameters_list;
 parameters_list: parameters_list ',' parameter | parameter;
