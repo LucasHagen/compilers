@@ -1,16 +1,21 @@
 %{
+
 #include <stdio.h>
 
-extern int yylineno;
 /*
 	Authors:
 		- Gabriel Pakulski da Silva - 00274701
 		- Lucas Sonntag Hagen       - 00274698
 */
 
+extern int yylineno;
+
 int yylex(void);
 void yyerror (char const *s);
+
 %}
+
+%define parse.error verbose
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
@@ -183,9 +188,7 @@ bin_op: PLUS | MINUS | MULT | DIV |
 				TK_OC_AND|
 				TK_OC_OR;
 
-
-
 %%
 void yyerror (char const *s){
-	fprintf(stderr,"Error in line %d: '%s'\n", yylineno, s);
+	fprintf(stderr,"[ERROR] %s in line %d;\n", s, yylineno);
 }
