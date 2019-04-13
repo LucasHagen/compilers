@@ -8,8 +8,8 @@ ETAPA=etapa2
 
 bison: parser.y
 	bison -d parser.y
-	flex  scanner.l
-	${CC} -c lex.yy.c parser.tab.c
-	${CC} -o parser lex.yy.o parser.tab.o main.c ${CFLAGS}
+	flex  -o scanner.yy.c scanner.l
+	${CC} -c scanner.yy.c parser.tab.c
+	${CC} -o parser scanner.yy.o parser.tab.o main.c ${CFLAGS}
 clean:
 	rm -rf *.out *.o *.yy.c *.out.c *.tab.c *.tab.h *.yy.c parser

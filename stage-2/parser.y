@@ -78,9 +78,6 @@ void yyerror (char const *s);
 %token LEFT_P
 %token RIGHT_P
 
-%precedence TK_PR_THEN
-%precedence TK_PR_ELSE
-
 %left TK_OC_EQ TK_OC_NE
 %left TK_OC_GE TK_OC_LE GREATER LESS
 %left TK_OC_SR TK_OC_SL
@@ -163,10 +160,10 @@ c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 
 expression: un_op simple_expression optional_expression | simple_expression optional_expression;
 
-simple_expression: operator | '(' expression ')';
-optional_expression: bin_op expression | '?' expression ':' expression | %empty;
+simple_expression: operand | '(' expression ')';
+optional_expression: bin_op expression | QUESTION expression ':' expression | %empty;
 
-operator: identifier | lit | c_call_func;
+operand: identifier | lit | c_call_func;
 
 identifier: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' expression ']';
 
