@@ -38,3 +38,6 @@
 # Bison generated files
 *.tab.c
 *.tab.h
+
+# TAR
+*.tgz
