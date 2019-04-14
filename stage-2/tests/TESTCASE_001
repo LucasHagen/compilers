@@ -75,7 +75,51 @@ int simple_commands () {
   continue;
 
   // if, for, while:
+  if (x==1) then
+  {
+    x=2;
+    y=3;
+    if(z==4) then
+    {
+      k=k+1;
+    }
+    else
+    {
+      k=k+2;
+    }
+  }
+  else
+  {
+    k=0;
+  }
 
+  for(i=0:i<100:i=i+1)
+  {
+    j=j+1;
+  }
+
+  while(true) do
+  {
+    output("AAAAAAAAAAAAAAAA\n");
+  }
+
+  // Testing expressions:
+  test = +x;
+  test = -x;
+  test = -(-(x^3));
+  test = !true;
+  test = &xis;
+  test = *xis;
+  test = &(*(x+1));
+  test = ?(!false);
+  test = #vector;
+  test = xis + xis + xis;
+  test = xis * xis / xis;
+  test = xis % 4;
+  test = x | y;
+  test = y & x;
+  test = (x ^ 4) ^ 5;
+  test = xis ? (1+9) * 10 : 0;
 }
 
 

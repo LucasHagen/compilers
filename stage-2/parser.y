@@ -78,14 +78,20 @@ void yyerror (char const *s);
 %token LEFT_P
 %token RIGHT_P
 
+%left COMMA
+%right QUESTION
+%left TK_OC_OR
+%left TK_OC_AND
+%left BIT_OR
+%left BIT_AND
 %left TK_OC_EQ TK_OC_NE
 %left TK_OC_GE TK_OC_LE GREATER LESS
 %left TK_OC_SR TK_OC_SL
 %left PLUS MINUS
 %left MULT DIV R_DIV
 %left EXP
-%left QUESTION
 %right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
+%left PARENTHESIS
 %start programa
 
 %%
@@ -113,11 +119,11 @@ parameter_type: type | TK_PR_CONST type;
 body: commands_block;
 
 commands_block: '{' commands_list '}';
-commands_list: %empty | commands_list command ';' ;
+commands_list: %empty | commands_list command ';' | commands_list c_flux_control;
 command: commands_block | c_declare_variable | c_attr |
 		c_input | c_output | c_call_func | c_shift |
-		c_return | c_continue | c_break |
-		c_if | c_for | c_while;
+		c_return | c_continue | c_break ;
+c_flux_control: c_for | c_if | c_while;
 
 c_declare_variable: static const type TK_IDENTIFICADOR c_declare_variable_attr;
 c_declare_variable_attr: %empty | TK_OC_LE c_declare_attr_value;
@@ -160,7 +166,7 @@ c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 
 expression: un_op simple_expression optional_expression | simple_expression optional_expression;
 
-simple_expression: operand | '(' expression ')';
+simple_expression: operand | '(' expression ')' %prec PARENTHESIS;
 optional_expression: bin_op expression | QUESTION expression ':' expression | %empty;
 
 operand: identifier | lit | c_call_func;
@@ -176,7 +182,7 @@ un_op: PLUS %prec UPLUS | MINUS %prec UMINUS | EXCLAMATION | '&' %prec ADDRESS |
  			 MULT %prec POINTER | HASHTAG | QUESTION;
 
 bin_op: PLUS | MINUS | MULT | DIV |
- 				R_DIV | BIT_OR | '&' | EXP |
+ 				R_DIV | BIT_OR | '&' %prec BIT_AND| EXP |
 				GREATER | LESS |
 				TK_OC_LE |
 				TK_OC_GE |
