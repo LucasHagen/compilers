@@ -86,22 +86,22 @@ int simple_commands () {
     else
     {
       k=k+2;
-    }
+    };
   }
   else
   {
     k=0;
-  }
+  };
 
   for(i=0:i<100:i=i+1)
   {
     j=j+1;
-  }
+  };
 
   while(true) do
   {
     output("AAAAAAAAAAAAAAAA\n");
-  }
+  };
 
   // Testing expressions:
   test = +x;
