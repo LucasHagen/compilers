@@ -119,11 +119,11 @@ parameter_type: type | TK_PR_CONST type;
 body: commands_block;
 
 commands_block: '{' commands_list '}';
-commands_list: %empty | commands_list command ';' | commands_list c_flux_control;
+commands_list: %empty | commands_list command ';';
 command: commands_block | c_declare_variable | c_attr |
 		c_input | c_output | c_call_func | c_shift |
-		c_return | c_continue | c_break ;
-c_flux_control: c_for | c_if | c_while;
+		c_return | c_continue | c_break |
+		c_for | c_if | c_while;
 
 c_declare_variable: static const type TK_IDENTIFICADOR c_declare_variable_attr;
 c_declare_variable_attr: %empty | TK_OC_LE c_declare_attr_value;
