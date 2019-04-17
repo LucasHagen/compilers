@@ -107,10 +107,9 @@ static: TK_PR_STATIC | %empty;
 const: TK_PR_CONST | %empty;
 global_var: var ';';
 
-
 function: header body;
 header: function_type function_name '(' function_parameters ')';
-function_type: static const type;
+function_type: static type;
 function_name: TK_IDENTIFICADOR;
 function_parameters: %empty | parameters_list;
 parameters_list: parameters_list ',' parameter | parameter;
@@ -158,7 +157,6 @@ c_for_command_list: c_for_no_comma | c_for_command_list ',' c_for_no_comma;
 c_for_no_comma: c_declare_variable | c_attr |
 		c_input | c_shift | c_return | c_continue | c_break |
 		c_if | c_while;
-
 
 c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 

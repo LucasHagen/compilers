@@ -17,7 +17,7 @@
 
 white           [ \t]+
 digit           [0-9]
-integer         -?{digit}+
+integer         [-+]?{digit}+
 identifier      [a-zA-Z_][a-zA-Z0-9_]*
 float           {integer}[.]{digit}+([eE][+-]?{digit}+)?
 line_comment    "//".*
