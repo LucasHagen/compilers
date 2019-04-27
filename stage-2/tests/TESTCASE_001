@@ -16,7 +16,7 @@ int inc (int x){
 static float test1 () {
 }
 
-const char return_a () {
+char return_a () {
   return 'a';
 }
 
