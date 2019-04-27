@@ -166,31 +166,143 @@ protected {
 	return TK_PR_PROTECTED;
 }
 
-"<="  return TK_OC_LE;
-">="  return TK_OC_GE;
-"=="  return TK_OC_EQ;
-"!="  return TK_OC_NE;
-"&&"  return TK_OC_AND;
-"||"  return TK_OC_OR;
-">>"  return TK_OC_SR;
-"<<"  return TK_OC_SL;
-"%>%" return TK_OC_FORWARD_PIPE;
-"%|%" return TK_OC_BASH_PIPE;
+"<="  {
+	operator();
+	return TK_OC_LE;
+}
 
-{integer} { return TK_LIT_INT; }
+">=" {
+	operator();
+	return TK_OC_GE;
+}
 
-{float}   { return TK_LIT_FLOAT; }
+"==" {
+	operator();
+	return TK_OC_EQ;
+}
 
-{char}    { return TK_LIT_CHAR; }
+"!=" {
+	operator();
+	return TK_OC_NE;
+}
 
-{string}  { return TK_LIT_STRING; }
+"&&" {
+	operator();
+	return TK_OC_AND;
+}
 
-true  return TK_LIT_TRUE;
-false return TK_LIT_FALSE;
+"||" {
+	operator();
+	return TK_OC_OR;
+}
 
-{especial_char} { return (int) *yytext; }
+">>" {
+	operator();
+	return TK_OC_SR;
+}
 
-{identifier} { return TK_IDENTIFICADOR; }
+"<<" {
+	operator();
+	return TK_OC_SL;
+}
+
+"%>%" {
+	operator();
+	return TK_OC_FORWARD_PIPE;
+}
+
+"%|%" {
+	operator();
+	return TK_OC_BASH_PIPE;
+}
+
+
+"!" {
+	operator();
+	return EXCLAMATION;
+}
+"?" {
+	operator();
+	return QUESTION;
+}
+"#" {
+	operator();
+	return HASHTAG;
+}
+"+" {
+	operator();
+	return PLUS;
+}
+"-" {
+	operator();
+	return MINUS;
+}
+"*" {
+	operator();
+	return MULT;
+}
+"/" {
+	operator();
+	return DIV;
+}
+"%" {
+	operator();
+	return R_DIV;
+}
+"|" {
+	operator();
+	return BIT_OR;
+}
+"^" {
+	operator();
+	return EXP;
+}
+">" {
+	operator();
+	return GREATER;
+}
+"<" {
+	operator();
+	return LESS;
+}
+
+{integer} {
+	literal(INT);
+	return TK_LIT_INT;
+}
+
+{float}   {
+	literal(FLOAT);
+	return TK_LIT_FLOAT;
+}
+
+{char}    {
+	literal(CHAR);
+	return TK_LIT_CHAR;
+}
+
+{string}  {
+	literal(STRING);
+	return TK_LIT_STRING;
+}
+
+true  {
+	literal(BOOL);
+	return TK_LIT_TRUE;
+}
+false {
+	literal(BOOL);
+	return TK_LIT_FALSE;
+}
+{especial_char} {
+	special_char();
+	return (int) *yytext;
+}
+
+{identifier} {
+	identifier();
+	return TK_IDENTIFICADOR;
+}
 
 {white}   { }
 

@@ -69,19 +69,20 @@ void yyerror (char const *s);
 %token <lex_value> TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
-%token '!'
-%token '?'
-%token '#'
+%token <valor_lexico> EXCLAMATION
+%token <valor_lexico> QUESTION
+%token <valor_lexico> HASHTAG
 
-%token '-'
-%token '+'
-%token '*'
-%token '/'
-%token '%'
-%token '|'
-%token '^'
-%token '>'
-%token '<'
+
+%token <valor_lexico> MINUS
+%token <valor_lexico> PLUS
+%token <valor_lexico> MULT
+%token <valor_lexico> DIV
+%token <valor_lexico> R_DIV
+%token <valor_lexico> BIT_OR
+%token <valor_lexico> EXP
+%token <valor_lexico> GREATER
+%token <valor_lexico> LESS
 
 %left ','
 %right '?'
