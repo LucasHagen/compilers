@@ -7,6 +7,17 @@
 */
 
 #include "parser.tab.h"
+#include "lexeme.h"
+#include <string.h>
+
+void keyword();
+void special_char();
+void operator();
+void identifier();
+void literal(int id);
+void create_token(int value);
+int parse_bool(char* text);
+void print_lexeme(struct lexeme *lex);
 
 %}
 %option yylineno
@@ -32,31 +43,128 @@ especial_char   [,;:()\[\]{}+\-|?*/<>=!&%#^.$]
 <MLINE_COMMENT>\n   { }
 <MLINE_COMMENT>.    { }
 
-int 		return TK_PR_INT;
-float 		return TK_PR_FLOAT;
-bool 		return TK_PR_BOOL;
-char 		return TK_PR_CHAR;
-string		return TK_PR_STRING;
-if 			return TK_PR_IF;
-then 		return TK_PR_THEN;
-else 		return TK_PR_ELSE;
-while 		return TK_PR_WHILE;
-do 			return TK_PR_DO;
-input 		return TK_PR_INPUT;
-output 		return TK_PR_OUTPUT;
-return 		return TK_PR_RETURN;
-const 		return TK_PR_CONST;
-static 		return TK_PR_STATIC;
-foreach 	return TK_PR_FOREACH;
-for 		return TK_PR_FOR;
-switch 		return TK_PR_SWITCH;
-case 		return TK_PR_CASE;
-break 		return TK_PR_BREAK;
-continue 	return TK_PR_CONTINUE;
-class 		return TK_PR_CLASS;
-private 	return TK_PR_PRIVATE;
-public 		return TK_PR_PUBLIC;
-protected 	return TK_PR_PROTECTED;
+int {
+	keyword();
+	return TK_PR_INT;
+}
+
+float {
+	keyword();
+	return TK_PR_FLOAT;
+}
+
+bool {
+	keyword();
+	return TK_PR_BOOL;
+}
+
+char {
+	keyword();
+	return TK_PR_CHAR;
+}
+
+string {
+	keyword();
+	return TK_PR_STRING;
+}
+
+if {
+	keyword();
+	return TK_PR_IF;
+}
+
+then {
+	keyword();
+	return TK_PR_THEN;
+}
+
+else {
+	keyword();
+	return TK_PR_ELSE;
+}
+while {
+	keyword();
+	return TK_PR_WHILE;
+}
+
+do {
+	keyword();
+	return TK_PR_DO;
+}
+
+input {
+	keyword();
+	return TK_PR_INPUT;
+}
+
+output {
+	keyword();
+	return TK_PR_OUTPUT;
+}
+
+return {
+	keyword();
+	return TK_PR_RETURN;
+}
+
+const {
+	keyword();
+	return TK_PR_CONST;
+}
+
+static {
+	keyword();
+	return TK_PR_STATIC;
+}
+
+foreach {
+	keyword();
+	return TK_PR_FOREACH;
+}
+
+for {
+	keyword();
+	return TK_PR_FOR;
+}
+
+switch {
+	keyword();
+	return TK_PR_SWITCH;
+}
+
+case {
+	keyword();
+	return TK_PR_CASE;
+}
+
+break {
+	keyword();
+	return TK_PR_BREAK;
+}
+
+continue {
+	keyword();
+	return TK_PR_CONTINUE;
+}
+
+class {
+	keyword();
+	return TK_PR_CLASS;
+}
+
+private {
+	keyword();
+	return TK_PR_PRIVATE;
+}
+
+public {
+	keyword();
+	return TK_PR_PUBLIC;
+}
+protected {
+	keyword();
+	return TK_PR_PROTECTED;
+}
 
 "<="  return TK_OC_LE;
 ">="  return TK_OC_GE;
@@ -110,4 +218,101 @@ false return TK_LIT_FALSE;
 int get_line_number(void)
 {
 	return yylineno;
+}
+
+void keyword(){
+	create_token(KEYWORD);
+}
+void special_char(){
+	create_token(SPECIAL_CHAR);
+}
+void operator(){
+	create_token(OPERATOR);
+}
+void identifier(){
+	create_token(IDENTIFIER);
+}
+void literal(int id){
+	create_token(LITERAL);
+	switch(id){
+		case INT:
+			yylval.valor_lexico->literal_type = INT;
+			yylval.valor_lexico->token_value.v_int = atoi(yytext);
+		break;
+
+		case FLOAT:
+			yylval.valor_lexico->literal_type = FLOAT;
+			yylval.valor_lexico->token_value.v_float = atof(yytext);
+		break;
+
+		case BOOL:
+			yylval.valor_lexico->literal_type = BOOL;
+			yylval.valor_lexico->token_value.v_bool = parse_bool(yytext);
+		break;
+
+		case CHAR:
+			yylval.valor_lexico->literal_type = CHAR;
+			yylval.valor_lexico->token_value.v_char = yytext[1];
+		break;
+		case STRING:
+			yylval.valor_lexico->literal_type = STRING;
+			yylval.valor_lexico->token_value.v_string = strdup(yytext);
+		break;
+
+		default:
+			printf("Tipo invalido de literal !!!!!!!!");
+		break;
+	}
+}
+
+void create_token(int value) {
+	yylval.valor_lexico = (struct lexeme *) malloc(sizeof(struct lexeme));
+	yylval.valor_lexico->line_number = yylineno;
+	switch(value){
+		case KEYWORD:
+			yylval.valor_lexico->literal_type = NOT_LITERAL;
+	 		yylval.valor_lexico->token_value.v_string = strdup(yytext);
+			yylval.valor_lexico->token_type = KEYWORD;
+		break;
+
+		case SPECIAL_CHAR:
+			yylval.valor_lexico->literal_type = NOT_LITERAL;
+	 		yylval.valor_lexico->token_value.v_char = yytext[0];
+			yylval.valor_lexico->token_type = SPECIAL_CHAR;
+		break;
+
+		case OPERATOR:
+			yylval.valor_lexico->literal_type = NOT_LITERAL;
+	 		yylval.valor_lexico->token_value.v_string = strdup(yytext);
+			yylval.valor_lexico->token_type = OPERATOR;
+		break;
+
+		case IDENTIFIER:
+			yylval.valor_lexico->token_type = NOT_LITERAL;
+	 		yylval.valor_lexico->token_value.v_string = strdup(yytext);
+			yylval.valor_lexico->token_type = IDENTIFIER;
+		break;
+
+		case LITERAL:
+			yylval.valor_lexico->token_type = LITERAL;
+		break;
+
+		default:
+			printf("Tipo de token invalido!!!!!!!!!!");
+		break;
+	}
+}
+
+int parse_bool (char *text){
+	if(strcmp(text,"true") == 0)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+void print_lexeme(struct lexeme *lex){
+	printf("Line Number: %d",lex->line_number);
+	printf("Token Type: %d", lex->token_type);
+	printf("Lit Type: %d", lex->literal_type);
+	printf("Value: %s", lex->token_value);
 }
