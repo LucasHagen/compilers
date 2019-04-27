@@ -177,21 +177,6 @@ protected {
 "%>%" return TK_OC_FORWARD_PIPE;
 "%|%" return TK_OC_BASH_PIPE;
 
-"!" return EXCLAMATION;
-"?" return QUESTION;
-"#" return HASHTAG;
-
-"+" return PLUS;
-"-" return MINUS;
-"*" return MULT;
-"/" return DIV;
-"%" return R_DIV;
-"|" return BIT_OR;
-"^" return EXP;
-">" return GREATER;
-"<" return LESS;
-
-
 {integer} { return TK_LIT_INT; }
 
 {float}   { return TK_LIT_FLOAT; }
@@ -236,27 +221,27 @@ void literal(int id){
 	create_token(LITERAL);
 	switch(id){
 		case INT:
-			yylval.valor_lexico->literal_type = INT;
-			yylval.valor_lexico->token_value.v_int = atoi(yytext);
+			yylval.lex_value->literal_type = INT;
+			yylval.lex_value->token_value.v_int = atoi(yytext);
 		break;
 
 		case FLOAT:
-			yylval.valor_lexico->literal_type = FLOAT;
-			yylval.valor_lexico->token_value.v_float = atof(yytext);
+			yylval.lex_value->literal_type = FLOAT;
+			yylval.lex_value->token_value.v_float = atof(yytext);
 		break;
 
 		case BOOL:
-			yylval.valor_lexico->literal_type = BOOL;
-			yylval.valor_lexico->token_value.v_bool = parse_bool(yytext);
+			yylval.lex_value->literal_type = BOOL;
+			yylval.lex_value->token_value.v_bool = parse_bool(yytext);
 		break;
 
 		case CHAR:
-			yylval.valor_lexico->literal_type = CHAR;
-			yylval.valor_lexico->token_value.v_char = yytext[1];
+			yylval.lex_value->literal_type = CHAR;
+			yylval.lex_value->token_value.v_char = yytext[1];
 		break;
 		case STRING:
-			yylval.valor_lexico->literal_type = STRING;
-			yylval.valor_lexico->token_value.v_string = strdup(yytext);
+			yylval.lex_value->literal_type = STRING;
+			yylval.lex_value->token_value.v_string = strdup(yytext);
 		break;
 
 		default:
@@ -266,35 +251,35 @@ void literal(int id){
 }
 
 void create_token(int value) {
-	yylval.valor_lexico = (struct lexeme *) malloc(sizeof(struct lexeme));
-	yylval.valor_lexico->line_number = yylineno;
+	yylval.lex_value = (struct lexeme *) malloc(sizeof(struct lexeme));
+	yylval.lex_value->line_number = yylineno;
 	switch(value){
 		case KEYWORD:
-			yylval.valor_lexico->literal_type = NOT_LITERAL;
-	 		yylval.valor_lexico->token_value.v_string = strdup(yytext);
-			yylval.valor_lexico->token_type = KEYWORD;
+			yylval.lex_value->literal_type = NOT_LITERAL;
+	 		yylval.lex_value->token_value.v_string = strdup(yytext);
+			yylval.lex_value->token_type = KEYWORD;
 		break;
 
 		case SPECIAL_CHAR:
-			yylval.valor_lexico->literal_type = NOT_LITERAL;
-	 		yylval.valor_lexico->token_value.v_char = yytext[0];
-			yylval.valor_lexico->token_type = SPECIAL_CHAR;
+			yylval.lex_value->literal_type = NOT_LITERAL;
+	 		yylval.lex_value->token_value.v_char = yytext[0];
+			yylval.lex_value->token_type = SPECIAL_CHAR;
 		break;
 
 		case OPERATOR:
-			yylval.valor_lexico->literal_type = NOT_LITERAL;
-	 		yylval.valor_lexico->token_value.v_string = strdup(yytext);
-			yylval.valor_lexico->token_type = OPERATOR;
+			yylval.lex_value->literal_type = NOT_LITERAL;
+	 		yylval.lex_value->token_value.v_string = strdup(yytext);
+			yylval.lex_value->token_type = OPERATOR;
 		break;
 
 		case IDENTIFIER:
-			yylval.valor_lexico->token_type = NOT_LITERAL;
-	 		yylval.valor_lexico->token_value.v_string = strdup(yytext);
-			yylval.valor_lexico->token_type = IDENTIFIER;
+			yylval.lex_value->token_type = NOT_LITERAL;
+	 		yylval.lex_value->token_value.v_string = strdup(yytext);
+			yylval.lex_value->token_type = IDENTIFIER;
 		break;
 
 		case LITERAL:
-			yylval.valor_lexico->token_type = LITERAL;
+			yylval.lex_value->token_type = LITERAL;
 		break;
 
 		default:

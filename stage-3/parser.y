@@ -1,7 +1,9 @@
 %{
 
-#include "lexeme.h"
 #include <stdio.h>
+#include "lexeme.h"
+#include "tree.h"
+
 /*
 	Authors:
 		- Gabriel Pakulski da Silva - 00274701
@@ -17,86 +19,83 @@ void yyerror (char const *s);
 %}
 
 %union {
- struct lexeme *valor_lexico;
-	// falta o nodo.
+	struct lexeme* lex_value;
+	struct node* node;
 }
 
 %define parse.error verbose
 
-%token <valor_lexico> TK_PR_INT
-%token <valor_lexico> TK_PR_FLOAT
-%token <valor_lexico> TK_PR_BOOL
-%token <valor_lexico> TK_PR_CHAR
-%token <valor_lexico> TK_PR_STRING
-%token <valor_lexico> TK_PR_IF
-%token <valor_lexico> TK_PR_THEN
-%token <valor_lexico> TK_PR_ELSE
-%token <valor_lexico> TK_PR_WHILE
-%token <valor_lexico> TK_PR_DO
-%token <valor_lexico> TK_PR_INPUT
-%token <valor_lexico> TK_PR_OUTPUT
-%token <valor_lexico> TK_PR_RETURN
-%token <valor_lexico> TK_PR_CONST
-%token <valor_lexico> TK_PR_STATIC
-%token <valor_lexico> TK_PR_FOREACH
-%token <valor_lexico> TK_PR_FOR
-%token <valor_lexico> TK_PR_SWITCH
-%token <valor_lexico> TK_PR_CASE
-%token <valor_lexico> TK_PR_BREAK
-%token <valor_lexico> TK_PR_CONTINUE
-%token <valor_lexico> TK_PR_CLASS
-%token <valor_lexico> TK_PR_PRIVATE
-%token <valor_lexico> TK_PR_PUBLIC
-%token <valor_lexico> TK_PR_PROTECTED
-%token <valor_lexico> TK_OC_LE
-%token <valor_lexico> TK_OC_GE
-%token <valor_lexico> TK_OC_EQ
-%token <valor_lexico> TK_OC_NE
-%token <valor_lexico> TK_OC_AND
-%token <valor_lexico> TK_OC_OR
-%token <valor_lexico> TK_OC_SL
-%token <valor_lexico> TK_OC_SR
-%token <valor_lexico> TK_OC_FORWARD_PIPE
-%token <valor_lexico> TK_OC_BASH_PIPE
-%token <valor_lexico> TK_LIT_INT
-%token <valor_lexico> TK_LIT_FLOAT
-%token <valor_lexico> TK_LIT_FALSE
-%token <valor_lexico> TK_LIT_TRUE
-%token <valor_lexico> TK_LIT_CHAR
-%token <valor_lexico> TK_LIT_STRING
-%token <valor_lexico> TK_IDENTIFICADOR
+%token <lex_value> TK_PR_INT
+%token <lex_value> TK_PR_FLOAT
+%token <lex_value> TK_PR_BOOL
+%token <lex_value> TK_PR_CHAR
+%token <lex_value> TK_PR_STRING
+%token <lex_value> TK_PR_IF
+%token <lex_value> TK_PR_THEN
+%token <lex_value> TK_PR_ELSE
+%token <lex_value> TK_PR_WHILE
+%token <lex_value> TK_PR_DO
+%token <lex_value> TK_PR_INPUT
+%token <lex_value> TK_PR_OUTPUT
+%token <lex_value> TK_PR_RETURN
+%token <lex_value> TK_PR_CONST
+%token <lex_value> TK_PR_STATIC
+%token <lex_value> TK_PR_FOREACH
+%token <lex_value> TK_PR_FOR
+%token <lex_value> TK_PR_SWITCH
+%token <lex_value> TK_PR_CASE
+%token <lex_value> TK_PR_BREAK
+%token <lex_value> TK_PR_CONTINUE
+%token <lex_value> TK_PR_CLASS
+%token <lex_value> TK_PR_PRIVATE
+%token <lex_value> TK_PR_PUBLIC
+%token <lex_value> TK_PR_PROTECTED
+%token <lex_value> TK_OC_LE
+%token <lex_value> TK_OC_GE
+%token <lex_value> TK_OC_EQ
+%token <lex_value> TK_OC_NE
+%token <lex_value> TK_OC_AND
+%token <lex_value> TK_OC_OR
+%token <lex_value> TK_OC_SL
+%token <lex_value> TK_OC_SR
+%token <lex_value> TK_OC_FORWARD_PIPE
+%token <lex_value> TK_OC_BASH_PIPE
+%token <lex_value> TK_LIT_INT
+%token <lex_value> TK_LIT_FLOAT
+%token <lex_value> TK_LIT_FALSE
+%token <lex_value> TK_LIT_TRUE
+%token <lex_value> TK_LIT_CHAR
+%token <lex_value> TK_LIT_STRING
+%token <lex_value> TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
-%token EXCLAMATION
-%token QUESTION
-%token HASHTAG
+%token '!'
+%token '?'
+%token '#'
 
+%token '-'
+%token '+'
+%token '*'
+%token '/'
+%token '%'
+%token '|'
+%token '^'
+%token '>'
+%token '<'
 
-%token MINUS
-%token PLUS
-%token MULT
-%token DIV
-%token R_DIV
-%token BIT_OR
-%token EXP
-%token GREATER
-%token LESS
-%token LEFT_P
-%token RIGHT_P
-
-%left COMMA
-%right QUESTION
+%left ','
+%right '?'
 %left TK_OC_OR
 %left TK_OC_AND
-%left BIT_OR
-%left BIT_AND
+%left '|'
+%left '&'
 %left TK_OC_EQ TK_OC_NE
-%left TK_OC_GE TK_OC_LE GREATER LESS
+%left TK_OC_GE TK_OC_LE '>' '<'
 %left TK_OC_SR TK_OC_SL
-%left PLUS MINUS
-%left MULT DIV R_DIV
-%left EXP
-%right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
+%left '+' '-'
+%left '*' '/' '%'
+%left '^'
+%right POINTER ADDRESS '!' UPLUS UMINUS '#'
 %left PARENTHESIS
 %start programa
 
@@ -171,7 +170,7 @@ c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 expression: un_op simple_expression optional_expression | simple_expression optional_expression;
 
 simple_expression: operand | '(' expression ')' %prec PARENTHESIS;
-optional_expression: bin_op expression | QUESTION expression ':' expression | %empty;
+optional_expression: bin_op expression | '?' expression ':' expression | %empty;
 
 operand: identifier | lit | c_call_func;
 
@@ -182,12 +181,12 @@ num_lit: TK_LIT_INT | TK_LIT_FLOAT;
 char_lit: TK_LIT_CHAR | TK_LIT_STRING;
 boolean: TK_LIT_TRUE | TK_LIT_FALSE;
 
-un_op: PLUS %prec UPLUS | MINUS %prec UMINUS | EXCLAMATION | '&' %prec ADDRESS |
- 			 MULT %prec POINTER | HASHTAG | QUESTION;
+un_op: '+' %prec UPLUS | '-' %prec UMINUS | '!' | '&' %prec ADDRESS |
+ 			 '*' %prec POINTER | '#' | '?';
 
-bin_op: PLUS | MINUS | MULT | DIV |
- 				R_DIV | BIT_OR | '&' %prec BIT_AND| EXP |
-				GREATER | LESS |
+bin_op: '+' | '-' | '*' | '/' |
+ 				'%' | '|' | '&' %prec '&'| '^' |
+				'>' | '<' |
 				TK_OC_LE |
 				TK_OC_GE |
 				TK_OC_EQ |

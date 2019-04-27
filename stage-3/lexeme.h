@@ -1,3 +1,6 @@
+#ifndef LEXEME_H
+#define LEXEME_H
+
 /*
 TOKENS
 Os tokens se enquadram em diferentes categorias:
@@ -54,3 +57,5 @@ union Literal_value {
     int literal_type; //caso seja não literal, recebe o valor NOT_LITERAL
     union Literal_value token_value;
   } Lexeme;
+
+#endif
