@@ -168,7 +168,25 @@ programa:
 		arvore = $$;
 	};
 
-big_list: big_list global_var | big_list function | function | global_var ;
+big_list:
+	big_list global_var
+	{
+		$$ = $1;
+		add_child($$, $2);
+	}|
+	big_list function
+	{
+		$$ = $1;
+		add_child($$, $2);
+	}|
+	function
+	{
+		$$ = $1;
+	}|
+	global_var
+	{
+		$$ = $1;
+	};
 
 literal:
 	TK_LIT_TRUE
@@ -255,31 +273,70 @@ const:
 		$$ = NULL;
 	};
 
-function: header body;
-header: static type TK_IDENTIFICADOR '(' function_parameters ')';
-function_parameters: %empty | parameters_list;
-parameters_list: parameters_list g',' parameter | parameter;
+function:
+	header body
+	{
+		$$ = $1;
+		add_child($$, $2);
+	};
+
+header:
+	static type TK_IDENTIFICADOR '(' function_parameters ')'
+	{
+		$$ = $1;
+
+		if($$ == NULL) {
+			$$ = $2;
+		} else {
+			add_child($$, $2);
+		}
+
+		add_child($$, new_node($3));
+		add_child($$, new_node($4));
+		add_child($$, $5);
+		add_child($$, new_node($6));
+	};
+
+function_parameters:
+	%empty
+	{
+		$$ = NULL;
+	}|
+	parameters_list
+	{
+		$$ = $1;
+	};
+
+parameters_list:
+	parameters_list ',' parameter
+	{
+		$$ = $1;
+		add_child($$, new_node($2));
+		add_child($$, $3);
+	}|
+	parameter
+	{
+		$$ = $1;
+	};
 
 parameter:
 	const type TK_IDENTIFICADOR
 	{
-		if($1 != NULL)
-		{
-			$$ = $1;
-			add_child($$, $1);
-			add_child($$, new_node($3));
-		}
-		else
-		{
+		$$ = $1;
+
+		if($$ == NULL) {
 			$$ = $2;
-			add_child($$, new_node($3));
+		} else {
+			add_child($$, $2);
 		}
+
+		add_child($$, new_node($3));
 	};
 
 body:
 	commands_block
 	{
-		$$ = $1
+		$$ = $1;
 	};
 
 commands_block:
@@ -290,11 +347,71 @@ commands_block:
 		add_child($$, new_node($3));
 	};
 
-commands_list: %empty | commands_list command ';';
-command: commands_block | c_declare_variable | c_attr |
-		c_input | c_output | c_call_func | c_shift |
-		c_return | c_continue | c_break |
-		c_for | c_if | c_while;
+commands_list:
+	%empty
+	{
+		$$ = NULL;
+	}|
+	commands_list command ';'
+	{
+		$$ = $1;
+		add_child($$, $2);
+		add_child($$, new_node($3));
+	};
+
+command:
+	commands_block
+	{
+		$$ = $1;
+	}|
+	c_declare_variable
+	{
+		$$ = $1;
+	}|
+	c_attr
+	{
+		$$ = $1;
+	}|
+	c_input
+	{
+		$$ = $1;
+	}|
+	c_output
+	{
+		$$ = $1;
+	}|
+	c_call_func
+	{
+		$$ = $1;
+	}|
+	c_shift
+	{
+		$$ = $1;
+	}|
+	c_return
+	{
+		$$ = $1;
+	}|
+	c_continue
+	{
+		$$ = $1;
+	}|
+	c_break
+	{
+		$$ = $1;
+	}|
+	c_for
+	{
+		$$ = $1;
+	}|
+	c_if
+	{
+		$$ = $1;
+	}|
+	c_while
+	{
+		$$ = $1;
+	};
 
 c_declare_variable:
 	static const type TK_IDENTIFICADOR c_declare_variable_attr
@@ -328,7 +445,7 @@ c_declare_variable_attr:
 	TK_OC_LE c_declare_attr_value
 	{
 		$$ = new_node($1);
-		add_child($2);
+		add_child($$, $2);
 	};
 
 c_declare_attr_value:
@@ -363,17 +480,27 @@ c_output:
 		add_child($$, $2);
 	};
 
-c_output_exp_list: expression | c_output_exp_list ',' expression;
+c_output_exp_list:
+	expression
+	{
+		$$ = $1;
+	}|
+	c_output_exp_list ',' expression
+	{
+		$$ = $1;
+		add_child($$, new_node($2));
+		add_child($$, $3);
+	};
 
 c_call_func:
 	TK_IDENTIFICADOR '(' c_call_parameters ')'
 	{
 		$$ = new_node($1);
-		add_child($$, $2);
+		add_child($$, new_node($2));
 		if($4 != NULL) {
 			add_child($$, $3);
 		}
-		add_child($$, $4);
+		add_child($$, new_node($4));
 	};
 
 c_call_parameters:
@@ -386,7 +513,17 @@ c_call_parameters:
 		$$ = $1;
 	};
 
-c_call_list_exp: expression | c_call_list_exp ',' expression;
+c_call_list_exp:
+	expression
+	{
+		$$ = $1;
+	}|
+	c_call_list_exp ',' expression
+	{
+		$$ = $1;
+		add_child($$, new_node($2));
+		add_child($$, $3);
+	};
 
 c_shift:
 	identifier c_shift_symbol expression
@@ -429,16 +566,15 @@ c_if:
 	TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else
 	{
 		$$ = new_node($1);
-		add_child($$, $2);
+		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, $4);
+		add_child($$, new_node($4));
 		add_child($$, new_node($5));
 		add_child($$, $6);
 		if($7 != NULL) {
 			add_child($$, $7);
 		}
 	};
-
 
 c_else:
 	%empty
@@ -466,11 +602,55 @@ c_for:
 	};
 
 
-c_for_command_list: c_for_no_comma | c_for_command_list ',' c_for_no_comma;
+c_for_command_list:
+ 	c_for_no_comma
+	{
+		$$ = $1;
+	}|
+	c_for_command_list ',' c_for_no_comma
+	{
+		$$ = $1;
+		add_child($$, new_node($2));
+		add_child($$, $3);
+	};
 
-c_for_no_comma: c_declare_variable | c_attr |
-		c_input | c_shift | c_return | c_continue | c_break |
-		c_if | c_while;
+c_for_no_comma:
+	c_declare_variable
+	{
+		$$ = $1;
+	}|
+	c_attr
+	{
+		$$ = $1;
+	}|
+	c_input
+	{
+		$$ = $1;
+	}|
+	c_shift
+	{
+		$$ = $1;
+	}|
+	c_return
+	{
+		$$ = $1;
+	}|
+	c_continue
+	{
+		$$ = $1;
+	}|
+	c_break
+	{
+		$$ = $1;
+	}|
+	c_if
+	{
+		$$ = $1;
+	}|
+	c_while
+	{
+		$$ = $1;
+	};
 
 c_while:
 	TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block
@@ -483,7 +663,24 @@ c_while:
 		add_child($$, $6);
 	};
 
-expression: un_op simple_expression optional_expression | simple_expression optional_expression;
+expression:
+	un_op simple_expression optional_expression
+	{
+		$$ = $1;
+		add_child($$, $2);
+
+		if($3 != NULL) {
+			add_child($$, $3);
+		}
+	}|
+	simple_expression optional_expression
+	{
+		$$ = $1;
+
+		if($2 != NULL) {
+			add_child($$, $2);
+		}
+	};
 
 simple_expression:
 	operand
@@ -497,7 +694,23 @@ simple_expression:
 		add_child($$, new_node($3));
 	};
 
-optional_expression: bin_op expression | QUESTION expression ':' expression | %empty;
+optional_expression:
+	bin_op expression
+	{
+		$$ = $1;
+		add_child($$, $2);
+	}|
+	QUESTION expression ':' expression
+	{
+		$$ = new_node($1);
+		add_child($$, $2);
+		add_child($$, new_node($3));
+		add_child($$, $4);
+	}|
+	%empty
+	{
+		$$ = NULL;
+	};
 
 operand:
 	identifier
