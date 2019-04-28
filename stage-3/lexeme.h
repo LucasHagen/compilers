@@ -35,7 +35,7 @@ TIPOS DOS LITERAIS
 
 #define NOT_LITERAL 1010
 
-union Literal_value {
+union literal_value {
   int v_int;
   float v_float;
   int v_bool;
@@ -55,7 +55,7 @@ union Literal_value {
     int line_number;
     int token_type;
     int literal_type; //caso seja não literal, recebe o valor NOT_LITERAL
-    union Literal_value token_value;
+    union literal_value token_value;
   } Lexeme;
 
 #endif

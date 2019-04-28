@@ -69,19 +69,19 @@ void yyerror (char const *s);
 %token <lex_value> TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
-%token ','
-%token ';'
-%token ':'
-%token '('
-%token ')'
-%token '['
-%token ']'
-%token '{'
-%token '}'
-%token '='
-%token '&'
-%token '$'
-%token '.'
+%token <lex_value> ','
+%token <lex_value> ';'
+%token <lex_value> ':'
+%token <lex_value> '('
+%token <lex_value> ')'
+%token <lex_value> '['
+%token <lex_value> ']'
+%token <lex_value> '{'
+%token <lex_value> '}'
+%token <lex_value> '='
+%token <lex_value> '&'
+%token <lex_value> '$'
+%token <lex_value> '.'
 %token <lex_value> PLUS
 %token <lex_value> MINUS
 %token <lex_value> BIT_OR
@@ -109,12 +109,75 @@ void yyerror (char const *s);
 %left EXP
 %right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
 %left PARENTHESIS
+
+%{ /*
+	%type <node> programa
+%type <node> big_list
+%type <node> literal
+%type <node> type
+%type <node> var
+%type <node> vector
+%type <node> static
+%type <node> const
+%type <node> global_var
+%type <node> function
+%type <node> header
+%type <node> function_type
+%type <node> function_name
+%type <node> function_parameters
+%type <node> parameters_list
+%type <node> parameter
+%type <node> parameter_type
+%type <node> body
+%type <node> commands_block
+%type <node> commands_list
+%type <node> command
+%type <node> c_declare_variable
+%type <node> c_declare_variable_attr
+%type <node> c_declare_attr_value
+%type <node> c_attr
+%type <node> vector_access
+%type <node> c_input
+%type <node> c_output
+%type <node> c_output_exp_list
+%type <node> c_call_func
+%type <node> c_call_parameters
+%type <node> c_call_list_exp
+%type <node> c_shift
+%type <node> c_shift_symbol
+%type <node> c_return
+%type <node> c_continue
+%type <node> c_break
+%type <node> c_if
+%type <node> c_else
+%type <node> c_for
+%type <node> c_for_command_list
+%type <node> c_for_no_comma
+%type <node> c_while
+%type <node> expression
+%type <node> simple_expression
+%type <node> optional_expression
+%type <node> operand
+%type <node> identifier
+%type <node> lit
+%type <node> num_lit
+%type <node> char_lit
+%type <node> boolean
+%type <node> un_op
+%type <node> bin_op
+*/
+%}
+
 %start programa
 
 %%
 
 programa:  big_list;
-big_list: global_var big_list | function big_list | %empty;
+
+big_list: big_list global_var | big_list function | function | global_var ;
+
+
+
 literal: TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_STRING | TK_LIT_CHAR | TK_LIT_INT | TK_LIT_FLOAT;
 
 type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
@@ -223,7 +286,7 @@ void yyerror (char const *s){
  * @param arvore AST Pointer
  */
 void descompila (void *arvore) {
-	// TODO
+	decompile(arvore);
 }
 
 /**
@@ -232,5 +295,5 @@ void descompila (void *arvore) {
  * @param arvore AST Pointer
  */
 void libera (void *arvore) {
-	// TODO
+	free_tree(arvore);
 }

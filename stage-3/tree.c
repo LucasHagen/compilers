@@ -35,3 +35,21 @@ void add_child(Node* node, Node* child)
 
     node->children[node->children_count - 1] = child;
 }
+
+/**
+ * Generates a source code based on a Abstract Syntax Tree (AST)
+ *
+ * @param root AST Pointer
+ */
+void decompile(void *root) {
+    // TODO
+}
+
+/**
+ * Frees memory previously allocated to the AST structure
+ *
+ * @param root AST Pointer
+ */
+void free_tree(void *root) {
+    // TODO
+}

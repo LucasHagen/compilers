@@ -395,7 +395,7 @@ void create_token(int value) {
 		break;
 
 		default:
-			printf("Tipo de token invalido!!!!!!!!!!");
+			printf("Tipo de token invalido!");
 		break;
 	}
 }
