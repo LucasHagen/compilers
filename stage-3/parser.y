@@ -110,10 +110,10 @@ void yyerror (char const *s);
 %right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
 %left PARENTHESIS
 
+%type <lex_value> literal
 %{ /*
 	%type <node> programa
 %type <node> big_list
-%type <node> literal
 %type <node> type
 %type <node> var
 %type <node> vector
@@ -176,9 +176,31 @@ programa:  big_list;
 
 big_list: big_list global_var | big_list function | function | global_var ;
 
-
-
-literal: TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_STRING | TK_LIT_CHAR | TK_LIT_INT | TK_LIT_FLOAT;
+literal:
+	TK_LIT_TRUE
+	{
+		$$ = $1;
+	}|
+	TK_LIT_FALSE
+	{
+		$$ = $1;
+	}|
+	TK_LIT_STRING
+	{
+		$$ = $1;
+	}|
+	TK_LIT_CHAR
+	{
+		$$ = $1;
+	}|
+	TK_LIT_INT
+	{
+		$$ = $1;
+	}|
+	TK_LIT_FLOAT
+	{
+		$$ = $1;
+	};
 
 type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
 var: vector static type | TK_IDENTIFICADOR static type;
