@@ -12,9 +12,9 @@ typedef struct node {
 /**
  * Creates a new node structure and allocates the nedded memory
  *
- * @param token Operation Identifier
+ * @param lexeme Main Lexeme
  */
-Node* new_node(Lexeme* llexeme);
+Node* new_node(Lexeme* lexeme);
 
 /**
  * Adds a new child to a existing node
@@ -29,14 +29,14 @@ void add_child(Node* node, Node* child);
  *
  * @param arvore AST Pointer
  */
-void decompile (void *root);
+void decompile(Node* root);
 
 /**
  * Frees memory previously allocated to the AST structure
  *
  * @param arvore AST Pointer
  */
-void free_tree (void *root);
+void free_tree(Node* root);
 
 
 #endif // TREE_H

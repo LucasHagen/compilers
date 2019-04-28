@@ -41,7 +41,8 @@ void add_child(Node* node, Node* child)
  *
  * @param root AST Pointer
  */
-void decompile(void *root) {
+void decompile(Node* root)
+{
     // TODO
 }
 
@@ -50,6 +51,25 @@ void decompile(void *root) {
  *
  * @param root AST Pointer
  */
-void free_tree(void *root) {
-    // TODO
+void free_tree(Node* root)
+{
+    if(root != 0) // NULL
+    {
+        if(root->lexeme != 0)
+        {
+            free(root->lexeme);
+        }
+
+        for(int i = 0; i < root->children_count; i++)
+        {
+            Node* child = *(root->children + i);
+
+            if(child != 0) {
+                free_tree(child);
+            }
+        }
+
+        free(root->children);
+        free(root);
+    }
 }
