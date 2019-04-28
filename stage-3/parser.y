@@ -110,24 +110,20 @@ void yyerror (char const *s);
 %right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
 %left PARENTHESIS
 
-%type <lex_value> literal
-%{ /*
-	%type <node> programa
-%type <node> big_list
+%type <node> literal
 %type <node> type
-%type <node> var
-%type <node> vector
-%type <node> static
 %type <node> const
+%type <node> var
+%type <node> static
 %type <node> global_var
+
+%type <node> programa
+%type <node> big_list
 %type <node> function
 %type <node> header
-%type <node> function_type
-%type <node> function_name
 %type <node> function_parameters
 %type <node> parameters_list
 %type <node> parameter
-%type <node> parameter_type
 %type <node> body
 %type <node> commands_block
 %type <node> commands_list
@@ -136,7 +132,6 @@ void yyerror (char const *s);
 %type <node> c_declare_variable_attr
 %type <node> c_declare_attr_value
 %type <node> c_attr
-%type <node> vector_access
 %type <node> c_input
 %type <node> c_output
 %type <node> c_output_exp_list
@@ -159,14 +154,8 @@ void yyerror (char const *s);
 %type <node> optional_expression
 %type <node> operand
 %type <node> identifier
-%type <node> lit
-%type <node> num_lit
-%type <node> char_lit
-%type <node> boolean
 %type <node> un_op
 %type <node> bin_op
-*/
-%}
 
 %start programa
 
@@ -179,47 +168,94 @@ big_list: big_list global_var | big_list function | function | global_var ;
 literal:
 	TK_LIT_TRUE
 	{
-		$$ = $1;
+		$$ = new_node($1);
 	}|
 	TK_LIT_FALSE
 	{
-		$$ = $1;
+		$$ = new_node($1);
 	}|
 	TK_LIT_STRING
 	{
-		$$ = $1;
+		$$ = new_node($1);
 	}|
 	TK_LIT_CHAR
 	{
-		$$ = $1;
+		$$ = new_node($1);
 	}|
 	TK_LIT_INT
 	{
-		$$ = $1;
+		$$ = new_node($1);
 	}|
 	TK_LIT_FLOAT
+	{
+		$$ = new_node($1);
+	};
+
+type:
+	TK_PR_INT
+	{
+		$$ = new_node($1);
+	}|
+	TK_PR_FLOAT
+	{
+		$$ = new_node($1);
+	}|
+	TK_PR_CHAR
+	{
+		$$ = new_node($1);
+	}|
+	TK_PR_BOOL {
+		$$ = new_node($1);
+	}|
+	TK_PR_STRING
+	{
+		$$ = new_node($1);
+	};
+
+global_var:
+	var ';'
 	{
 		$$ = $1;
 	};
 
-type: TK_PR_INT | TK_PR_FLOAT | TK_PR_CHAR | TK_PR_BOOL | TK_PR_STRING;
-var: vector static type | TK_IDENTIFICADOR static type;
-vector: TK_IDENTIFICADOR '[' expression ']';
-static: TK_PR_STATIC | %empty;
-const: TK_PR_CONST | %empty;
-global_var: var ';';
+var:
+	identifier static type
+	{
+		// VAR = <identifier> (<index>, <static>, <type>)
+		$$ = $1;
+		add_child($$, $2);
+		add_child($$, $3);
+	};
+
+static:
+	TK_PR_STATIC
+	{
+		$$ = new_node($1);
+	}|
+	%empty
+	{
+		$$ = NULL;
+	};
+
+const:
+	TK_PR_CONST
+	{
+		$$ = new_node($1);
+	}|
+	%empty
+	{
+		$$ = NULL;
+	};
 
 function: header body;
-header: function_type function_name '(' function_parameters ')';
-function_type: static type;
-function_name: TK_IDENTIFICADOR;
+header: static type TK_IDENTIFICADOR '(' function_parameters ')';
 function_parameters: %empty | parameters_list;
 parameters_list: parameters_list ',' parameter | parameter;
-parameter: parameter_type TK_IDENTIFICADOR;
-parameter_type: type | TK_PR_CONST type;
+parameter: const type TK_IDENTIFICADOR;
 body: commands_block;
 
 commands_block: '{' commands_list '}';
+
 commands_list: %empty | commands_list command ';';
 command: commands_block | c_declare_variable | c_attr |
 		c_input | c_output | c_call_func | c_shift |
@@ -230,66 +266,238 @@ c_declare_variable: static const type TK_IDENTIFICADOR c_declare_variable_attr;
 c_declare_variable_attr: %empty | TK_OC_LE c_declare_attr_value;
 c_declare_attr_value: literal | TK_IDENTIFICADOR;
 
-c_attr: TK_IDENTIFICADOR vector_access '=' expression;
-vector_access: %empty | '[' expression ']';
+c_attr:
+	identifier '=' expression
+	{
+		$$ = new_node($2);
+		add_child($$, $1);
+		add_child($$, $3);
+	};
 
-c_input: TK_PR_INPUT expression;
+c_input:
+	TK_PR_INPUT expression
+	{
+		$$ = new_node($1);
+		add_child($$, $2);
+	};
 
-c_output: TK_PR_OUTPUT c_output_exp_list;
+c_output:
+	TK_PR_OUTPUT c_output_exp_list
+	{
+		$$ = new_node($1);
+		add_child($$, $2);
+	};
+
 c_output_exp_list: expression | c_output_exp_list ',' expression;
 
-c_call_func: TK_IDENTIFICADOR '(' c_call_parameters ')';
-c_call_parameters: %empty | c_call_list_exp;
+c_call_func:
+	TK_IDENTIFICADOR '(' c_call_parameters ')'
+	{
+		$$ = new_node($1);
+		add_child($$, $3);
+	};
+
+c_call_parameters:
+	%empty
+	{
+		$$ = NULL;
+	}|
+	c_call_list_exp
+	{
+		$$ = $1;
+	};
+
 c_call_list_exp: expression | c_call_list_exp ',' expression;
 
-c_shift: TK_IDENTIFICADOR vector_access c_shift_symbol expression;
+c_shift: identifier c_shift_symbol expression;
 c_shift_symbol: TK_OC_SR | TK_OC_SL;
 
 c_return: TK_PR_RETURN expression;
 
-c_continue: TK_PR_CONTINUE;
+c_continue:
+	TK_PR_CONTINUE
+	{
+		$$ = new_node($1);
+	};
 
-c_break: TK_PR_BREAK;
+c_break:
+	TK_PR_BREAK
+	{
+		$$ = new_node($1);
+	};
 
-c_if: TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else;
-c_else: %empty | TK_PR_ELSE commands_block;
+c_if:
+	TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else
+	{
+		$$ = new_node($1);
+		add_child($$, $3);
+		add_child($$, $6);
+		add_child($$, $7);
+	};
 
-c_for: TK_PR_FOR '(' c_for_command_list ':' expression ':' c_for_command_list ')' commands_block;
+
+c_else:
+	%empty
+	{
+		$$ = NULL;
+	}|
+	TK_PR_ELSE commands_block
+	{
+		$$ = $2;
+	};
+
+c_for:
+	TK_PR_FOR '(' c_for_command_list ':' expression ':' c_for_command_list ')' commands_block
+	{
+		$$ = new_node($1);
+		add_child($$, $3);
+		add_child($$, $5);
+		add_child($$, $7);
+		add_child($$, $9);
+	};
+
+
 c_for_command_list: c_for_no_comma | c_for_command_list ',' c_for_no_comma;
+
 c_for_no_comma: c_declare_variable | c_attr |
 		c_input | c_shift | c_return | c_continue | c_break |
 		c_if | c_while;
 
-c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
-
-
+c_while:
+	TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block
+	{
+		$$ = new_node($1);
+		add_child($$, $3);
+		add_child($$, $6);
+	};
 
 expression: un_op simple_expression optional_expression | simple_expression optional_expression;
 
 simple_expression: operand | '(' expression ')' %prec PARENTHESIS;
+
 optional_expression: bin_op expression | QUESTION expression ':' expression | %empty;
 
-operand: identifier | lit | c_call_func;
+operand:
+	identifier
+	{
+		$$ = $1;
+	}|
+	literal
+	{
+		$$ = $1;
+	}|
+	c_call_func
+	{
+		$$ = $1;
+	};
 
-identifier: TK_IDENTIFICADOR | TK_IDENTIFICADOR '[' expression ']';
+identifier:
+	TK_IDENTIFICADOR
+	{
+		$$ = new_node($1);
+		add_child($$, NULL);
+	}|
+	TK_IDENTIFICADOR '[' expression ']'
+	{
+		$$ = new_node($1);
+		add_child($$, $3);
+	};
 
-lit: num_lit | char_lit | boolean;
-num_lit: TK_LIT_INT | TK_LIT_FLOAT;
-char_lit: TK_LIT_CHAR | TK_LIT_STRING;
-boolean: TK_LIT_TRUE | TK_LIT_FALSE;
+un_op:
+	PLUS %prec UPLUS
+	{
+		$$ = new_node($1);
+	}|
+	MINUS %prec UMINUS
+	{
+		$$ = new_node($1);
+	}|
+	EXCLAMATION
+	{
+		$$ = new_node($1);
+	}|
+	'&' %prec ADDRESS
+	{
+		$$ = new_node($1);
+	}|
+ 	MULT %prec POINTER
+	{
+		$$ = new_node($1);
+	}|
+	HASHTAG
+	{
+		$$ = new_node($1);
+	}|
+	QUESTION
+	{
+		$$ = new_node($1);
+	};
 
-un_op: PLUS %prec UPLUS | MINUS %prec UMINUS | EXCLAMATION | '&' %prec ADDRESS |
- 			 MULT %prec POINTER | HASHTAG | QUESTION;
-
-bin_op: PLUS | MINUS | MULT | DIV |
- 				R_DIV | BIT_OR | '&' %prec '&'| EXP |
-				GREATER | LESS |
-				TK_OC_LE |
-				TK_OC_GE |
-				TK_OC_EQ |
-				TK_OC_NE |
-				TK_OC_AND|
-				TK_OC_OR;
+bin_op:
+	PLUS
+	{
+		$$ = new_node($1);
+	}|
+	MINUS
+	{
+		$$ = new_node($1);
+	}|
+	MULT
+	{
+		$$ = new_node($1);
+	}|
+	DIV
+	{
+		$$ = new_node($1);
+	}|
+	R_DIV
+	{
+		$$ = new_node($1);
+	}|
+	BIT_OR
+	{
+		$$ = new_node($1);
+	}|
+	'&' %prec '&'
+	{
+		$$ = new_node($1);
+	}|
+	EXP
+	{
+		$$ = new_node($1);
+	}|
+	GREATER
+	{
+		$$ = new_node($1);
+	}|
+	LESS
+	{
+		$$ = new_node($1);
+	}|
+	TK_OC_LE
+	{
+		$$ = new_node($1);
+	}|
+	TK_OC_GE
+	{
+		$$ = new_node($1);
+	}|
+	TK_OC_EQ
+	{
+		$$ = new_node($1);
+	}|
+	TK_OC_NE
+	{
+		$$ = new_node($1);
+	}|
+	TK_OC_AND
+	{
+		$$ = new_node($1);
+	}|
+	TK_OC_OR
+	{
+		$$ = new_node($1);
+	};
 
 %%
 
