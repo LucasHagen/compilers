@@ -36,11 +36,11 @@ TIPOS DOS LITERAIS
 #define NOT_LITERAL 1010
 
 union literal_value {
-  int v_int;
-  float v_float;
-  int v_bool;
-  char v_char;
-  char* v_string;
+    int v_int;
+    float v_float;
+    int v_bool;
+    char v_char;
+    char* v_string;
 };
 
 /*
@@ -51,11 +51,11 @@ union literal_value {
     tipo do token (um dentre as cinco categorias definidas na E1)
     valor do token
 */
-  typedef struct lexeme {
+typedef struct lexeme {
     int line_number;
     int token_type;
     int literal_type; //caso seja não literal, recebe o valor NOT_LITERAL
     union literal_value token_value;
-  } Lexeme;
+} Lexeme;
 
 #endif

@@ -408,8 +408,25 @@ int parse_bool (char *text){
 }
 
 void print_lexeme(struct lexeme *lex){
-	printf("Line Number: %d",lex->line_number);
-	printf("Token Type: %d", lex->token_type);
-	printf("Lit Type: %d", lex->literal_type);
-	printf("Value: %s", lex->token_value);
+	printf("LEXEME:\n");
+	printf(" - Line Number: %d\n",lex->line_number);
+	printf(" - Token Type: %d\n", lex->token_type);
+	printf(" - Lit Type: %d\n", lex->literal_type);
+
+	switch(lex->literal_type) {
+		case INT:
+			printf(" - Value: %d\n", lex->token_value.v_int);
+			break;
+		case FLOAT:
+			printf(" - Value: %f\n", lex->token_value.v_float);
+			break;
+		case BOOL:
+			printf(" - Value: %s\n", lex->token_value.v_bool ? "TRUE" : "FALSE");
+			break;
+		case CHAR:
+			printf(" - Value: %c\n", lex->token_value.v_char);
+			break;
+		default:
+			printf(" - Value: %s\n", lex->token_value.v_string);
+	}
 }
