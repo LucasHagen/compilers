@@ -69,34 +69,45 @@ void yyerror (char const *s);
 %token <lex_value> TK_IDENTIFICADOR
 %token TOKEN_ERRO
 
-%token <valor_lexico> EXCLAMATION
-%token <valor_lexico> QUESTION
-%token <valor_lexico> HASHTAG
-
-
-%token <valor_lexico> MINUS
-%token <valor_lexico> PLUS
-%token <valor_lexico> MULT
-%token <valor_lexico> DIV
-%token <valor_lexico> R_DIV
-%token <valor_lexico> BIT_OR
-%token <valor_lexico> EXP
-%token <valor_lexico> GREATER
-%token <valor_lexico> LESS
+%token ','
+%token ';'
+%token ':'
+%token '('
+%token ')'
+%token '['
+%token ']'
+%token '{'
+%token '}'
+%token '='
+%token '&'
+%token '$'
+%token '.'
+%token <lex_value> PLUS
+%token <lex_value> MINUS
+%token <lex_value> BIT_OR
+%token <lex_value> QUESTION
+%token <lex_value> MULT
+%token <lex_value> DIV
+%token <lex_value> LESS
+%token <lex_value> GREATER
+%token <lex_value> EXCLAMATION
+%token <lex_value> R_DIV
+%token <lex_value> HASHTAG
+%token <lex_value> EXP
 
 %left ','
-%right '?'
+%right QUESTION
 %left TK_OC_OR
 %left TK_OC_AND
-%left '|'
+%left BIT_OR
 %left '&'
 %left TK_OC_EQ TK_OC_NE
-%left TK_OC_GE TK_OC_LE '>' '<'
+%left TK_OC_GE TK_OC_LE GREATER LESS
 %left TK_OC_SR TK_OC_SL
-%left '+' '-'
-%left '*' '/' '%'
-%left '^'
-%right POINTER ADDRESS '!' UPLUS UMINUS '#'
+%left PLUS MINUS
+%left MULT DIV R_DIV
+%left EXP
+%right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
 %left PARENTHESIS
 %start programa
 
@@ -171,7 +182,7 @@ c_while: TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block;
 expression: un_op simple_expression optional_expression | simple_expression optional_expression;
 
 simple_expression: operand | '(' expression ')' %prec PARENTHESIS;
-optional_expression: bin_op expression | '?' expression ':' expression | %empty;
+optional_expression: bin_op expression | QUESTION expression ':' expression | %empty;
 
 operand: identifier | lit | c_call_func;
 
@@ -182,12 +193,12 @@ num_lit: TK_LIT_INT | TK_LIT_FLOAT;
 char_lit: TK_LIT_CHAR | TK_LIT_STRING;
 boolean: TK_LIT_TRUE | TK_LIT_FALSE;
 
-un_op: '+' %prec UPLUS | '-' %prec UMINUS | '!' | '&' %prec ADDRESS |
- 			 '*' %prec POINTER | '#' | '?';
+un_op: PLUS %prec UPLUS | MINUS %prec UMINUS | EXCLAMATION | '&' %prec ADDRESS |
+ 			 MULT %prec POINTER | HASHTAG | QUESTION;
 
-bin_op: '+' | '-' | '*' | '/' |
- 				'%' | '|' | '&' %prec '&'| '^' |
-				'>' | '<' |
+bin_op: PLUS | MINUS | MULT | DIV |
+ 				R_DIV | BIT_OR | '&' %prec '&'| EXP |
+				GREATER | LESS |
 				TK_OC_LE |
 				TK_OC_GE |
 				TK_OC_EQ |
