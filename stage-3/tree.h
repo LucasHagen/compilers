@@ -38,5 +38,12 @@ void decompile(Node* root);
  */
 void free_tree(Node* root);
 
+/**
+ * Prints a Lexeme's value
+ *
+ * @param lex Lexeme
+ */
+void print_lexeme(Lexeme* lex);
+
 
 #endif // TREE_H

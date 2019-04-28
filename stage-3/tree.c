@@ -43,7 +43,19 @@ void add_child(Node* node, Node* child)
  */
 void decompile(Node* root)
 {
-    // TODO
+    if(root != 0)
+    {
+        print_lexeme(root->lexeme);
+
+        for(int i = 0; i < root->children_count; i++)
+        {
+            Node* child = *(root->children + i);
+
+            if(child != 0) {
+                decompile(child);
+            }
+        }
+    }
 }
 
 /**
@@ -57,6 +69,8 @@ void free_tree(Node* root)
     {
         if(root->lexeme != 0)
         {
+            // TODO: FREE STRING IN V_STRING
+
             free(root->lexeme);
         }
 
@@ -71,5 +85,42 @@ void free_tree(Node* root)
 
         free(root->children);
         free(root);
+    }
+}
+
+/**
+ * Prints a Lexeme's value
+ *
+ * @param lex Lexeme
+ */
+void print_lexeme(Lexeme* lex)
+{
+    if(lex != 0)
+    {
+        if(lex->token_type == SPECIAL_CHAR)
+        {
+            printf("%c ", lex->token_value.v_char);
+        }
+        else
+        {
+            switch(lex->literal_type)
+            {
+                case INT:
+                    printf("%d ", lex->token_value.v_int);
+                    break;
+                case FLOAT:
+                    printf("%f ", lex->token_value.v_float);
+                    break;
+                case BOOL:
+                    printf("%s ", lex->token_value.v_bool ? "true" : "false");
+                    break;
+                case CHAR:
+                    printf("%c ", lex->token_value.v_char);
+                    break;
+                default:
+                    printf("%s ", lex->token_value.v_string);
+                    break;
+            }
+        }
     }
 }

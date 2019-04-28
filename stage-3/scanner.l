@@ -16,8 +16,7 @@ void operator();
 void identifier();
 void literal(int id);
 void create_token(int value);
-int parse_bool(char* text);
-void print_lexeme(struct lexeme *lex);
+int  parse_bool(char* text);
 
 %}
 %option yylineno
@@ -405,28 +404,4 @@ int parse_bool (char *text){
 		return TRUE;
 	else
 		return FALSE;
-}
-
-void print_lexeme(struct lexeme *lex){
-	printf("LEXEME:\n");
-	printf(" - Line Number: %d\n",lex->line_number);
-	printf(" - Token Type: %d\n", lex->token_type);
-	printf(" - Lit Type: %d\n", lex->literal_type);
-
-	switch(lex->literal_type) {
-		case INT:
-			printf(" - Value: %d\n", lex->token_value.v_int);
-			break;
-		case FLOAT:
-			printf(" - Value: %f\n", lex->token_value.v_float);
-			break;
-		case BOOL:
-			printf(" - Value: %s\n", lex->token_value.v_bool ? "TRUE" : "FALSE");
-			break;
-		case CHAR:
-			printf(" - Value: %c\n", lex->token_value.v_char);
-			break;
-		default:
-			printf(" - Value: %s\n", lex->token_value.v_string);
-	}
 }

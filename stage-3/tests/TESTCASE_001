@@ -14,13 +14,14 @@ int inc (int x){
 }
 
 static float test1 () {
+
 }
 
 char return_a () {
   return 'a';
 }
 
-static const int do_nothing () {
+static int do_nothing () {
 
 }
 

@@ -352,11 +352,11 @@ commands_list:
 	{
 		$$ = NULL;
 	}|
-	commands_list command ';'
+	command ';' commands_list
 	{
 		$$ = $1;
-		add_child($$, $2);
-		add_child($$, new_node($3));
+		add_child($$, new_node($2));
+		add_child($$, $3);
 	};
 
 command:
