@@ -155,7 +155,6 @@ Lexeme* create_lexeme(char c);
 %type <node> operand
 %type <node> identifier
 %type <node> un_op
-%type <node> bin_op
 
 %start programa
 
@@ -700,6 +699,22 @@ expression:
 		add_child($$, $3);
 		add_child($$, new_node(create_lexeme(')')));
 	}|
+	expression R_DIV expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression BIT_OR expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
 	expression EXP expression
 	{
 		$$ = new_node(create_lexeme('('));
@@ -708,17 +723,74 @@ expression:
 		add_child($$, $3);
 		add_child($$, new_node(create_lexeme(')')));
 	}|
-	MINUS expression %prec UOP
+	expression GREATER expression
 	{
 		$$ = new_node(create_lexeme('('));
-		add_child($$, new_node($1));
-		add_child($$, $2);
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
 		add_child($$, new_node(create_lexeme(')')));
 	}|
-	PLUS expression %prec UOP
+	expression LESS expression
 	{
 		$$ = new_node(create_lexeme('('));
-		add_child($$, new_node($1));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression TK_OC_LE expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression TK_OC_GE expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression TK_OC_EQ expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression TK_OC_NE expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression TK_OC_AND expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression TK_OC_OR expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	un_op expression %prec UOP
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
 		add_child($$, $2);
 		add_child($$, new_node(create_lexeme(')')));
 	}|
@@ -782,72 +854,6 @@ un_op:
 		$$ = new_node($1);
 	}|
 	QUESTION
-	{
-		$$ = new_node($1);
-	};
-
-bin_op:
-	PLUS
-	{
-		$$ = new_node($1);
-	}|
-	MINUS
-	{
-		$$ = new_node($1);
-	}|
-	MULT
-	{
-		$$ = new_node($1);
-	}|
-	DIV
-	{
-		$$ = new_node($1);
-	}|
-	R_DIV
-	{
-		$$ = new_node($1);
-	}|
-	BIT_OR
-	{
-		$$ = new_node($1);
-	}|
-	'&'
-	{
-		$$ = new_node($1);
-	}|
-	EXP
-	{
-		$$ = new_node($1);
-	}|
-	GREATER
-	{
-		$$ = new_node($1);
-	}|
-	LESS
-	{
-		$$ = new_node($1);
-	}|
-	TK_OC_LE
-	{
-		$$ = new_node($1);
-	}|
-	TK_OC_GE
-	{
-		$$ = new_node($1);
-	}|
-	TK_OC_EQ
-	{
-		$$ = new_node($1);
-	}|
-	TK_OC_NE
-	{
-		$$ = new_node($1);
-	}|
-	TK_OC_AND
-	{
-		$$ = new_node($1);
-	}|
-	TK_OC_OR
 	{
 		$$ = new_node($1);
 	};
