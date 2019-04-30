@@ -852,7 +852,7 @@ void yyerror (char const *s){
  * @param arvore AST Pointer
  */
 void descompila (void *arvore) {
-	decompile(arvore);
+	decompile((Node*) arvore);
 }
 
 /**
@@ -860,6 +860,6 @@ void descompila (void *arvore) {
  *
  * @param arvore AST Pointer
  */
-void libera (void *arvore) {
-	free_tree(arvore);
+void libera (void *tree) {
+	free_tree((Node*) tree);
 }

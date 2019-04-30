@@ -39,11 +39,18 @@ void decompile(Node* root);
 void free_tree(Node* root);
 
 /**
+ * Frees memory allocated for a Lexeme
+ *
+ * @param lex Lexeme Pointer
+ * @return Allways 0, to override old pointer
+ */
+int free_lexeme(Lexeme* lex);
+
+/**
  * Prints a Lexeme's value
  *
  * @param lex Lexeme
  */
 void print_lexeme(Lexeme* lex);
-
 
 #endif // TREE_H

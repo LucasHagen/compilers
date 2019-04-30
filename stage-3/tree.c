@@ -43,7 +43,7 @@ void add_child(Node* node, Node* child)
  */
 void decompile(Node* root)
 {
-    if(root != 0)
+    if(root != NULL)
     {
         print_lexeme(root->lexeme);
 
@@ -51,7 +51,7 @@ void decompile(Node* root)
         {
             Node* child = *(root->children + i);
 
-            if(child != 0) {
+            if(child != NULL) {
                 decompile(child);
             }
         }
@@ -65,20 +65,18 @@ void decompile(Node* root)
  */
 void free_tree(Node* root)
 {
-    if(root != 0) // NULL
+    if(root != NULL) // NULL
     {
-        if(root->lexeme != 0)
+        if(root->lexeme != NULL)
         {
-            // TODO: FREE STRING IN V_STRING
-
-            free(root->lexeme);
+            free_lexeme(root->lexeme);
         }
 
         for(int i = 0; i < root->children_count; i++)
         {
             Node* child = *(root->children + i);
 
-            if(child != 0) {
+            if(child != NULL) {
                 free_tree(child);
             }
         }
@@ -88,6 +86,33 @@ void free_tree(Node* root)
     }
 }
 
+
+/**
+ * Frees memory allocated for a Lexeme
+ *
+ * @param lex Lexeme Pointer
+ * @return Allways 0, to override old pointer
+ */
+int free_lexeme(Lexeme* lex)
+{
+    if(lex != NULL)
+    {
+        // Free string value if allocated
+        if(lex->token_type != SPECIAL_CHAR &&
+            lex->literal_type != INT &&
+            lex->literal_type != FLOAT &&
+            lex->literal_type != BOOL &&
+            lex->literal_type != CHAR )
+        {
+            free(lex->token_value.v_string);
+        }
+
+        free(lex);
+    }
+
+    return 1;
+}
+
 /**
  * Prints a Lexeme's value
  *
@@ -95,7 +120,7 @@ void free_tree(Node* root)
  */
 void print_lexeme(Lexeme* lex)
 {
-    if(lex != 0)
+    if(lex != NULL)
     {
         if(lex->token_type == SPECIAL_CHAR)
         {
