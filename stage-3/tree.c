@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /**
  * Creates a new node structure and allocates the nedded memory
@@ -140,12 +141,78 @@ void print_lexeme(Lexeme* lex)
                     printf("%s ", lex->token_value.v_bool ? "true" : "false");
                     break;
                 case CHAR:
-                    printf("%c ", lex->token_value.v_char);
+                    printf("\'");
+                    print_char(lex->token_value.v_char);
+                    printf("\' ");
+                    break;
+                case STRING:
+                    print_string(lex->token_value.v_string);
+                    printf(" ");
                     break;
                 default:
-                    printf("%s ", lex->token_value.v_string);
+                    printf("%s ",lex->token_value.v_string);
                     break;
             }
         }
     }
+}
+void print_char (char v_char){
+  switch(v_char){
+    case '\n':
+      printf("\\n");
+    break;
+
+    case '\a':
+      printf("\\a");
+    break;
+
+    case '\b':
+      printf("\\b");
+    break;
+
+    case '\f':
+      printf("\\f");
+    break;
+
+    case '\r':
+      printf("\\r");
+    break;
+
+    case '\t':
+      printf("\\t");
+    break;
+
+    case '\v':
+      printf("\\v");
+    break;
+
+    case '\\':
+      printf("\\\\");
+    break;
+
+    case '\'':
+      printf("\\\'");
+    break;
+
+    case '\"':
+      printf("\\\"");
+    break;
+
+    case '\?':
+      printf("\\\?");
+    break;
+
+    default:
+        printf("%c", v_char);
+    break;
+  }
+}
+
+void print_string(char* v_string){
+  int i;
+  printf("\"");
+  for(i=0;i<strlen(v_string);i++){
+    print_char(v_string[i]);
+  }
+  printf("\"");
 }

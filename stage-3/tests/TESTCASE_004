@@ -1,0 +1,5 @@
+int main () {
+  y = "string";
+  y = "str\ning\atest";
+  y = "\"string\"";
+}

@@ -18,6 +18,9 @@ void literal(int id);
 void create_token(int value);
 int  parse_bool(char* text);
 
+char scaped_char(char character);
+char* string_handler (char* string);
+
 %}
 %option yylineno
 %option noyywrap
@@ -348,10 +351,14 @@ void literal(int id){
 
 		case CHAR:
 			yylval.lex_value->literal_type = CHAR;
-			yylval.lex_value->token_value.v_char = yytext[1];
+			if(yytext[1] != '\\')
+				yylval.lex_value->token_value.v_char = yytext[1];
+			else
+				yylval.lex_value->token_value.v_char = scaped_char(yytext[2]);
 		break;
 		case STRING:
 			yylval.lex_value->literal_type = STRING;
+			yytext = string_handler(yytext);
 			yylval.lex_value->token_value.v_string = strdup(yytext);
 		break;
 
@@ -404,4 +411,69 @@ int parse_bool (char *text){
 		return TRUE;
 	else
 		return FALSE;
+}
+
+char scaped_char (char character){
+	switch(character){
+		case 'n':
+			return '\n';
+		break;
+
+		case 'a':
+			return '\a';
+		break;
+		case 'b':
+			return '\b';
+		break;
+
+		case 'f':
+			return '\f';
+		break;
+
+		case 'r':
+			return '\r';
+		break;
+
+		case 't':
+			return '\t';
+		break;
+
+		case 'v':
+			return '\v';
+		break;
+
+		case '\\':
+			return '\\';
+		break;
+
+		case '\'':
+			return '\'';
+		break;
+
+		case '\"':
+			return '\"';
+		break;
+
+		case '\?':
+			return '\?';
+		break;
+	}
+}
+
+char* string_handler (char* string){
+	char *aux = (char *) malloc(strlen(string)*sizeof(char));
+	char *out = (char *) malloc(strlen(string)*sizeof(char));
+	aux = strcpy(aux, &string[1]);
+	out = strncpy(out,aux,strlen(aux)-1);
+	int i, counter;
+	for(i=0;i<strlen(out);i++){
+		if(out[i] == '\\'){
+			for(counter=i;counter<strlen(out);counter++){
+				out[counter] = out[counter+1];
+			}
+			out[i] = scaped_char(out[i]);
+		}
+	}
+	free(aux);
+	return out;
 }
