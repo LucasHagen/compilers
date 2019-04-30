@@ -15,6 +15,7 @@ extern void* arvore;
 
 int yylex(void);
 void yyerror (char const *s);
+Lexeme* create_lexeme(char c);
 
 %}
 
@@ -107,7 +108,8 @@ void yyerror (char const *s);
 %left PLUS MINUS
 %left MULT DIV R_DIV
 %left EXP
-%right POINTER ADDRESS EXCLAMATION UPLUS UMINUS HASHTAG
+%right EXCLAMATION HASHTAG
+%left UOP
 %left PARENTHESIS
 
 %type <node> literal
@@ -150,8 +152,6 @@ void yyerror (char const *s);
 %type <node> c_for_no_comma
 %type <node> c_while
 %type <node> expression
-%type <node> simple_expression
-%type <node> optional_expression
 %type <node> operand
 %type <node> identifier
 %type <node> un_op
@@ -664,52 +664,69 @@ c_while:
 	};
 
 expression:
-	un_op simple_expression optional_expression
-	{
-		$$ = $1;
-		add_child($$, $2);
-
-		if($3 != NULL) {
-			add_child($$, $3);
-		}
-	}|
-	simple_expression optional_expression
-	{
-		$$ = $1;
-
-		if($2 != NULL) {
-			add_child($$, $2);
-		}
-	};
-
-simple_expression:
 	operand
 	{
 		$$ = $1;
 	}|
-	'(' expression ')' %prec PARENTHESIS
+	expression PLUS expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression MINUS expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression MULT expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression DIV expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression EXP expression
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, $1);
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	MINUS expression %prec UOP
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, new_node($1));
+		add_child($$, $2);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	PLUS expression %prec UOP
+	{
+		$$ = new_node(create_lexeme('('));
+		add_child($$, new_node($1));
+		add_child($$, $2);
+		add_child($$, new_node(create_lexeme(')')));
+	}|
+	'(' expression ')'
 	{
 		$$ = new_node($1);
 		add_child($$, $2);
 		add_child($$, new_node($3));
-	};
-
-optional_expression:
-	bin_op expression
-	{
-		$$ = $1;
-		add_child($$, $2);
-	}|
-	QUESTION expression ':' expression
-	{
-		$$ = new_node($1);
-		add_child($$, $2);
-		add_child($$, new_node($3));
-		add_child($$, $4);
-	}|
-	%empty
-	{
-		$$ = NULL;
 	};
 
 operand:
@@ -740,11 +757,11 @@ identifier:
 	};
 
 un_op:
-	PLUS %prec UPLUS
+	PLUS
 	{
 		$$ = new_node($1);
 	}|
-	MINUS %prec UMINUS
+	MINUS
 	{
 		$$ = new_node($1);
 	}|
@@ -752,11 +769,11 @@ un_op:
 	{
 		$$ = new_node($1);
 	}|
-	'&' %prec ADDRESS
+	'&'
 	{
 		$$ = new_node($1);
 	}|
- 	MULT %prec POINTER
+ 	MULT
 	{
 		$$ = new_node($1);
 	}|
@@ -794,7 +811,7 @@ bin_op:
 	{
 		$$ = new_node($1);
 	}|
-	'&' %prec '&'
+	'&'
 	{
 		$$ = new_node($1);
 	}|
@@ -862,4 +879,14 @@ void descompila (void *arvore) {
  */
 void libera (void *tree) {
 	free_tree((Node*) tree);
+}
+
+Lexeme* create_lexeme(char c) {
+	Lexeme* lex = (Lexeme*) malloc(sizeof(Lexeme));
+	lex->line_number = -1;
+	lex->literal_type = NOT_LITERAL;
+	lex->token_value.v_char = c;
+	lex->token_type = SPECIAL_CHAR;
+
+	return lex;
 }
