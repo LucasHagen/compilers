@@ -110,7 +110,6 @@ Lexeme* create_lexeme(char c);
 %left EXP
 %right EXCLAMATION HASHTAG
 %left UOP
-%left PARENTHESIS
 
 %type <node> literal
 %type <node> type
@@ -496,7 +495,7 @@ c_call_func:
 	{
 		$$ = new_node($1);
 		add_child($$, new_node($2));
-		if($4 != NULL) {
+		if($3 != NULL) {
 			add_child($$, $3);
 		}
 		add_child($$, new_node($4));
@@ -669,130 +668,112 @@ expression:
 	}|
 	expression PLUS expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression MINUS expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression MULT expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression DIV expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression R_DIV expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression BIT_OR expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression EXP expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression GREATER expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression LESS expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression TK_OC_LE expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression TK_OC_GE expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression TK_OC_EQ expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression TK_OC_NE expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression TK_OC_AND expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
 	}|
 	expression TK_OC_OR expression
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, new_node($2));
 		add_child($$, $3);
-		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression '&' expression
+	{
+		$$ = $1;
+		add_child($$, new_node($2));
+		add_child($$, $3);
 	}|
 	un_op expression %prec UOP
 	{
-		$$ = new_node(create_lexeme('('));
-		add_child($$, $1);
+		$$ = $1;
 		add_child($$, $2);
-		add_child($$, new_node(create_lexeme(')')));
+	}|
+	expression QUESTION expression ':' expression %prec QUESTION
+	{
+		$$ = $1;
+		add_child($$, new_node($2));
+		add_child($$, $3);
+		add_child($$, new_node($4));
+		add_child($$, $5);
 	}|
 	'(' expression ')'
 	{
