@@ -9,14 +9,14 @@
  *
  * @param token Operation Identifier
  */
-Node* new_node(Lexeme* lexeme)
+Node* new_node(int type, Lexeme* lexeme)
 {
-    Node* node = (Node*) malloc(sizeof(Node));
-
-    node->lexeme = lexeme;
+    Node* node           = (Node*) malloc(sizeof(Node));
+    node->type           = type;
+    node->lexeme         = lexeme;
     node->children_count = 0;
-    node->children = (Node**) malloc(sizeof(Node**));
-
+    node->children       = (Node**) malloc(sizeof(Node**));
+    node->seq           = NULL;
     return node;
 }
 
