@@ -216,3 +216,104 @@ void print_string(char* v_string){
   }
   printf("\"");
 }
+
+struct node* create_simple_node(int type)
+{
+    struct node* n = malloc(sizeof(struct node));
+    node->type = type;
+
+    return n;
+}
+
+
+struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse)
+{
+    struct node* node = create_simple_node(NODE_TYPE_TER_OP);
+
+    node->n_if.condition = condition;
+    node->n_if.n_true    = ifTrue;
+    node->n_if.n_false   = ifFalse;
+
+    return node;
+}
+
+struct node* create_node_bin_op(int op, Node* left, Node* right)
+{
+    struct node* node = create_simple_node(NODE_TYPE_BIN_OP);
+
+    node->n_bin_op.op = op;
+    node->n_bin_op.left = left;
+    node->n_bin_op.right = right;
+
+    return node;
+}
+
+struct node* create_node_un_op(int op, Node* operand)
+{
+    struct node* node = create_simple_node(NODE_TYPE_UN_OP);
+
+    node->n_un_op.op = op;
+    node->n_un_op.operand = operand;
+
+    return node;
+}
+
+struct node* crete_node_if(Node* condition, Node* ifTrue, Node* ifFalse)
+{
+    struct node* node = create_simple_node(NODE_TYPE_IF);
+
+    node->n_if.condition = condition;
+    node->n_if.n_true = ifTrue;
+    node->n_if.n_false = ifFalse;
+
+    return node;
+}
+
+struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code)
+{
+    struct node* node = create_simple_node(NODE_TYPE_FOR);
+
+    node->n_for.setup       = setup;
+    node->n_for.condition   = condition;
+    node->n_for.increment   = increment;
+    node->n_for.code        = code;
+
+    return node;
+}
+
+
+struct node* create_node_while(Node* condition, Node* code)
+{
+    struct node* node = create_simple_node(NODE_TYPE_WHILE);
+
+    node->n_while.condition = condition;
+    node->n_while.code      = code;
+
+    return node;
+}
+
+
+struct node* create_node_func_call(Lexeme* identifier, Node* parameters)
+{
+    struct node* node = create_simple_node(NODE_TYPE_FUNC_CALL);
+
+    node->n_call_or_access.identifier       = identifier;
+    node->n_call_or_access.index_or_param   = parameters;
+
+    return node;
+}
+
+
+struct node* create_node_func_decl(Lexeme* identifier, int type, int is_static, Node* parameters, Node* code);
+struct node* create_node_func_param(Lexeme* identifier, int type, int is_const);
+struct node* create_node_var_access(Lexeme* identifier, Node* index);
+struct node* create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value);
+struct node* create_node_var_attr(Lexeme* identifier, int index, Node* value);
+struct node* create_node_input(Node* input);
+struct node* create_node_output(Node* output);
+struct node* create_node_shift_left();
+struct node* create_node_shift_right();
+struct node* create_node_return(Node* expression);
+struct node* create_node_break();
+struct node* create_node_continue();
+struct node* create_node_literal(Lexeme* value);

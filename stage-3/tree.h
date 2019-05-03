@@ -51,8 +51,8 @@ typedef struct node {
 
 struct node_if {
 	struct node* condition;
-	struct node* true_value;
-	struct node* false_value;
+	struct node* n_true;
+	struct node* n_false;
 };
 
 struct node_bin_op {
@@ -181,45 +181,26 @@ void print_string(char* v_string);
 
 //  ===== CREATE SPECIFIC NODES FOR EACH THING =====
 
-void create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse);
-
-void create_node_bin_op(int op, Node* left, Node* right);
-
-void create_node_un_op(int op, Node* operand);
-
-void crete_node_if(Node* condition, Node* ifTrue, Node* ifFalse);
-
-void create_node_for(Node* setup, Node* condition, Node* increment, Node* code);
-
-void create_node_while(Node* condition, Node* code);
-
-void create_node_func_call(Lexeme* identifier, Node* parameters);
-
-void create_node_func_decl(Lexeme* identifier, int type, int is_static, Node* parameters, Node* code);
-
-void create_node_func_param(Lexeme* identifier, int type, int is_const);
-
-void create_node_var_access(Lexeme* identifier, Node* index);
-
-void create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value);
-
-void create_node_var_attr(Lexeme* identifier, int index, Node* value);
-
-void create_node_input(Node* input);
-
-void create_node_output(Node* output);
-
-void create_node_shift_left();
-
-void create_node_shift_right();
-
-void create_node_return(Node* expression);
-
-void create_node_break();
-
-void create_node_continue();
-
-void create_node_literal(Lexeme* value);
+struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse);
+struct node* create_node_bin_op(int op, Node* left, Node* right);
+struct node* create_node_un_op(int op, Node* operand);
+struct node* crete_node_if(Node* condition, Node* ifTrue, Node* ifFalse);
+struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code);
+struct node* create_node_while(Node* condition, Node* code);
+struct node* create_node_func_call(Lexeme* identifier, Node* parameters);
+struct node* create_node_func_decl(Lexeme* identifier, int type, int is_static, Node* parameters, Node* code);
+struct node* create_node_func_param(Lexeme* identifier, int type, int is_const);
+struct node* create_node_var_access(Lexeme* identifier, Node* index);
+struct node* create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value);
+struct node* create_node_var_attr(Lexeme* identifier, int index, Node* value);
+struct node* create_node_input(Node* input);
+struct node* create_node_output(Node* output);
+struct node* create_node_shift_left();
+struct node* create_node_shift_right();
+struct node* create_node_return(Node* expression);
+struct node* create_node_break();
+struct node* create_node_continue();
+struct node* create_node_literal(Lexeme* value);
 
 
 
