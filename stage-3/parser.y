@@ -169,12 +169,12 @@ big_list:
 	big_list global_var
 	{
 		$$ = $2;
-		$$.seq = $1;
+		$$->seq = $1;
 	}|
 	big_list function
 	{
 		$$ = $2;
-		$$.seq = $1;
+		$$->seq = $1;
 	}|
 	function
 	{
@@ -291,7 +291,7 @@ parameters_list:
 	parameters_list ',' parameter
 	{
 		$$ = $3;
-		$$.seq = $1;
+		$$->seq = $1;
 	}|
 	parameter
 	{
@@ -328,7 +328,7 @@ commands_list:
 	commands_list ';' command
 	{
 		$$ = $3;
-		$$.seq = $1;
+		$$->seq = $1;
 	};
 
 command:
@@ -444,7 +444,7 @@ c_output_exp_list:
 	c_output_exp_list ',' expression
 	{
 		$$ = $3;
-		$$.seq = $1;
+		$$->seq = $1;
 	};
 
 c_call_func:
@@ -471,7 +471,7 @@ c_call_list_exp:
 	c_call_list_exp ',' expression
 	{
 		$$ = $3;
-		$$.seq = $3;
+		$$->seq = $3;
 	};
 
 c_shift:
@@ -540,7 +540,7 @@ c_for_command_list:
 	c_for_command_list ',' c_for_no_comma
 	{
 		$$ = $3;
-		$$.seq = $1;
+		$$->seq = $1;
 	};
 
 c_for_no_comma:
@@ -584,9 +584,7 @@ c_for_no_comma:
 c_while:
 	TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block
 	{
-		$$ = new_node(NODE_TYPE_WHILE, $1);
-		add_child($$, $3);
-		add_child($$, $6);
+		$$ = create_node_while($3,$6);
 	};
 
 expression:
@@ -729,7 +727,7 @@ un_op:
 %%
 
 /**
- * Prints a error, when it occurs
+ * Prints an error, when it occurs
  *
  * @param s String to the error message
  */
@@ -761,6 +759,5 @@ Lexeme* create_lexeme(char c) {
 	lex->literal_type = NOT_LITERAL;
 	lex->token_value.v_char = c;
 	lex->token_type = SPECIAL_CHAR;
-
 	return lex;
 }

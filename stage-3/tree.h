@@ -3,31 +3,51 @@
 
 #include "lexeme.h"
 
-#define NODE_TYPE_TER_OP
-#define NODE_TYPE_BIN_OP
-#define NODE_TYPE_UN_OP
-#define NODE_TYPE_IF
-#define NODE_TYPE_FOR
-#define NODE_TYPE_WHILE
-#define NODE_TYPE_FUNC_CALL
-#define NODE_TYPE_FUNC_DECL
-#define NODE_TYPE_VAR_ACCESS
-#define NODE_TYPE_VAR_DECL
-#define NODE_TYPE_VAR_ATTR
-#define NODE_TYPE_INPUT
-#define NODE_TYPE_OUTPUT
-#define NODE_TYPE_SHIFT_LEFT
-#define NODE_TYPE_SHIFT_RIGHT
-#define NODE_TYPE_RETURN
-#define NODE_TYPE_BREAK
-#define NODE_TYPE_CONTINUE
-#define NODE_TYPE_LITERAL
+#define NODE_TYPE_TER_OP 			0
+#define NODE_TYPE_BIN_OP			1
+#define NODE_TYPE_UN_OP				2
+#define NODE_TYPE_IF					3
+#define NODE_TYPE_FOR					4
+#define NODE_TYPE_WHILE				5
+#define NODE_TYPE_FUNC_CALL		6
+#define NODE_TYPE_FUNC_DECL		7
+#define NODE_TYPE_VAR_ACCESS	8
+#define NODE_TYPE_VAR_DECL		9
+#define NODE_TYPE_VAR_ATTR		10
+#define NODE_TYPE_INPUT				11
+#define NODE_TYPE_OUTPUT			12
+#define NODE_TYPE_SHIFT_LEFT	13
+#define NODE_TYPE_SHIFT_RIGHT	14
+#define NODE_TYPE_RETURN			15
+#define NODE_TYPE_BREAK				16
+#define NODE_TYPE_CONTINUE		17
+#define NODE_TYPE_LITERAL			18
 
-#define LITERAL_TYPE_INT;
-#define LITERAL_TYPE_FLOAT;
-#define LITERAL_TYPE_CHAR
-#define LITERAL_TYPE_BOOL;
-#define LITERAL_TYPE_STRING;
+#define LITERAL_TYPE_INT			101
+#define LITERAL_TYPE_FLOAT		102
+#define LITERAL_TYPE_CHAR			103
+#define LITERAL_TYPE_BOOL			104
+#define LITERAL_TYPE_STRING		105
+
+#define OP_PLUS 				200
+#define OP_MINUS				201
+#define OP_MULT					202
+#define OP_DIV					203
+#define OP_R_DIV				204
+#define OP_BIT_OR				205
+#define OP_BIT_AND			206
+#define OP_EXP					207
+#define OP_GREATER			208
+#define OP_LESS					209
+#define OP_LE						210
+#define OP_GE						211
+#define OP_EQ						212
+#define OP_NE						213
+#define OP_AND					214
+#define OP_OR						215
+#define OP_EXCLAMATION	216
+#define OP_HASHTAG			217
+#define OP_QUESTION			218
 
 typedef struct node {
 	int			  type;
@@ -91,6 +111,7 @@ struct node_func_decl {
 	int 		   is_static;
 };
 
+
 struct node_var_decl {
 	struct lexeme* identifier;
 	struct node*   size;
@@ -110,7 +131,7 @@ struct node_io {
 	struct node* params;
 };
 
-struct node_shift {
+struct Lexemenode_shift {
 	struct node* var;
 	struct node* count;
 };
@@ -181,6 +202,7 @@ void print_string(char* v_string);
 
 //  ===== CREATE SPECIFIC NODES FOR EACH THING =====
 
+struct node* create_simple_node(int type);
 struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse);
 struct node* create_node_bin_op(int op, Node* left, Node* right);
 struct node* create_node_un_op(int op, Node* operand);
@@ -192,7 +214,7 @@ struct node* create_node_func_decl(Lexeme* identifier, int type, int is_static, 
 struct node* create_node_func_param(Lexeme* identifier, int type, int is_const);
 struct node* create_node_var_access(Lexeme* identifier, Node* index);
 struct node* create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value);
-struct node* create_node_var_attr(Lexeme* identifier, int index, Node* value);
+struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value);
 struct node* create_node_input(Node* input);
 struct node* create_node_output(Node* output);
 struct node* create_node_shift_left();

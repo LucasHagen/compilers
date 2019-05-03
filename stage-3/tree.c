@@ -3,19 +3,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+int count = 0;
 /**
  * Creates a new node structure and allocates the nedded memory
  *
  * @param token Operation Identifier
  */
-Node* new_node(int type, Lexeme* lexeme)
+Node* new_node(int type)
 {
     Node* node           = (Node*) malloc(sizeof(Node));
     node->type           = type;
-    node->lexeme         = lexeme;
-    node->children_count = 0;
-    node->children       = (Node**) malloc(sizeof(Node**));
     node->seq           = NULL;
     return node;
 }
@@ -28,6 +25,7 @@ Node* new_node(int type, Lexeme* lexeme)
  */
 void add_child(Node* node, Node* child)
 {
+  /*
     node->children_count++;
     node->children = (Node**) realloc(
             node->children,
@@ -35,6 +33,7 @@ void add_child(Node* node, Node* child)
         );
 
     node->children[node->children_count - 1] = child;
+  */
 }
 
 /**
@@ -44,6 +43,7 @@ void add_child(Node* node, Node* child)
  */
 void decompile(Node* root)
 {
+  /*
     if(root != NULL)
     {
         print_lexeme(root->lexeme);
@@ -57,6 +57,8 @@ void decompile(Node* root)
             }
         }
     }
+  */
+  printf("Decompile needs to be implemented\n");
 }
 
 /**
@@ -66,6 +68,7 @@ void decompile(Node* root)
  */
 void free_tree(Node* root)
 {
+  /*
     if(root != NULL) // NULL
     {
         if(root->lexeme != NULL)
@@ -85,6 +88,8 @@ void free_tree(Node* root)
         free(root->children);
         free(root);
     }
+  */
+  printf("Free Tree needs to be implemented\n");
 }
 
 
@@ -219,10 +224,10 @@ void print_string(char* v_string){
 
 struct node* create_simple_node(int type)
 {
-    struct node* n = malloc(sizeof(struct node));
+    struct node* node = malloc(sizeof(struct node));
     node->type = type;
 
-    return n;
+    return node;
 }
 
 
@@ -230,9 +235,9 @@ struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse)
 {
     struct node* node = create_simple_node(NODE_TYPE_TER_OP);
 
-    node->n_if.condition = condition;
-    node->n_if.n_true    = ifTrue;
-    node->n_if.n_false   = ifFalse;
+    node->n_if->condition = condition;
+    node->n_if->n_true    = ifTrue;
+    node->n_if->n_false   = ifFalse;
 
     return node;
 }
@@ -241,9 +246,9 @@ struct node* create_node_bin_op(int op, Node* left, Node* right)
 {
     struct node* node = create_simple_node(NODE_TYPE_BIN_OP);
 
-    node->n_bin_op.op = op;
-    node->n_bin_op.left = left;
-    node->n_bin_op.right = right;
+    node->n_bin_op->op = op;
+    node->n_bin_op->left = left;
+    node->n_bin_op->right = right;
 
     return node;
 }
@@ -252,8 +257,8 @@ struct node* create_node_un_op(int op, Node* operand)
 {
     struct node* node = create_simple_node(NODE_TYPE_UN_OP);
 
-    node->n_un_op.op = op;
-    node->n_un_op.operand = operand;
+    node->n_un_op->op = op;
+    node->n_un_op->operand = operand;
 
     return node;
 }
@@ -262,9 +267,9 @@ struct node* crete_node_if(Node* condition, Node* ifTrue, Node* ifFalse)
 {
     struct node* node = create_simple_node(NODE_TYPE_IF);
 
-    node->n_if.condition = condition;
-    node->n_if.n_true = ifTrue;
-    node->n_if.n_false = ifFalse;
+    node->n_if->condition = condition;
+    node->n_if->n_true = ifTrue;
+    node->n_if->n_false = ifFalse;
 
     return node;
 }
@@ -273,10 +278,10 @@ struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node
 {
     struct node* node = create_simple_node(NODE_TYPE_FOR);
 
-    node->n_for.setup       = setup;
-    node->n_for.condition   = condition;
-    node->n_for.increment   = increment;
-    node->n_for.code        = code;
+    node->n_for->setup       = setup;
+    node->n_for->condition   = condition;
+    node->n_for->increment   = increment;
+    node->n_for->code        = code;
 
     return node;
 }
@@ -286,8 +291,8 @@ struct node* create_node_while(Node* condition, Node* code)
 {
     struct node* node = create_simple_node(NODE_TYPE_WHILE);
 
-    node->n_while.condition = condition;
-    node->n_while.code      = code;
+    node->n_while->condition = condition;
+    node->n_while->code      = code;
 
     return node;
 }
@@ -297,23 +302,130 @@ struct node* create_node_func_call(Lexeme* identifier, Node* parameters)
 {
     struct node* node = create_simple_node(NODE_TYPE_FUNC_CALL);
 
-    node->n_call_or_access.identifier       = identifier;
-    node->n_call_or_access.index_or_param   = parameters;
+    node->n_call_or_access->identifier       = identifier;
+    node->n_call_or_access->index_or_param   = parameters;
 
     return node;
 }
 
+struct node* create_node_func_decl(Lexeme* identifier, int type, int is_static, Node* parameters, Node* code)
+{
+  struct node* node = create_simple_node(NODE_TYPE_FUNC_DECL);
 
-struct node* create_node_func_decl(Lexeme* identifier, int type, int is_static, Node* parameters, Node* code);
-struct node* create_node_func_param(Lexeme* identifier, int type, int is_const);
-struct node* create_node_var_access(Lexeme* identifier, Node* index);
-struct node* create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value);
-struct node* create_node_var_attr(Lexeme* identifier, int index, Node* value);
-struct node* create_node_input(Node* input);
-struct node* create_node_output(Node* output);
-struct node* create_node_shift_left();
-struct node* create_node_shift_right();
-struct node* create_node_return(Node* expression);
-struct node* create_node_break();
-struct node* create_node_continue();
-struct node* create_node_literal(Lexeme* value);
+  node->n_func_decl->identifier  = identifier;
+  node->n_func_decl->param       = parameters;
+  node->n_func_decl->code        = code;
+  node->n_func_decl->type         = type;
+  node->n_func_decl->is_static    = is_static;
+
+  return node;
+}
+
+struct node* create_node_func_param(Lexeme* identifier, int type, int is_const)
+{
+  struct node* node = create_simple_node(type);
+
+  //TODO
+
+  return node;
+}
+
+struct node* create_node_var_access(Lexeme* identifier, Node* index)
+{
+  struct node* node = create_simple_node(NODE_TYPE_VAR_ACCESS);
+
+  node->n_call_or_access->identifier     = identifier;
+  node->n_call_or_access->index_or_param = index;
+
+  return node;
+}
+
+struct node* create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value)
+{
+  struct node* node = create_simple_node(NODE_TYPE_VAR_DECL);
+
+  node->n_var_decl->identifier   = identifier->n_call_or_access->identifier;
+  node->n_var_decl->size     = identifier->n_call_or_access->index_or_param;
+  node->n_var_decl->type      = type;
+  node->n_var_decl->is_static = is_static;
+  node->n_var_decl->is_const  = is_const;
+  node->n_var_decl->value    = value;
+
+  return node;
+}
+
+struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value)
+{
+  struct node* node = create_simple_node(NODE_TYPE_VAR_ATTR);
+
+  node->n_var_attr->identifier = identifier;
+  node->n_var_attr->index = index;
+  node->n_var_attr->value = value;
+
+  return node;
+}
+
+struct node* create_node_input(Node* input)
+{
+  Node* node = new_node(NODE_TYPE_INPUT);
+
+  node->n_io->params = input;
+
+  return node;
+}
+
+struct node* create_node_output(Node* output)
+{
+  struct node* node = create_simple_node(NODE_TYPE_OUTPUT);
+
+  node->n_io->params = output;
+
+  return node;
+}
+
+struct node* create_node_shift_left()
+{
+  struct node* node = create_simple_node(NODE_TYPE_SHIFT_LEFT);
+
+  return node;
+}
+
+struct node* create_node_shift_right()
+{
+  struct node* node = create_simple_node(NODE_TYPE_SHIFT_RIGHT);
+
+  return node;
+}
+
+
+struct node* create_node_return(Node* expression)
+{
+  struct node* node = create_simple_node(NODE_TYPE_RETURN);
+
+  node->seq = expression;
+
+  return node;
+}
+
+struct node* create_node_break()
+{
+  struct node* node = create_simple_node(NODE_TYPE_BREAK);
+
+  return node;
+}
+
+struct node* create_node_continue()
+{
+  struct node* node = create_simple_node(NODE_TYPE_CONTINUE);
+
+  return node;
+}
+
+struct node* create_node_literal(Lexeme* value)
+{
+  struct node* node = create_simple_node(NODE_TYPE_LITERAL);
+
+  node->n_literal->literal = value;
+
+  return node;
+}
