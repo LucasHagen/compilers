@@ -233,109 +233,6 @@ int free_lexeme(Lexeme* lex)
     return 1;
 }
 
-/**
- * Prints a Lexeme's value
- *
- * @param lex Lexeme
- */
-void print_lexeme(Lexeme* lex)
-{
-    if(lex != NULL)
-    {
-        if(lex->token_type == SPECIAL_CHAR)
-        {
-            printf("%c ", lex->token_value.v_char);
-        }
-        else
-        {
-            switch(lex->literal_type)
-            {
-                case INT:
-                    printf("%d ", lex->token_value.v_int);
-                    break;
-                case FLOAT:
-                    printf("%f ", lex->token_value.v_float);
-                    break;
-                case BOOL:
-                    printf("%s ", lex->token_value.v_bool ? "true" : "false");
-                    break;
-                case CHAR:
-                    printf("\'");
-                    print_char(lex->token_value.v_char);
-                    printf("\' ");
-                    break;
-                case STRING:
-                    print_string(lex->token_value.v_string);
-                    printf(" ");
-                    break;
-                default:
-                    printf("%s ",lex->token_value.v_string);
-                    break;
-            }
-        }
-    }
-}
-void print_char (char v_char){
-  switch(v_char){
-    case '\n':
-      printf("\\n");
-    break;
-
-    case '\a':
-      printf("\\a");
-    break;
-
-    case '\b':
-      printf("\\b");
-    break;
-
-    case '\f':
-      printf("\\f");
-    break;
-
-    case '\r':
-      printf("\\r");
-    break;
-
-    case '\t':
-      printf("\\t");
-    break;
-
-    case '\v':
-      printf("\\v");
-    break;
-
-    case '\\':
-      printf("\\\\");
-    break;
-
-    case '\'':
-      printf("\\\'");
-    break;
-
-    case '\"':
-      printf("\\\"");
-    break;
-
-    case '\?':
-      printf("\\\?");
-    break;
-
-    default:
-        printf("%c", v_char);
-    break;
-  }
-}
-
-void print_string(char* v_string){
-    int i;
-    printf("\"");
-    for(i = 0; i < strlen(v_string); i++) {
-        print_char(v_string[i]);
-    }
-    printf("\"");
-}
-
 struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse)
 {
     struct node* node = new_node(NODE_TYPE_TER_OP);
@@ -512,7 +409,7 @@ struct node* create_node_return(Node* expression)
 {
     struct node* node = new_node(NODE_TYPE_RETURN);
 
-    node->seq = expression;
+    node->n_io.params = expression;
 
     return node;
 }

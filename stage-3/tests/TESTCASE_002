@@ -2,7 +2,18 @@ x int;
 y[10] static int;
 _teste123[40000] static string;
 
-int main()
+int main(int x, const string yyy, string i1)
+{
+    x = 1 + 2 - - 4 * 3 ^ 4 / 10 * - 1 + 3;
+    break;
+    continue;
+    return 10 + 10 + 10;
+}
+
+testeee[123123123] int;
+
+
+int xxxx(int x, const string yyy, string i1)
 {
     x = 1 + 2 - - 4 * 3 ^ 4 / 10 * - 1 + 3;
 }

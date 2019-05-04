@@ -159,24 +159,6 @@ int free_lexeme(Lexeme* lex);
 
 void free_node(Node* node);
 
-void print_lexeme(Lexeme* lex);
-
-/**
- * Prints a char value
- * If it is a scaped character, a string will be printed.
- *
- * @param char v_char
- */
-void print_char (char v_char);
-
-/**
- * Prints a string considering the scaped characters
- * In case of ocurrance, the corresponding string will be printed
- *
- * @param char* v_string
- */
-void print_string(char* v_string);
-
 //  ===== CREATE SPECIFIC NODES FOR EACH THING =====
 
 struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse);
