@@ -112,13 +112,15 @@ Lexeme* create_lexeme(char c);
 %right EXCLAMATION HASHTAG
 %left UOP
 
-%type <node> literal
-%type <lex_value> type
-%type <int_val> const
-%type <node> var
-%type <int_val> static
-%type <node> global_var
 
+%type <int_val> const
+%type <int_val> static
+
+%type <lex_value> type
+
+%type <node> var
+%type <node> global_var
+%type <node> literal
 %type <node> programa
 %type <node> big_list
 %type <node> function
@@ -154,6 +156,7 @@ Lexeme* create_lexeme(char c);
 %type <node> operand
 %type <node> identifier
 %type <node> un_op
+%type <node> optional_vector_index
 
 %start programa
 
@@ -245,9 +248,9 @@ global_var:
 	};
 
 var:
-	identifier static type
+	TK_IDENTIFICADOR optional_vector_index static type
 	{
-		$$ = create_node_var_decl($1, $3, $2, 0, NULL);
+		$$ = create_node_var_decl($1, $2, $4, $3, 0, NULL);
 	};
 
 static:
@@ -394,7 +397,8 @@ c_declare_variable:
 	static const type TK_IDENTIFICADOR c_declare_variable_attr
 	{
 		$$ = create_node_var_decl(
-			create_node_var_access($4, NULL),
+			$4,
+			NULL,
 			$3,
 			$1,
 			$2,
@@ -423,9 +427,9 @@ c_declare_attr_value:
 	};
 
 c_attr:
-	identifier '=' expression
+	TK_IDENTIFICADOR optional_vector_index '=' expression
 	{
-		$$ = create_node_var_attr($1, $3);
+		$$ = create_node_var_attr($1, $2, $4);
 	};
 
 c_input:
@@ -696,6 +700,16 @@ identifier:
 	TK_IDENTIFICADOR '[' expression ']'
 	{
 		$$ = create_node_var_access($1, $3);
+	};
+
+optional_vector_index:
+	%empty
+	{
+		$$ = NULL;
+	}|
+	'[' expression ']'
+	{
+		$$ = $2;
 	};
 
 un_op:

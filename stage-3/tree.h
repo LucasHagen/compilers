@@ -24,32 +24,6 @@
 #define NODE_TYPE_LITERAL		18
 #define NODE_TYPE_FUNC_PARAM    19
 
-#define LITERAL_TYPE_INT		101
-#define LITERAL_TYPE_FLOAT		102
-#define LITERAL_TYPE_CHAR		103
-#define LITERAL_TYPE_BOOL		104
-#define LITERAL_TYPE_STRING		105
-
-#define OP_PLUS 				200
-#define OP_MINUS				201
-#define OP_MULT					202
-#define OP_DIV					203
-#define OP_R_DIV				204
-#define OP_BIT_OR				205
-#define OP_BIT_AND				206
-#define OP_EXP					207
-#define OP_GREATER				208
-#define OP_LESS					209
-#define OP_LE					210
-#define OP_GE					211
-#define OP_EQ					212
-#define OP_NE					213
-#define OP_AND					214
-#define OP_OR					215
-#define OP_EXCLAMATION			216
-#define OP_HASHTAG				217
-#define OP_QUESTION				218
-
 struct node_if {
 	struct node* condition;
 	struct node* n_true;
@@ -92,7 +66,6 @@ struct node_func_decl {
 	int 		   is_static;
 };
 
-
 struct node_var_decl {
 	struct lexeme* identifier;
 	struct node*   size;
@@ -103,8 +76,9 @@ struct node_var_decl {
 };
 
 struct node_var_attr {
-	struct node* identifier;
-	struct node* value;
+	struct lexeme* identifier;
+	struct node*   index;
+	struct node*   value;
 };
 
 struct node_io {
@@ -212,8 +186,10 @@ struct node* create_node_func_call(Lexeme* identifier, Node* parameters);
 struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_static, Node* parameters, Node* code);
 struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_const);
 struct node* create_node_var_access(Lexeme* identifier, Node* index);
-struct node* create_node_var_decl(Node* identifier, Lexeme* type, int is_static, int is_const, Node* value);
-struct node* create_node_var_attr(Node* identifier, Node* value);
+
+struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value);
+
+struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value);
 struct node* create_node_input(Node* input);
 struct node* create_node_output(Node* output);
 struct node* create_node_shift_left();

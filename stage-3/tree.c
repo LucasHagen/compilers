@@ -301,55 +301,61 @@ struct node* create_node_func_call(Lexeme* identifier, Node* parameters)
 
 struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_static, Node* parameters, Node* code)
 {
-  struct node* node = new_node(NODE_TYPE_FUNC_DECL);
+    struct node* node = new_node(NODE_TYPE_FUNC_DECL);
 
-  node->n_func_decl.identifier  = identifier;
-  node->n_func_decl.param       = parameters;
-  node->n_func_decl.code        = code;
-  node->n_func_decl.type         = type;
-  node->n_func_decl.is_static    = is_static;
+    node->n_func_decl.identifier  = identifier;
+    node->n_func_decl.param       = parameters;
+    node->n_func_decl.code        = code;
+    node->n_func_decl.type        = type;
+    node->n_func_decl.is_static   = is_static;
 
-  return node;
+    return node;
 }
 
 struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_const)
 {
-  struct node* node = new_node(NODE_TYPE_FUNC_PARAM);
+    struct node* node = new_node(NODE_TYPE_FUNC_PARAM);
 
-  //TODO
+    node->n_var_decl.identifier  = identifier;
+    node->n_var_decl.size        = NULL;
+    node->n_var_decl.type        = type;
+    node->n_var_decl.is_static   = FALSE;
+    node->n_var_decl.is_const    = is_const;
+    node->n_var_decl.value       = NULL;
 
-  return node;
+    return node;
 }
 
 struct node* create_node_var_access(Lexeme* identifier, Node* index)
 {
-  struct node* node = new_node(NODE_TYPE_VAR_ACCESS);
+    struct node* node = new_node(NODE_TYPE_VAR_ACCESS);
 
-  node->n_call_or_access.identifier     = identifier;
-  node->n_call_or_access.index_or_param = index;
+    node->n_call_or_access.identifier     = identifier;
+    node->n_call_or_access.index_or_param = index;
 
-  return node;
+    return node;
 }
 
-struct node* create_node_var_decl(Node* identifier, Lexeme* type, int is_static, int is_const, Node* value)
+struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value)
 {
-  struct node* node = new_node(NODE_TYPE_VAR_DECL);
+    struct node* node = new_node(NODE_TYPE_VAR_DECL);
 
-  node->n_var_decl.identifier   = identifier->n_call_or_access.identifier;
-  node->n_var_decl.size         = identifier->n_call_or_access.index_or_param;
-  node->n_var_decl.type         = type;
-  node->n_var_decl.is_static    = is_static;
-  node->n_var_decl.is_const     = is_const;
-  node->n_var_decl.value        = value;
+    node->n_var_decl.identifier   = identifier;
+    node->n_var_decl.size         = size;
+    node->n_var_decl.type         = type;
+    node->n_var_decl.is_static    = is_static;
+    node->n_var_decl.is_const     = is_const;
+    node->n_var_decl.value        = value;
 
-  return node;
+    return node;
 }
 
-struct node* create_node_var_attr(Node* identifier, Node* value)
+struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value)
 {
   struct node* node = new_node(NODE_TYPE_VAR_ATTR);
 
   node->n_var_attr.identifier = identifier;
+  node->n_var_attr.index = index;
   node->n_var_attr.value = value;
 
   return node;
