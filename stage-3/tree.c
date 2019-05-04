@@ -19,207 +19,164 @@ Node* new_node(int type)
 }
 
 /**
- * Adds a new child to a existing node
- *
- * @param node Pointer to the parent node
- * @param child Pointer to the child node
- */
-void add_child(Node* node, Node* child)
-{
-  /*
-    node->children_count++;
-    node->children = (Node**) realloc(
-            node->children,
-            node->children_count * sizeof(Node**)
-        );
-
-    node->children[node->children_count - 1] = child;
-  */
-}
-
-/**
- * Generates a source code based on a Abstract Syntax Tree (AST)
- *
- * @param root AST Pointer
- */
-void decompile(Node* root)
-{
-  /*
-    if(root != NULL)
-    {
-        print_lexeme(root->lexeme);
-
-        for(int i = 0; i < root->children_count; i++)
-        {
-            Node* child = *(root->children + i);
-
-            if(child != NULL) {
-                decompile(child);
-            }
-        }
-    }
-  */
-  printf("Decompile needs to be implemented\n");
-}
-
-/**
  * Frees memory previously allocated to the AST structure
  *
  * @param root AST Pointer
  */
 void free_tree(Node* root)
 {
-    Node* aux;
-    int i = 0;
-    while(root->seq != NULL){
-        i++;
-        printf("%d\n",i);
-        aux = root->seq;
+    printf("========== START FREE TREE ==========\n");
+    if(root != NULL)
+    {
         free_node(root);
-        printf("kkkkkk\n");
-        root = aux;
     }
-  free_node(aux);
-  free(aux);
-  printf("Memory alocated for tree is now free!\n");
+    printf("Memory alocated for tree is now free!\n");
 }
 
 void free_node(Node* node){
-  printf("Free Node()\n");
-  printf("Tipo: %d\n",node->type);
-  if(node != NULL){
-    switch(node->type){
-      case NODE_TYPE_TER_OP:
-        free_node(node->n_if.condition);
-        free_node(node->n_if.n_true);
-        free_node(node->n_if.n_false);
-        free(node);
-      break;
-
-      case NODE_TYPE_BIN_OP:
-        free_lexeme(node->n_bin_op.op);
-        free_node(node->n_bin_op.left);
-        free_node(node->n_bin_op.right);
-        free(node);
-      break;
-
-      case NODE_TYPE_UN_OP:
-        free_lexeme(node->n_un_op.op);
-        free_node(node->n_un_op.operand);
-        free(node);
-      break;
-
-      case NODE_TYPE_IF:
-        free_node(node->n_if.condition);
-        free_node(node->n_if.n_true);
-        free_node(node->n_if.n_false);
-        free(node);
-      break;
-
-      case NODE_TYPE_FOR:
-        free_node(node->n_for.setup);
-        free_node(node->n_for.condition);
-        free_node(node->n_for.increment);
-        free_node(node->n_for.code);
-        free(node);
-      break;
-
-      case NODE_TYPE_WHILE:
-        free_node(node->n_while.condition);
-        free_node(node->n_while.code);
-        free(node);
-      break;
-
-      case NODE_TYPE_FUNC_CALL:
-        free_lexeme(node->n_call_or_access.identifier);
-        free_node(node->n_call_or_access.index_or_param);
-        free(node);
-      break;
-
-      case NODE_TYPE_FUNC_DECL:
-        free_lexeme(node->n_func_decl.identifier);
-        free_node(node->n_func_decl.param);
-        free_node(node->n_func_decl.code);
-        free_lexeme(node->n_func_decl.type);
-        free(node);
-      break;
-
-      case NODE_TYPE_FUNC_PARAM:
-        free_lexeme(node->n_var_decl.identifier);
-        free_lexeme(node->n_var_decl.type);
-        free(node);
-      break;
-
-      case NODE_TYPE_VAR_ACCESS:
-        free_lexeme(node->n_call_or_access.identifier);
-        free_node(node->n_call_or_access.index_or_param);
-        free(node);
-      break;
-
-      case NODE_TYPE_VAR_DECL:
-        free_lexeme(node->n_var_decl.identifier);
-        free_lexeme(node->n_var_decl.type);
-        free_node(node->n_var_decl.size);
-        free_node(node->n_var_decl.value);
-        free(node);
-      break;
-
-      case NODE_TYPE_GLOBAL_VAR_DECL:
-        free_lexeme(node->n_var_decl.identifier);
-        free_lexeme(node->n_var_decl.type);
-        free_node(node->n_var_decl.size);
-        free_node(node->n_var_decl.value);
-        free(node);
-      break;
-
-      case NODE_TYPE_VAR_ATTR:
-        free_lexeme(node->n_var_attr.identifier);
-        free_node(node->n_var_attr.index);
-        free_node(node->n_var_attr.value);
-        free(node);
-      break;
-
-      case NODE_TYPE_INPUT:
-        free_node(node->n_io.params);
-        free(node);
-      break;
-
-      case NODE_TYPE_OUTPUT:
-        free_node(node->n_io.params);
-        free(node);
-      break;
-
-      case NODE_TYPE_SHIFT_LEFT:
-        free(node);
-      break;
-
-      case NODE_TYPE_SHIFT_RIGHT:
-        free(node);
-      break;
-
-      case NODE_TYPE_RETURN:
+    if(node != NULL){
         free_node(node->seq);
-        free(node);
-      break;
+        printf("Node entrou na free_node()\n");
+        printf("- Tipo: %d\n",    node->type);
+        printf("- Tipo seq: %d\n",node->seq == NULL ? -1 : node->seq->type);
 
-      case NODE_TYPE_BREAK:
-        free(node);
-      break;
+        switch(node->type){
+          case NODE_TYPE_COMMAND_BLOCK:
+            free_node(node->n_cmd_block.command);
+            free(node);
+            break;
 
-      case NODE_TYPE_CONTINUE:
-        free(node);
-      break;
+          case NODE_TYPE_TER_OP:
+            free_node(node->n_if.condition);
+            free_node(node->n_if.n_true);
+            free_node(node->n_if.n_false);
+            free(node);
+          break;
 
-      case NODE_TYPE_LITERAL:
-        free_lexeme(node->n_literal.literal);
-        free(node);
-      break;
+          case NODE_TYPE_BIN_OP:
+            free_lexeme(node->n_bin_op.op);
+            free_node(node->n_bin_op.left);
+            free_node(node->n_bin_op.right);
+            free(node);
+          break;
 
-      default:
-        free(node);
-      break;
+          case NODE_TYPE_UN_OP:
+            free_lexeme(node->n_un_op.op);
+            free_node(node->n_un_op.operand);
+            free(node);
+          break;
+
+          case NODE_TYPE_IF:
+            free_node(node->n_if.condition);
+            free_node(node->n_if.n_true);
+            free_node(node->n_if.n_false);
+            free(node);
+          break;
+
+          case NODE_TYPE_FOR:
+            free_node(node->n_for.setup);
+            free_node(node->n_for.condition);
+            free_node(node->n_for.increment);
+            free_node(node->n_for.code);
+            free(node);
+          break;
+
+          case NODE_TYPE_WHILE:
+            free_node(node->n_while.condition);
+            free_node(node->n_while.code);
+            free(node);
+          break;
+
+          case NODE_TYPE_FUNC_CALL:
+            free_lexeme(node->n_call_or_access.identifier);
+            free_node(node->n_call_or_access.index_or_param);
+            free(node);
+          break;
+
+          case NODE_TYPE_FUNC_DECL:
+            free_lexeme(node->n_func_decl.identifier);
+            free_node(node->n_func_decl.param);
+            free_node(node->n_func_decl.code);
+            free_lexeme(node->n_func_decl.type);
+            free(node);
+          break;
+
+          case NODE_TYPE_FUNC_PARAM:
+            free_lexeme(node->n_var_decl.identifier);
+            free_lexeme(node->n_var_decl.type);
+            free(node);
+          break;
+
+          case NODE_TYPE_VAR_ACCESS:
+            free_lexeme(node->n_call_or_access.identifier);
+            free_node(node->n_call_or_access.index_or_param);
+            free(node);
+          break;
+
+          case NODE_TYPE_VAR_DECL:
+            free_lexeme(node->n_var_decl.identifier);
+            free_lexeme(node->n_var_decl.type);
+            free_node(node->n_var_decl.size);
+            free_node(node->n_var_decl.value);
+            free(node);
+          break;
+
+          case NODE_TYPE_GLOBAL_VAR_DECL:
+            free_lexeme(node->n_var_decl.identifier);
+            free_lexeme(node->n_var_decl.type);
+            free_node(node->n_var_decl.size);
+            free_node(node->n_var_decl.value);
+            free(node);
+          break;
+
+          case NODE_TYPE_VAR_ATTR:
+            free_lexeme(node->n_var_attr.identifier);
+            free_node(node->n_var_attr.index);
+            free_node(node->n_var_attr.value);
+            free(node);
+          break;
+
+          case NODE_TYPE_INPUT:
+            free_node(node->n_io.params);
+            free(node);
+          break;
+
+          case NODE_TYPE_OUTPUT:
+            free_node(node->n_io.params);
+            free(node);
+          break;
+
+          case NODE_TYPE_SHIFT_LEFT:
+            free(node);
+          break;
+
+          case NODE_TYPE_SHIFT_RIGHT:
+            free(node);
+          break;
+
+          case NODE_TYPE_RETURN:
+            free_node(node->seq);
+            free(node);
+          break;
+
+          case NODE_TYPE_BREAK:
+            free(node);
+          break;
+
+          case NODE_TYPE_CONTINUE:
+            free(node);
+          break;
+
+          case NODE_TYPE_LITERAL:
+            free_lexeme(node->n_literal.literal);
+            free(node);
+          break;
+
+          default:
+            free(node);
+          break;
+        }
     }
-  }
 }
 
 /**
@@ -230,6 +187,7 @@ void free_node(Node* node){
  */
 int free_lexeme(Lexeme* lex)
 {
+    printf("- in free lexeme\n");
     if(lex != NULL)
     {
         // Free string value if allocated
@@ -239,11 +197,13 @@ int free_lexeme(Lexeme* lex)
             lex->literal_type != BOOL &&
             lex->literal_type != CHAR )
         {
+            printf("- String: %s\n",lex->token_value.v_string);
             free(lex->token_value.v_string);
         }
 
         free(lex);
     }
+    printf("- out free lexeme\n");
 
     return 1;
 }

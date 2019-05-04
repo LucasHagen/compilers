@@ -129,21 +129,6 @@ typedef struct node {
 Node* new_node(int type);
 
 /**
- * Adds a new child to a existing node
- *
- * @param node Pointer to the parent node
- * @param child Pointer to the child node
- */
-void add_child(Node* node, Node* child);
-
-/**
- * Generates a source code based on a Abstract Syntax Tree (AST)
- *
- * @param arvore AST Pointer
- */
-void decompile(Node* root);
-
-/**
  * Frees memory previously allocated to the AST structure
  *
  * @param arvore AST Pointer
