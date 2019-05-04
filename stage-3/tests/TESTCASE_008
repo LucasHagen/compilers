@@ -1,2 +1,4 @@
 xis int;
 xis float;
+
+static string funcao1 (int a1, int b, int c, string d, string e)  {}
