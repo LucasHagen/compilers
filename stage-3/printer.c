@@ -92,8 +92,9 @@ void print_block(Node* node) {
     printf("{\n");
     if(node->n_cmd_block.command != NULL) {
         print_node(node->n_cmd_block.command, ";\n");
+        printf(";");
     }
-    printf(";\n}");
+    printf("\n}");
 }
 
 void print_for(Node* node) {
@@ -191,7 +192,7 @@ void print_func_decl(Node* node)
     if(node->n_func_decl.is_static) {
         printf("static ");
     }
-    printf("%s %s(", node->n_func_decl.type->token_value.v_string,
+    printf("%s %s (", node->n_func_decl.type->token_value.v_string,
         node->n_func_decl.identifier->token_value.v_string);
 
     print_func_decl_param(node->n_func_decl.param);
