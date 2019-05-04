@@ -24,6 +24,11 @@
 #define NODE_TYPE_LITERAL			18
 #define NODE_TYPE_FUNC_PARAM    	19
 #define NODE_TYPE_GLOBAL_VAR_DECL	20
+#define NODE_TYPE_COMMAND_BLOCK     21
+
+struct node_command_block {
+	struct node* command;
+};
 
 struct node_if {
 	struct node* condition;
@@ -112,6 +117,7 @@ typedef struct node {
 		struct node_io				n_io;
 		struct node_shift			n_shift;
 		struct node_literal			n_literal;
+		struct node_command_block   n_cmd_block;
 	};
 } Node;
 
@@ -183,6 +189,7 @@ struct node* create_node_return(Node* expression);
 struct node* create_node_break();
 struct node* create_node_continue();
 struct node* create_node_literal(Lexeme* value);
+struct node* create_node_command_block(Node* first_command);
 
 
 

@@ -322,11 +322,11 @@ body:
 commands_block:
 	'{' commands_list '}'
 	{
-		$$ = $2;
+		$$ = create_node_command_block($2);
 	} |
 	'{' '}'
 	{
-		$$ = NULL;
+		$$ = create_node_command_block(NULL);
 	};
 
 commands_list:

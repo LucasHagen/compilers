@@ -35,10 +35,10 @@ void print_node(Node* node, char* separator) {
             print_un_op(node);
             break;
         case NODE_TYPE_BREAK:
-            printf("break;\n");
+            printf("break");
             break;
         case NODE_TYPE_CONTINUE:
-            printf("continue;\n");
+            printf("continue");
             break;
         case NODE_TYPE_RETURN:
             print_io("return", node);
@@ -76,22 +76,54 @@ void print_node(Node* node, char* separator) {
         case NODE_TYPE_IF:
             print_if(node);
             break;
+        case NODE_TYPE_WHILE:
+            print_while(node);
+            break;
+        case NODE_TYPE_FOR:
+            print_for(node);
+            break;
+        case NODE_TYPE_COMMAND_BLOCK:
+            print_block(node);
+            break;
     }
+}
+
+void print_block(Node* node) {
+    printf("{\n");
+    if(node->n_cmd_block.command != NULL) {
+        print_node(node->n_cmd_block.command, ";\n");
+    }
+    printf(";\n}");
+}
+
+void print_for(Node* node) {
+    printf("for (");
+    print_node(node->n_for.setup, ", ");
+    printf(" : ");
+    print_node(node->n_for.condition, NULL);
+    printf(" : ");
+    print_node(node->n_for.increment, ", ");
+    printf(") ");
+    print_node(node->n_for.code, NULL);
+}
+
+void print_while(Node* node) {
+    printf("while (");
+    print_node(node->n_while.condition, NULL);
+    printf(") do ");
+    print_node(node->n_while.code, NULL);
 }
 
 // if ( x ) then b else b
 void print_if(Node* node) {
     printf("if (");
     print_node(node->n_if.condition, NULL);
-    printf(") then {\n");
+    printf(") then ");
     print_node(node->n_if.n_true, NULL);
-    printf("}");
     if(node->n_if.n_false != NULL) {
-        printf(" else {\n");
+        printf(" else ");
         print_node(node->n_if.n_false, NULL);
-        printf("}");
     }
-    printf(";\n");
 }
 
 void print_func_call(Node* node) {
@@ -118,7 +150,6 @@ void print_var_decl(Node* node) {
         printf(" <= ");
         print_node(node->n_var_decl.value, NULL);
     }
-    printf(";\n");
 }
 
 void print_var_attr(Node* node) {
@@ -130,14 +161,12 @@ void print_var_attr(Node* node) {
     }
     printf(" = ");
     print_node(node->n_var_attr.value, NULL);
-    printf(";\n");
 }
 
 void print_shift(char* direction, Node* node) {
     print_node(node->n_shift.var, NULL);
     printf(" %s ", direction);
     print_node(node->n_shift.count, NULL);
-    printf(";\n");
 }
 
 void print_global_var_decl(Node* node)
@@ -166,9 +195,9 @@ void print_func_decl(Node* node)
         node->n_func_decl.identifier->token_value.v_string);
 
     print_func_decl_param(node->n_func_decl.param);
-    printf(") {\n");
+    printf(") ");
     print_node(node->n_func_decl.code, NULL);
-    printf("}\n");
+    printf("\n");
 }
 
 void print_func_decl_param(Node* node)
@@ -199,7 +228,6 @@ void print_var_access(Node* node) {
 void print_io(char* cmd, Node* node) {
     printf("%s ", cmd);
     print_node(node->n_io.params, ", ");
-    printf(";\n");
 }
 
 

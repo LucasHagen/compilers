@@ -20,6 +20,9 @@ void print_var_attr(Node* node);
 void print_var_decl(Node* node);
 void print_func_call(Node* node);
 void print_if(Node* node);
+void print_while(Node* node);
+void print_for(Node* node);
+void print_block(Node* node);
 
 void print_global_var_decl(Node* node);
 void print_func_decl(Node* node);
