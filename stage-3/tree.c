@@ -1,4 +1,5 @@
 #include "tree.h"
+#include "printer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -68,18 +69,23 @@ void decompile(Node* root)
  */
 void free_tree(Node* root)
 {
-    Node* aux = (Node*) malloc(sizeof(Node*));
+    Node* aux = (Node*) calloc(1,sizeof(struct node));
+    int i = 0;
     while(root->seq != NULL){
+        i++;
         aux = root->seq;
         free_node(root);
         root = aux;
     }
-  free(root);
+  free_node(aux);
   free(aux);
   printf("Memory alocated for tree is now free!\n");
 }
 
 void free_node(Node* node){
+  printf("node entrou na free_node()\n");
+  printf("Tipo: %d\n",node->type);
+  printf("Tipo seq: %d\n",node->seq->type);
   if(node != NULL){
     switch(node->type){
       case NODE_TYPE_TER_OP:
@@ -157,6 +163,14 @@ void free_node(Node* node){
         free(node);
       break;
 
+      case NODE_TYPE_GLOBAL_VAR_DECL:
+        free_lexeme(node->n_var_decl.identifier);
+        free_lexeme(node->n_var_decl.type);
+        free_node(node->n_var_decl.size);
+        free_node(node->n_var_decl.value);
+        free(node);
+      break;
+
       case NODE_TYPE_VAR_ATTR:
         free_lexeme(node->n_var_attr.identifier);
         free_node(node->n_var_attr.index);
@@ -215,6 +229,7 @@ void free_node(Node* node){
  */
 int free_lexeme(Lexeme* lex)
 {
+    printf("in free lexeme\n");
     if(lex != NULL)
     {
         // Free string value if allocated
@@ -224,14 +239,17 @@ int free_lexeme(Lexeme* lex)
             lex->literal_type != BOOL &&
             lex->literal_type != CHAR )
         {
+            printf("String: %s\n",lex->token_value.v_string);
             free(lex->token_value.v_string);
         }
 
         free(lex);
     }
+    printf("out free lexeme\n");
 
     return 1;
 }
+
 
 struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse)
 {
@@ -361,7 +379,6 @@ struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, 
     return node;
 }
 
-
 struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value)
 {
     struct node* node = new_node(NODE_TYPE_GLOBAL_VAR_DECL);
@@ -424,7 +441,7 @@ struct node* create_node_return(Node* expression)
 {
     struct node* node = new_node(NODE_TYPE_RETURN);
 
-    node->n_io.params = expression;
+    node->seq = expression;
 
     return node;
 }

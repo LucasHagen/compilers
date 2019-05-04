@@ -332,7 +332,7 @@ void identifier(){
 	create_token(IDENTIFIER);
 }
 void literal(int id){
-	char* text = malloc(strlen(yytext)*sizeof(char));
+	char* text = calloc(strlen(yytext)+1,sizeof(char));
 	create_token(LITERAL);
 	switch(id){
 		case INT:
@@ -361,6 +361,7 @@ void literal(int id){
 			yylval.lex_value->literal_type = STRING;
 			text = string_handler(yytext);
 			yylval.lex_value->token_value.v_string = strdup(text);
+			printf("String capturada: %s - literal string\n",yylval.lex_value->token_value.v_string);
 		break;
 
 		default:
@@ -372,13 +373,14 @@ void literal(int id){
 }
 
 void create_token(int value) {
-	yylval.lex_value = (struct lexeme *) malloc(sizeof(struct lexeme));
+	yylval.lex_value = (struct lexeme *) calloc(1,sizeof(struct lexeme));
 	yylval.lex_value->line_number = yylineno;
 	switch(value){
 		case KEYWORD:
 			yylval.lex_value->literal_type = NOT_LITERAL;
 	 		yylval.lex_value->token_value.v_string = strdup(yytext);
 			yylval.lex_value->token_type = KEYWORD;
+			printf("String capturada: %s - palavra chave\n",yylval.lex_value->token_value.v_string);
 		break;
 
 		case SPECIAL_CHAR:
@@ -391,12 +393,14 @@ void create_token(int value) {
 			yylval.lex_value->literal_type = NOT_LITERAL;
 	 		yylval.lex_value->token_value.v_string = strdup(yytext);
 			yylval.lex_value->token_type = OPERATOR;
+			printf("String capturada: %s - operador\n",yylval.lex_value->token_value.v_string);
 		break;
 
 		case IDENTIFIER:
 			yylval.lex_value->token_type = NOT_LITERAL;
 	 		yylval.lex_value->token_value.v_string = strdup(yytext);
 			yylval.lex_value->token_type = IDENTIFIER;
+			printf("String capturada: %s - identificador\n",yylval.lex_value->token_value.v_string);
 		break;
 
 		case LITERAL:
@@ -464,8 +468,8 @@ char scaped_char (char character){
 }
 
 char* string_handler (char* string){
-	char *aux = (char *) malloc(strlen(string)*sizeof(char));
-	char *out = (char *) malloc(strlen(string)*sizeof(char));
+	char *aux = (char *) calloc(strlen(string)+1,sizeof(char));
+	char *out = (char *) calloc(strlen(string)+1,sizeof(char));
 	aux = strcpy(aux, &string[1]);
 	out = strncpy(out,aux,strlen(aux)-1);
 	int i, counter;
