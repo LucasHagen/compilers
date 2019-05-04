@@ -32,15 +32,15 @@ int big_parameters_list (int x, float y, string z, char w) {
 
 //Testing command blocks:
 int cm_ex () {
-  float x;
-  {
-    x = x + 1;
-      {
-        x = x * 2;
-      };
-      x = x + 2;
-  };
-  return x;
+    float x;
+    {
+        x = x + 1;
+        {
+            x = x * 2;
+        };
+        x = x + 2;
+    };
+    return x;
 }
 
 

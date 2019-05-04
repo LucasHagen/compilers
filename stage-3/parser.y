@@ -164,6 +164,10 @@ programa:
 	{
 		$$ = $1;
 		arvore = $$;
+	}|
+	%empty
+	{
+		$$ = NULL;
 	};
 
 big_list:
@@ -322,13 +326,13 @@ commands_block:
 	};
 
 commands_list:
-	command
+	command ';'
 	{
 		$$ = $1;
 	}|
-	commands_list ';' command
+	commands_list command ';'
 	{
-		$$ = $3;
+		$$ = $2;
 		$$->seq = $1;
 	};
 
