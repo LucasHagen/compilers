@@ -22,6 +22,9 @@ void print_node(Node* node, char* separator) {
     }
 
     switch(node->type) {
+        case NODE_TYPE_FUNC_PARAM:
+            print_func_decl_param(node);
+            break;
         case NODE_TYPE_LITERAL:
             print_lexeme(node->n_literal.literal);
             break;
@@ -172,7 +175,7 @@ void print_shift(char* direction, Node* node) {
 
 void print_global_var_decl(Node* node)
 {
-    printf("%s", node->n_var_decl.identifier->token_value.v_string);
+    print_lexeme(node->n_var_decl.identifier);
 
     if(node->n_var_decl.size != NULL) {
         printf("[");
@@ -184,7 +187,9 @@ void print_global_var_decl(Node* node)
         printf(" static");
     }
 
-    printf(" %s;\n", node->n_var_decl.type->token_value.v_string);
+    printf(" ");
+    print_lexeme(node->n_var_decl.type);
+    printf(";\n");
 }
 
 void print_func_decl(Node* node)
@@ -192,10 +197,11 @@ void print_func_decl(Node* node)
     if(node->n_func_decl.is_static) {
         printf("static ");
     }
-    printf("%s %s (", node->n_func_decl.type->token_value.v_string,
-        node->n_func_decl.identifier->token_value.v_string);
-
-    print_func_decl_param(node->n_func_decl.param);
+    print_lexeme(node->n_func_decl.type);
+    printf(" ");
+    print_lexeme(node->n_func_decl.identifier);
+    printf(" (");
+    print_node(node->n_func_decl.param, ", ");
     printf(") ");
     print_node(node->n_func_decl.code, NULL);
     printf("\n");
@@ -203,18 +209,12 @@ void print_func_decl(Node* node)
 
 void print_func_decl_param(Node* node)
 {
-    if(node != NULL) {
-        if(node->seq != NULL) {
-            print_func_decl_param(node->seq);
-            printf(", ");
-        }
-        if(node->n_var_decl.is_const) {
-            printf("const ");
-        }
-        printf("%s %s",
-            node->n_var_decl.type->token_value.v_string,
-            node->n_var_decl.identifier->token_value.v_string);
+    if(node->n_var_decl.is_const) {
+        printf("const ");
     }
+    print_lexeme(node->n_var_decl.type);
+    printf(" ");
+    print_lexeme(node->n_var_decl.identifier);
 }
 
 void print_var_access(Node* node) {
