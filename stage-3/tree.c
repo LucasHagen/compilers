@@ -214,12 +214,12 @@ void print_char (char v_char){
 }
 
 void print_string(char* v_string){
-  int i;
-  printf("\"");
-  for(i=0;i<strlen(v_string);i++){
-    print_char(v_string[i]);
-  }
-  printf("\"");
+    int i;
+    printf("\"");
+    for(i = 0; i < strlen(v_string); i++) {
+        print_char(v_string[i]);
+    }
+    printf("\"");
 }
 
 struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse)
@@ -352,76 +352,76 @@ struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, 
 
 struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value)
 {
-  struct node* node = new_node(NODE_TYPE_VAR_ATTR);
+    struct node* node = new_node(NODE_TYPE_VAR_ATTR);
 
-  node->n_var_attr.identifier = identifier;
-  node->n_var_attr.index = index;
-  node->n_var_attr.value = value;
+    node->n_var_attr.identifier = identifier;
+    node->n_var_attr.index = index;
+    node->n_var_attr.value = value;
 
-  return node;
+    return node;
 }
 
 struct node* create_node_input(Node* input)
 {
-  Node* node = new_node(NODE_TYPE_INPUT);
+    Node* node = new_node(NODE_TYPE_INPUT);
 
-  node->n_io.params = input;
+    node->n_io.params = input;
 
-  return node;
+    return node;
 }
 
 struct node* create_node_output(Node* output)
 {
-  struct node* node = new_node(NODE_TYPE_OUTPUT);
+    struct node* node = new_node(NODE_TYPE_OUTPUT);
 
-  node->n_io.params = output;
+    node->n_io.params = output;
 
-  return node;
+    return node;
 }
 
 struct node* create_node_shift_left()
 {
-  struct node* node = new_node(NODE_TYPE_SHIFT_LEFT);
+    struct node* node = new_node(NODE_TYPE_SHIFT_LEFT);
 
-  return node;
+    return node;
 }
 
 struct node* create_node_shift_right()
 {
-  struct node* node = new_node(NODE_TYPE_SHIFT_RIGHT);
+    struct node* node = new_node(NODE_TYPE_SHIFT_RIGHT);
 
-  return node;
+    return node;
 }
 
 
 struct node* create_node_return(Node* expression)
 {
-  struct node* node = new_node(NODE_TYPE_RETURN);
+    struct node* node = new_node(NODE_TYPE_RETURN);
 
-  node->seq = expression;
+    node->seq = expression;
 
-  return node;
+    return node;
 }
 
 struct node* create_node_break()
 {
-  struct node* node = new_node(NODE_TYPE_BREAK);
+    struct node* node = new_node(NODE_TYPE_BREAK);
 
-  return node;
+    return node;
 }
 
 struct node* create_node_continue()
 {
-  struct node* node = new_node(NODE_TYPE_CONTINUE);
+    struct node* node = new_node(NODE_TYPE_CONTINUE);
 
-  return node;
+    return node;
 }
 
 struct node* create_node_literal(Lexeme* value)
 {
-  struct node* node = new_node(NODE_TYPE_LITERAL);
+    struct node* node = new_node(NODE_TYPE_LITERAL);
 
-  node->n_literal.literal = value;
+    node->n_literal.literal = value;
 
-  return node;
+    return node;
 }

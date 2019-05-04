@@ -1,4 +1,6 @@
 x int;
+y[10] static int;
+_teste123[40000] static string;
 
 int main()
 {
