@@ -6,12 +6,53 @@
 
 void print_tree(Node* node)
 {
+    print_node(node, NULL);
+}
+
+void print_node(Node* node, char* separator) {
+    if(node == NULL)
+        return;
+
     if(node->seq != NULL) {
-        print_tree(node->seq);
+        print_node(node->seq, separator);
+
+        if(separator != NULL) {
+            printf("%s", separator);
+        }
     }
-    switch(node->type)
-    {
-        case NODE_TYPE_VAR_DECL:
+
+    switch(node->type) {
+        case NODE_TYPE_LITERAL:
+            print_lexeme(node->n_literal.literal);
+            break;
+        case NODE_TYPE_TER_OP:
+            print_ter_op(node);
+            break;
+        case NODE_TYPE_BIN_OP:
+            print_bin_op(node);
+            break;
+        case NODE_TYPE_UN_OP:
+            print_un_op(node);
+            break;
+        case NODE_TYPE_BREAK:
+            printf("break;\n");
+            break;
+        case NODE_TYPE_CONTINUE:
+            printf("continue;\n");
+            break;
+        case NODE_TYPE_RETURN:
+            print_io("return", node);
+            break;
+        case NODE_TYPE_INPUT:
+            print_io("input", node);
+            break;
+        case NODE_TYPE_OUTPUT:
+            print_io("output", node);
+            break;
+        case NODE_TYPE_VAR_ACCESS:
+            print_var_access(node);
+            break;
+        case NODE_TYPE_GLOBAL_VAR_DECL:
             print_global_var_decl(node);
             break;
         case NODE_TYPE_FUNC_DECL:
@@ -26,7 +67,7 @@ void print_global_var_decl(Node* node)
 
     if(node->n_var_decl.size != NULL) {
         printf("[");
-        print_node(node->n_var_decl.size);
+        print_node(node->n_var_decl.size, NULL);
         printf("]");
     }
 
@@ -47,7 +88,7 @@ void print_func_decl(Node* node)
 
     print_func_decl_param(node->n_func_decl.param);
     printf(") {\n");
-    print_node(node->n_func_decl.code);
+    print_node(node->n_func_decl.code, NULL);
     printf("}\n");
 }
 
@@ -67,55 +108,45 @@ void print_func_decl_param(Node* node)
     }
 }
 
-void print_node(Node* node) {
-    if(node == NULL)
-        return;
-
-    if(node->seq != NULL) {
-        print_node(node->seq);
+void print_var_access(Node* node) {
+    print_lexeme(node->n_call_or_access.identifier);
+    if(node->n_call_or_access.index_or_param != NULL) {
+        printf("[");
+        print_node(node->n_call_or_access.index_or_param, NULL);
+        printf("]");
     }
-
-    switch(node->type) {
-        case NODE_TYPE_LITERAL:
-            print_lexeme(node->n_literal.literal);
-            break;
-        case NODE_TYPE_BIN_OP:
-            print_bin_op(node);
-            break;
-        case NODE_TYPE_UN_OP:
-            print_un_op(node);
-            break;
-        case NODE_TYPE_BREAK:
-            printf("break;\n");
-            break;
-        case NODE_TYPE_CONTINUE:
-            printf("continue;\n");
-            break;
-        case NODE_TYPE_RETURN:
-            print_return(node);
-    }
-
 }
 
-void print_return(Node* node) {
-    printf("return ");
-    print_node(node->n_io.params);
+void print_io(char* cmd, Node* node) {
+    printf("%s ", cmd);
+    print_node(node->n_io.params, ", ");
     printf(";\n");
 }
 
+
 void print_bin_op(Node* node) {
     printf("(");
-    print_node(node->n_bin_op.left);
+    print_node(node->n_bin_op.left, NULL);
     printf(" ");
     print_lexeme(node->n_bin_op.op);
     printf(" ");
-    print_node(node->n_bin_op.right);
+    print_node(node->n_bin_op.right, NULL);
     printf(")");
+}
+
+void print_ter_op(Node* node) {
+    printf("((");
+    print_node(node->n_if.condition, NULL);
+    printf(") ? (");
+    print_node(node->n_if.n_true, NULL);
+    printf(") : (");
+    print_node(node->n_if.n_false, NULL);
+    printf("))");
 }
 
 void print_un_op(Node* node) {
     print_lexeme(node->n_un_op.op);
-    print_node(node->n_un_op.operand);
+    print_node(node->n_un_op.operand, NULL);
 }
 
 /**

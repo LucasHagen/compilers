@@ -361,6 +361,21 @@ struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, 
     return node;
 }
 
+
+struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value)
+{
+    struct node* node = new_node(NODE_TYPE_GLOBAL_VAR_DECL);
+
+    node->n_var_decl.identifier   = identifier;
+    node->n_var_decl.size         = size;
+    node->n_var_decl.type         = type;
+    node->n_var_decl.is_static    = is_static;
+    node->n_var_decl.is_const     = is_const;
+    node->n_var_decl.value        = value;
+
+    return node;
+}
+
 struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value)
 {
     struct node* node = new_node(NODE_TYPE_VAR_ATTR);

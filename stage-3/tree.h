@@ -3,26 +3,27 @@
 
 #include "lexeme.h"
 
-#define NODE_TYPE_TER_OP 		0
-#define NODE_TYPE_BIN_OP		1
-#define NODE_TYPE_UN_OP			2
-#define NODE_TYPE_IF			3
-#define NODE_TYPE_FOR			4
-#define NODE_TYPE_WHILE			5
-#define NODE_TYPE_FUNC_CALL		6
-#define NODE_TYPE_FUNC_DECL		7
-#define NODE_TYPE_VAR_ACCESS	8
-#define NODE_TYPE_VAR_DECL		9
-#define NODE_TYPE_VAR_ATTR		10
-#define NODE_TYPE_INPUT			11
-#define NODE_TYPE_OUTPUT		12
-#define NODE_TYPE_SHIFT_LEFT	13
-#define NODE_TYPE_SHIFT_RIGHT	14
-#define NODE_TYPE_RETURN		15
-#define NODE_TYPE_BREAK			16
-#define NODE_TYPE_CONTINUE		17
-#define NODE_TYPE_LITERAL		18
-#define NODE_TYPE_FUNC_PARAM    19
+#define NODE_TYPE_TER_OP 			0
+#define NODE_TYPE_BIN_OP			1
+#define NODE_TYPE_UN_OP				2
+#define NODE_TYPE_IF				3
+#define NODE_TYPE_FOR				4
+#define NODE_TYPE_WHILE				5
+#define NODE_TYPE_FUNC_CALL			6
+#define NODE_TYPE_FUNC_DECL			7
+#define NODE_TYPE_VAR_ACCESS		8
+#define NODE_TYPE_VAR_DECL			9
+#define NODE_TYPE_VAR_ATTR			10
+#define NODE_TYPE_INPUT				11
+#define NODE_TYPE_OUTPUT			12
+#define NODE_TYPE_SHIFT_LEFT		13
+#define NODE_TYPE_SHIFT_RIGHT		14
+#define NODE_TYPE_RETURN			15
+#define NODE_TYPE_BREAK				16
+#define NODE_TYPE_CONTINUE			17
+#define NODE_TYPE_LITERAL			18
+#define NODE_TYPE_FUNC_PARAM    	19
+#define NODE_TYPE_GLOBAL_VAR_DECL	20
 
 struct node_if {
 	struct node* condition;
@@ -172,6 +173,7 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
 struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_const);
 struct node* create_node_var_access(Lexeme* identifier, Node* index);
 struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value);
+struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value);
 struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value);
 struct node* create_node_input(Node* input);
 struct node* create_node_output(Node* output);

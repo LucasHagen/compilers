@@ -9,10 +9,12 @@
 #include "tree.h"
 
 void print_tree(Node* node);
-void print_node(Node* node);
+void print_node(Node* node, char* separator);
+void print_ter_op(Node* node);
 void print_bin_op(Node* node);
 void print_un_op(Node* node);
-void print_return(Node* node);
+void print_io(char* cmd, Node* node);
+void print_var_access(Node* node);
 
 void print_global_var_decl(Node* node);
 void print_func_decl(Node* node);
