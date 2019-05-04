@@ -68,30 +68,144 @@ void decompile(Node* root)
  */
 void free_tree(Node* root)
 {
-  /*
-    if(root != NULL) // NULL
-    {
-        if(root->lexeme != NULL)
-        {
-            free_lexeme(root->lexeme);
-        }
-
-        for(int i = 0; i < root->children_count; i++)
-        {
-            Node* child = *(root->children + i);
-
-            if(child != NULL) {
-                free_tree(child);
-            }
-        }
-
-        free(root->children);
-        free(root);
+    Node* aux = (Node*) malloc(sizeof(Node*));
+    while(root->seq != NULL){
+        aux = root->seq;
+        free_node(root);
+        root = aux;
     }
-  */
-  printf("Free Tree needs to be implemented\n");
+  free(root);
+  free(aux);
+  printf("Memory alocated for tree is now free!\n");
 }
 
+void free_node(Node* node){
+  if(node != NULL){
+    switch(node->type){
+      case NODE_TYPE_TER_OP:
+        free_node(node->n_if.condition);
+        free_node(node->n_if.n_true);
+        free_node(node->n_if.n_false);
+        free(node);
+      break;
+
+      case NODE_TYPE_BIN_OP:
+        free_lexeme(node->n_bin_op.op);
+        free_node(node->n_bin_op.left);
+        free_node(node->n_bin_op.right);
+        free(node);
+      break;
+
+      case NODE_TYPE_UN_OP:
+        free_lexeme(node->n_un_op.op);
+        free_node(node->n_un_op.operand);
+        free(node);
+      break;
+
+      case NODE_TYPE_IF:
+        free_node(node->n_if.condition);
+        free_node(node->n_if.n_true);
+        free_node(node->n_if.n_false);
+        free(node);
+      break;
+
+      case NODE_TYPE_FOR:
+        free_node(node->n_for.setup);
+        free_node(node->n_for.condition);
+        free_node(node->n_for.increment);
+        free_node(node->n_for.code);
+        free(node);
+      break;
+
+      case NODE_TYPE_WHILE:
+        free_node(node->n_while.condition);
+        free_node(node->n_while.code);
+        free(node);
+      break;
+
+      case NODE_TYPE_FUNC_CALL:
+        free_lexeme(node->n_call_or_access.identifier);
+        free_node(node->n_call_or_access.index_or_param);
+        free(node);
+      break;
+
+      case NODE_TYPE_FUNC_DECL:
+        free_lexeme(node->n_func_decl.identifier);
+        free_node(node->n_func_decl.param);
+        free_node(node->n_func_decl.code);
+        free_lexeme(node->n_func_decl.type);
+        free(node);
+      break;
+
+      case NODE_TYPE_FUNC_PARAM:
+        free_lexeme(node->n_var_decl.identifier);
+        free_lexeme(node->n_var_decl.type);
+        free(node);
+      break;
+
+      case NODE_TYPE_VAR_ACCESS:
+        free_lexeme(node->n_call_or_access.identifier);
+        free_node(node->n_call_or_access.index_or_param);
+        free(node);
+      break;
+
+      case NODE_TYPE_VAR_DECL:
+        free_lexeme(node->n_var_decl.identifier);
+        free_lexeme(node->n_var_decl.type);
+        free_node(node->n_var_decl.size);
+        free_node(node->n_var_decl.value);
+        free(node);
+      break;
+
+      case NODE_TYPE_VAR_ATTR:
+        free_lexeme(node->n_var_attr.identifier);
+        free_node(node->n_var_attr.index);
+        free_node(node->n_var_attr.value);
+        free(node);
+      break;
+
+      case NODE_TYPE_INPUT:
+        free_node(node->n_io.params);
+        free(node);
+      break;
+
+      case NODE_TYPE_OUTPUT:
+        free_node(node->n_io.params);
+        free(node);
+      break;
+
+      case NODE_TYPE_SHIFT_LEFT:
+        free(node);
+      break;
+
+      case NODE_TYPE_SHIFT_RIGHT:
+        free(node);
+      break;
+
+      case NODE_TYPE_RETURN:
+        free_node(node->seq);
+        free(node);
+      break;
+
+      case NODE_TYPE_BREAK:
+        free(node);
+      break;
+
+      case NODE_TYPE_CONTINUE:
+        free(node);
+      break;
+
+      case NODE_TYPE_LITERAL:
+        free_lexeme(node->n_literal.literal);
+        free(node);
+      break;
+
+      default:
+        free(node);
+      break;
+    }
+  }
+}
 
 /**
  * Frees memory allocated for a Lexeme

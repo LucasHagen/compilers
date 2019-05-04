@@ -1,0 +1,139 @@
+// Testing global variables:
+x int;
+vetor[50] float;
+xis[30] char;
+test static int;
+outro static char;
+var bool;
+var2 string;
+
+
+// Testing the function structure:
+int inc (int x){
+  return x + 1;
+}
+
+static float test1 () {
+}
+
+char return_a () {
+  return 'a';
+}
+
+static int do_nothing () {
+
+}
+
+int big_parameters_list (int x, float y, string z, char w) {
+
+}
+
+
+//Testing command blocks:
+int cm_ex () {
+  float x;
+  {
+    x = x + 1;
+      {
+        x = x * 2;
+      };
+      x = x + 2;
+  };
+  return x;
+}
+
+
+//Testing simple commands:
+
+int simple_commands () {
+  // Variable declaration:
+  int xis;
+  static float x;
+  static const float y <= 3.1415;
+  y = '\n';
+  y = "string";
+
+  // Attribuition commands:
+  xis = 2;
+  vector[2] = xis * xis;
+
+  // I/O commands:
+  output("Digite um valor para xis");
+  input(&xis);
+
+  // Function call:
+  print_xis(xis);
+  print_xis(2*3*xis);
+
+  // Shift commands:
+  xis << 2;
+  xis << xis;
+  xis >> 10;
+  xis >> (xis + (x ^ 2));
+
+  // Return, break, continue:
+  return xis;
+  break;
+  continue;
+
+  // if, for, while:
+  if (x==1) then
+  {
+    x=2;
+    y=3;
+    if(z==4) then
+    {
+      k=k+1;
+    }
+    else
+    {
+      k=k+2;
+    };
+  }
+  else
+  {
+    k=0;
+  };
+
+  for(i=0:i<100:i=i+1)
+  {
+    j=j+1;
+  };
+
+  while(true) do
+  {
+    output("AAAAAAAAAAAAAAAA\n");
+  };
+
+  // Testing expressions:
+  test = +x;
+  test = -x;
+  test = -(-(x^3));
+  test = !true;
+  test = &xis;
+  test = *xis;
+  test = &(*(x+1));
+  test = ?(!false);
+  test = #vector;
+  test = xis + xis + xis;
+  test = xis * xis / xis;
+  test = xis % 4;
+  test = x | y;
+  test = y & x;
+  test = (x ^ 4) ^ 5;
+  test = xis ? (1+9) * 10 : 0;
+}
+
+
+int main() {
+    int x <= 10;
+    {
+        static const int y <= 20;
+        y = x;
+    };
+
+    funcaooo();
+    funcaaooo2(10, 20, true, x);
+
+    x[10] << 1;
+}

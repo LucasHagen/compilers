@@ -156,6 +156,9 @@ int free_lexeme(Lexeme* lex);
  *
  * @param lex Lexeme
  */
+
+void free_node(Node* node);
+
 void print_lexeme(Lexeme* lex);
 
 /**
