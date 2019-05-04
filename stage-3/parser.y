@@ -480,7 +480,7 @@ c_call_list_exp:
 	c_call_list_exp ',' expression
 	{
 		$$ = $3;
-		$$->seq = $3;
+		$$->seq = $1;
 	};
 
 c_shift:

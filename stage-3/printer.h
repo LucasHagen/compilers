@@ -14,7 +14,12 @@ void print_ter_op(Node* node);
 void print_bin_op(Node* node);
 void print_un_op(Node* node);
 void print_io(char* cmd, Node* node);
+void print_shift(char* direction, Node* node);
 void print_var_access(Node* node);
+void print_var_attr(Node* node);
+void print_var_decl(Node* node);
+void print_func_call(Node* node);
+void print_if(Node* node);
 
 void print_global_var_decl(Node* node);
 void print_func_decl(Node* node);

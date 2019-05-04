@@ -58,7 +58,86 @@ void print_node(Node* node, char* separator) {
         case NODE_TYPE_FUNC_DECL:
             print_func_decl(node);
             break;
+        case NODE_TYPE_SHIFT_LEFT:
+            print_shift("<<", node);
+            break;
+        case NODE_TYPE_SHIFT_RIGHT:
+            print_shift(">>", node);
+            break;
+        case NODE_TYPE_VAR_ATTR:
+            print_var_attr(node);
+            break;
+        case NODE_TYPE_VAR_DECL:
+            print_var_decl(node);
+            break;
+        case NODE_TYPE_FUNC_CALL:
+            print_func_call(node);
+            break;
+        case NODE_TYPE_IF:
+            print_if(node);
+            break;
     }
+}
+
+// if ( x ) then b else b
+void print_if(Node* node) {
+    printf("if (");
+    print_node(node->n_if.condition, NULL);
+    printf(") then {\n");
+    print_node(node->n_if.n_true, NULL);
+    printf("}");
+    if(node->n_if.n_false != NULL) {
+        printf(" else {\n");
+        print_node(node->n_if.n_false, NULL);
+        printf("}");
+    }
+    printf(";\n");
+}
+
+void print_func_call(Node* node) {
+    print_lexeme(node->n_call_or_access.identifier);
+    printf("(");
+    if(node->n_call_or_access.index_or_param != NULL) {
+        print_node(node->n_call_or_access.index_or_param, ", ");
+    }
+    printf(")");
+}
+
+void print_var_decl(Node* node) {
+    if(node->n_var_decl.is_static) {
+        printf("static ");
+    }
+    if(node->n_var_decl.is_const) {
+        printf("const ");
+    }
+    print_lexeme(node->n_var_decl.type);
+    printf(" ");
+    print_lexeme(node->n_var_decl.identifier);
+
+    if(node->n_var_decl.value != NULL) {
+        printf(" <= ");
+        print_node(node->n_var_decl.value, NULL);
+    }
+    printf(";\n");
+}
+
+void print_var_attr(Node* node) {
+    print_lexeme(node->n_var_attr.identifier);
+    if(node->n_var_attr.index != NULL) {
+        printf("[");
+        print_node(node->n_var_attr.index, NULL);
+        printf("]");
+    }
+    printf(" = ");
+    print_node(node->n_var_attr.value, NULL);
+    printf(";\n");
+}
+
+void print_shift(char* direction, Node* node) {
+    print_node(node->n_shift.var, NULL);
+    printf(" %s ", direction);
+    print_node(node->n_shift.count, NULL);
+    printf(";\n");
 }
 
 void print_global_var_decl(Node* node)
