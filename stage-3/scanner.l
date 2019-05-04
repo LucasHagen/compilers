@@ -385,6 +385,7 @@ void create_token(int value) {
 			yylval.lex_value->literal_type = NOT_LITERAL;
 	 		yylval.lex_value->token_value.v_char = yytext[0];
 			yylval.lex_value->token_type = SPECIAL_CHAR;
+			free(yylval.lex_value);
 		break;
 
 		case OPERATOR:
