@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "lexeme.h"
 #include "tree.h"
+#include "printer.h"
 
 /*
 	Authors:
@@ -759,7 +760,7 @@ void yyerror (char const *s){
  * @param arvore AST Pointer
  */
 void descompila (void *arvore) {
-	decompile((Node*) arvore);
+	print_tree((Node*) arvore);
 }
 
 /**
