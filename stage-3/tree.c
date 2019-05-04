@@ -69,12 +69,14 @@ void decompile(Node* root)
  */
 void free_tree(Node* root)
 {
-    Node* aux = (Node*) calloc(1,sizeof(struct node));
+    Node* aux;
     int i = 0;
     while(root->seq != NULL){
         i++;
+        printf("%d\n",i);
         aux = root->seq;
         free_node(root);
+        printf("kkkkkk\n");
         root = aux;
     }
   free_node(aux);
@@ -83,9 +85,8 @@ void free_tree(Node* root)
 }
 
 void free_node(Node* node){
-  printf("node entrou na free_node()\n");
+  printf("Free Node()\n");
   printf("Tipo: %d\n",node->type);
-  printf("Tipo seq: %d\n",node->seq->type);
   if(node != NULL){
     switch(node->type){
       case NODE_TYPE_TER_OP:
@@ -229,7 +230,6 @@ void free_node(Node* node){
  */
 int free_lexeme(Lexeme* lex)
 {
-    printf("in free lexeme\n");
     if(lex != NULL)
     {
         // Free string value if allocated
@@ -239,13 +239,11 @@ int free_lexeme(Lexeme* lex)
             lex->literal_type != BOOL &&
             lex->literal_type != CHAR )
         {
-            printf("String: %s\n",lex->token_value.v_string);
             free(lex->token_value.v_string);
         }
 
         free(lex);
     }
-    printf("out free lexeme\n");
 
     return 1;
 }
