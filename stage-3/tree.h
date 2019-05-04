@@ -3,30 +3,31 @@
 
 #include "lexeme.h"
 
-#define NODE_TYPE_TER_OP 			0
-#define NODE_TYPE_BIN_OP			1
-#define NODE_TYPE_UN_OP				2
-#define NODE_TYPE_IF					3
-#define NODE_TYPE_FOR					4
-#define NODE_TYPE_WHILE				5
+#define NODE_TYPE_TER_OP 		0
+#define NODE_TYPE_BIN_OP		1
+#define NODE_TYPE_UN_OP			2
+#define NODE_TYPE_IF			3
+#define NODE_TYPE_FOR			4
+#define NODE_TYPE_WHILE			5
 #define NODE_TYPE_FUNC_CALL		6
 #define NODE_TYPE_FUNC_DECL		7
 #define NODE_TYPE_VAR_ACCESS	8
 #define NODE_TYPE_VAR_DECL		9
 #define NODE_TYPE_VAR_ATTR		10
-#define NODE_TYPE_INPUT				11
-#define NODE_TYPE_OUTPUT			12
+#define NODE_TYPE_INPUT			11
+#define NODE_TYPE_OUTPUT		12
 #define NODE_TYPE_SHIFT_LEFT	13
 #define NODE_TYPE_SHIFT_RIGHT	14
-#define NODE_TYPE_RETURN			15
-#define NODE_TYPE_BREAK				16
+#define NODE_TYPE_RETURN		15
+#define NODE_TYPE_BREAK			16
 #define NODE_TYPE_CONTINUE		17
-#define NODE_TYPE_LITERAL			18
+#define NODE_TYPE_LITERAL		18
+#define NODE_TYPE_FUNC_PARAM    19
 
-#define LITERAL_TYPE_INT			101
+#define LITERAL_TYPE_INT		101
 #define LITERAL_TYPE_FLOAT		102
-#define LITERAL_TYPE_CHAR			103
-#define LITERAL_TYPE_BOOL			104
+#define LITERAL_TYPE_CHAR		103
+#define LITERAL_TYPE_BOOL		104
 #define LITERAL_TYPE_STRING		105
 
 #define OP_PLUS 				200
@@ -35,39 +36,19 @@
 #define OP_DIV					203
 #define OP_R_DIV				204
 #define OP_BIT_OR				205
-#define OP_BIT_AND			206
+#define OP_BIT_AND				206
 #define OP_EXP					207
-#define OP_GREATER			208
+#define OP_GREATER				208
 #define OP_LESS					209
-#define OP_LE						210
-#define OP_GE						211
-#define OP_EQ						212
-#define OP_NE						213
+#define OP_LE					210
+#define OP_GE					211
+#define OP_EQ					212
+#define OP_NE					213
 #define OP_AND					214
-#define OP_OR						215
-#define OP_EXCLAMATION	216
-#define OP_HASHTAG			217
-#define OP_QUESTION			218
-
-typedef struct node {
-	int			  type;
-	struct node*  seq;
-
-	union {
-		struct node_if*				n_if;
-		struct node_bin_op*			n_bin_op;
-		struct node_un_op*			n_un_op;
-		struct node_for*			n_for;
-		struct node_while*			n_while;
-		struct node_call_access*	n_call_or_access;
-		struct node_func_decl*		n_func_decl;
-		struct node_var_decl*		n_var_decl;
-		struct node_var_attr*		n_var_attr;
-		struct node_io*				n_io;
-		struct node_shift*			n_shift;
-		struct node_literal*		n_literal;
-	};
-} Node;
+#define OP_OR					215
+#define OP_EXCLAMATION			216
+#define OP_HASHTAG				217
+#define OP_QUESTION				218
 
 struct node_if {
 	struct node* condition;
@@ -76,14 +57,14 @@ struct node_if {
 };
 
 struct node_bin_op {
-	int 		 op;
-	struct node* left;
-	struct node* right;
+	struct lexeme* op;
+	struct node*   left;
+	struct node*   right;
 };
 
 struct node_un_op {
-	int 		 op;
-	struct node* operand;
+	struct lexeme* op;
+	struct node*   operand;
 };
 
 struct node_for {
@@ -107,7 +88,7 @@ struct node_func_decl {
 	struct lexeme* identifier;
 	struct node*   param;
 	struct node*   code;
-	int 		   type;
+	struct lexeme* type;
 	int 		   is_static;
 };
 
@@ -115,23 +96,22 @@ struct node_func_decl {
 struct node_var_decl {
 	struct lexeme* identifier;
 	struct node*   size;
-	int 		   type;
+	struct lexeme* type;
 	int 		   is_static;
 	int 		   is_const;
 	struct node*   value;
 };
 
 struct node_var_attr {
-	struct lexeme* identifier;
-	struct node*   index;
-	struct node*   value;
+	struct node* identifier;
+	struct node* value;
 };
 
 struct node_io {
 	struct node* params;
 };
 
-struct Lexemenode_shift {
+struct node_shift {
 	struct node* var;
 	struct node* count;
 };
@@ -139,6 +119,26 @@ struct Lexemenode_shift {
 struct node_literal {
 	struct lexeme* literal;
 };
+
+typedef struct node {
+	int			  type;
+	struct node*  seq;
+
+	union {
+		struct node_if				n_if;
+		struct node_bin_op			n_bin_op;
+		struct node_un_op			n_un_op;
+		struct node_for				n_for;
+		struct node_while			n_while;
+		struct node_call_access		n_call_or_access;
+		struct node_func_decl		n_func_decl;
+		struct node_var_decl		n_var_decl;
+		struct node_var_attr		n_var_attr;
+		struct node_io				n_io;
+		struct node_shift			n_shift;
+		struct node_literal			n_literal;
+	};
+} Node;
 
 /**
  * Creates a new node structure and allocates the nedded memory
@@ -202,19 +202,18 @@ void print_string(char* v_string);
 
 //  ===== CREATE SPECIFIC NODES FOR EACH THING =====
 
-struct node* create_simple_node(int type);
 struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse);
-struct node* create_node_bin_op(int op, Node* left, Node* right);
-struct node* create_node_un_op(int op, Node* operand);
-struct node* crete_node_if(Node* condition, Node* ifTrue, Node* ifFalse);
+struct node* create_node_bin_op(Lexeme* op, Node* left, Node* right);
+struct node* create_node_un_op(Lexeme* op, Node* operand);
+struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse);
 struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code);
 struct node* create_node_while(Node* condition, Node* code);
 struct node* create_node_func_call(Lexeme* identifier, Node* parameters);
-struct node* create_node_func_decl(Lexeme* identifier, int type, int is_static, Node* parameters, Node* code);
-struct node* create_node_func_param(Lexeme* identifier, int type, int is_const);
+struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_static, Node* parameters, Node* code);
+struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_const);
 struct node* create_node_var_access(Lexeme* identifier, Node* index);
-struct node* create_node_var_decl(Node* identifier, int type, int is_static, int is_const, Node* value);
-struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value);
+struct node* create_node_var_decl(Node* identifier, Lexeme* type, int is_static, int is_const, Node* value);
+struct node* create_node_var_attr(Node* identifier, Node* value);
 struct node* create_node_input(Node* input);
 struct node* create_node_output(Node* output);
 struct node* create_node_shift_left();

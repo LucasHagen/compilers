@@ -21,7 +21,8 @@ Lexeme* create_lexeme(char c);
 
 %union {
 	struct lexeme* lex_value;
-	struct node* node;
+	struct node*   node;
+	int 		   int_val;
 }
 
 %define parse.error verbose
@@ -112,10 +113,10 @@ Lexeme* create_lexeme(char c);
 %left UOP
 
 %type <node> literal
-%type <int> type
-%type <int> const
+%type <lex_value> type
+%type <int_val> const
 %type <node> var
-%type <int> static
+%type <int_val> static
 %type <node> global_var
 
 %type <node> programa
@@ -313,7 +314,7 @@ body:
 commands_block:
 	'{' commands_list '}'
 	{
-		$$ = $1;
+		$$ = $2;
 	} |
 	'{' '}'
 	{
@@ -389,8 +390,7 @@ c_declare_variable:
 	static const type TK_IDENTIFICADOR c_declare_variable_attr
 	{
 		$$ = create_node_var_decl(
-			$4,
-			NULL,
+			create_node_var_access($4, NULL),
 			$3,
 			$1,
 			$2,
@@ -478,8 +478,8 @@ c_shift:
 	identifier c_shift_symbol expression
 	{
 		$$ = $2;
-		$$.n_shift.var = $1;
-		$$.n_shift.count = $3;
+		$$->n_shift.var = $1;
+		$$->n_shift.count = $3;
 	};
 
 c_shift_symbol:
@@ -529,7 +529,7 @@ c_else:
 c_for:
 	TK_PR_FOR '(' c_for_command_list ':' expression ':' c_for_command_list ')' commands_block
 	{
-		$$ = create_node_for($3, $5, $6, $9);
+		$$ = create_node_for($3, $5, $7, $9);
 	};
 
 c_for_command_list:
@@ -659,7 +659,7 @@ expression:
 	un_op expression %prec UOP
 	{
 		$$ = $1;
-		$$.n_un_op.operand = $2;
+		$$->n_un_op.operand = $2;
 	}|
 	expression QUESTION expression ':' expression %prec QUESTION
 	{
@@ -697,31 +697,31 @@ identifier:
 un_op:
 	PLUS
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	}|
 	MINUS
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	}|
 	EXCLAMATION
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	}|
 	'&'
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	}|
  	MULT
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	}|
 	HASHTAG
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	}|
 	QUESTION
 	{
-		$$ = create_node_un_op($1);
+		$$ = create_node_un_op($1, NULL);
 	};
 
 %%
