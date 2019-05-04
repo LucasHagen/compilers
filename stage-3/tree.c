@@ -441,7 +441,7 @@ struct node* create_node_return(Node* expression)
 {
     struct node* node = new_node(NODE_TYPE_RETURN);
 
-    node->n_io.params = expression
+    node->n_io.params = expression;
 
     return node;
 }
