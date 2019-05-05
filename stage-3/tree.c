@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+//#define COMP_DEBUG
+
 int count = 0;
 /**
  * Creates a new node structure and allocates the nedded memory
@@ -25,20 +28,29 @@ Node* new_node(int type)
  */
 void free_tree(Node* root)
 {
+    #ifdef COMP_DEBUG
     printf("========== START FREE TREE ==========\n");
+    #endif
+
     if(root != NULL)
     {
         free_node(root);
     }
+
+    #ifdef COMP_DEBUG
     printf("Memory alocated for tree is now free!\n");
+    #endif
 }
 
 void free_node(Node* node){
     if(node != NULL){
         free_node(node->seq);
+
+#ifdef COMP_DEBUG
         printf("Node entrou na free_node()\n");
         printf("- Tipo: %d\n",    node->type);
         printf("- Tipo seq: %d\n",node->seq == NULL ? -1 : node->seq->type);
+#endif
 
         switch(node->type){
           case NODE_TYPE_COMMAND_BLOCK:
@@ -187,7 +199,10 @@ void free_node(Node* node){
  */
 int free_lexeme(Lexeme* lex)
 {
+#ifdef COMP_DEBUG
     printf("- in free lexeme\n");
+#endif
+
     if(lex != NULL)
     {
         // Free string value if allocated
@@ -197,13 +212,17 @@ int free_lexeme(Lexeme* lex)
             lex->literal_type != BOOL &&
             lex->literal_type != CHAR )
         {
+#ifdef COMP_DEBUG
             printf("- String: %s\n",lex->token_value.v_string);
+#endif
             free(lex->token_value.v_string);
         }
 
         free(lex);
     }
+    #ifdef COMP_DEBUG
     printf("- out free lexeme\n");
+    #endif
 
     return 1;
 }
