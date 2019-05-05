@@ -2,6 +2,12 @@
 #define LEXEME_H
 
 /*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
+/*
 TOKENS
 Os tokens se enquadram em diferentes categorias:
   1) palavras reservadas da linguagem

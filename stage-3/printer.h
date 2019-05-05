@@ -1,6 +1,12 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 
+/*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
 #ifndef NULL
 #define NULL 0
 #endif  // NULL

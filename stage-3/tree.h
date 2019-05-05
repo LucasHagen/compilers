@@ -1,6 +1,12 @@
 #ifndef TREE_H
 #define TREE_H
 
+/*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
 #include "lexeme.h"
 
 #define NODE_TYPE_TER_OP 			0

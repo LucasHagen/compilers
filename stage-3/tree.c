@@ -5,6 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
+// To show debug messages, uncomment the line bellow and compile again
 //#define COMP_DEBUG
 
 int count = 0;

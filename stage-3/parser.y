@@ -272,7 +272,7 @@ const:
 	TK_PR_CONST
 	{
 		$$ = 1;
-		
+
 		free_lexeme($1);
 	}|
 	%empty
