@@ -44,12 +44,17 @@ void free_tree(Node* root)
 
 void free_node(Node* node){
     if(node != NULL){
-        free_node(node->seq);
+        int seq_type = -1;
+        if(node->seq != NULL) {
+            seq_type = node->seq->type;
+            free_node(node->seq);
+            node->seq = NULL;
+        }
 
 #ifdef COMP_DEBUG
         printf("Node entrou na free_node()\n");
-        printf("- Tipo: %d\n",    node->type);
-        printf("- Tipo seq: %d\n",node->seq == NULL ? -1 : node->seq->type);
+        printf("- Tipo: %d\n",     node->type);
+        printf("- Tipo seq: %d\n", seq_type);
 #endif
 
         switch(node->type){
@@ -159,15 +164,19 @@ void free_node(Node* node){
           break;
 
           case NODE_TYPE_SHIFT_LEFT:
+            free_node(node->n_shift.count);
+            free_node(node->n_shift.var);
             free(node);
           break;
 
           case NODE_TYPE_SHIFT_RIGHT:
+            free_node(node->n_shift.count);
+            free_node(node->n_shift.var);
             free(node);
           break;
 
           case NODE_TYPE_RETURN:
-            free_node(node->seq);
+            free_node(node->n_io.params);
             free(node);
           break;
 
@@ -185,7 +194,14 @@ void free_node(Node* node){
           break;
 
           default:
+            #ifdef COMP_DEBUG
+            printf(" - [ERROR] NODE TYPE NOT FOUND!\n");
+            printf(" - [ERROR] NODE TYPE NOT FOUND!\n");
+            printf(" - [ERROR] NODE TYPE NOT FOUND!\n");
+            #endif
             free(node);
+
+
           break;
         }
     }
@@ -213,7 +229,7 @@ int free_lexeme(Lexeme* lex)
             lex->literal_type != CHAR )
         {
 #ifdef COMP_DEBUG
-            printf("- String: %s\n",lex->token_value.v_string);
+            printf("- String: '%s';\n",lex->token_value.v_string);
 #endif
             free(lex->token_value.v_string);
         }

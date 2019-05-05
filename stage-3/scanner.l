@@ -332,8 +332,9 @@ void identifier(){
 	create_token(IDENTIFIER);
 }
 void literal(int id){
-	char* text = calloc(strlen(yytext)+1,sizeof(char));
+	char* text;
 	create_token(LITERAL);
+	
 	switch(id){
 		case INT:
 			yylval.lex_value->literal_type = INT;
@@ -361,13 +362,13 @@ void literal(int id){
 			yylval.lex_value->literal_type = STRING;
 			text = string_handler(yytext);
 			yylval.lex_value->token_value.v_string = strdup(text);
+			free(text);
 		break;
 
 		default:
 			printf("Tipo invalido de literal !!!!!!!!");
 		break;
 	}
-	free(text);
 	text=NULL;
 }
 
@@ -385,7 +386,6 @@ void create_token(int value) {
 			yylval.lex_value->literal_type = NOT_LITERAL;
 	 		yylval.lex_value->token_value.v_char = yytext[0];
 			yylval.lex_value->token_type = SPECIAL_CHAR;
-			free(yylval.lex_value);
 		break;
 
 		case OPERATOR:

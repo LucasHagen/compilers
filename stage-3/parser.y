@@ -246,6 +246,8 @@ global_var:
 	var ';'
 	{
 		$$ = $1;
+
+		free_lexeme($2);
 	};
 
 var:
@@ -258,6 +260,8 @@ static:
 	TK_PR_STATIC
 	{
 		$$ = 1;
+
+		free_lexeme($1);
 	}|
 	%empty
 	{
@@ -268,6 +272,8 @@ const:
 	TK_PR_CONST
 	{
 		$$ = 1;
+		
+		free_lexeme($1);
 	}|
 	%empty
 	{
@@ -284,6 +290,9 @@ function:
 			$5,
 			$7
 		);
+
+		free_lexeme($4);
+		free_lexeme($6);
 	};
 
 function_parameters:
@@ -301,6 +310,8 @@ parameters_list:
 	{
 		$$ = $3;
 		$$->seq = $1;
+
+		free_lexeme($2);
 	}|
 	parameter
 	{
@@ -323,21 +334,31 @@ commands_block:
 	'{' commands_list '}'
 	{
 		$$ = create_node_command_block($2);
+
+		free_lexeme($1);
+		free_lexeme($3);
 	} |
 	'{' '}'
 	{
 		$$ = create_node_command_block(NULL);
+
+		free_lexeme($1);
+		free_lexeme($2);
 	};
 
 commands_list:
 	command ';'
 	{
 		$$ = $1;
+
+		free_lexeme($2);
 	}|
 	commands_list command ';'
 	{
 		$$ = $2;
 		$$->seq = $1;
+
+		free_lexeme($3);
 	};
 
 command:
@@ -415,6 +436,8 @@ c_declare_variable_attr:
 	TK_OC_LE c_declare_attr_value
 	{
 		$$ = $2;
+
+		free_lexeme($1);
 	};
 
 c_declare_attr_value:
@@ -431,18 +454,24 @@ c_attr:
 	TK_IDENTIFICADOR optional_vector_index '=' expression
 	{
 		$$ = create_node_var_attr($1, $2, $4);
+
+		free_lexeme($3);
 	};
 
 c_input:
 	TK_PR_INPUT expression
 	{
 		$$ = create_node_input($2);
+
+		free_lexeme($1);
 	};
 
 c_output:
 	TK_PR_OUTPUT c_output_exp_list
 	{
 		$$ = create_node_output($2);
+
+		free_lexeme($1);
 	};
 
 c_output_exp_list:
@@ -454,12 +483,17 @@ c_output_exp_list:
 	{
 		$$ = $3;
 		$$->seq = $1;
+
+		free_lexeme($2);
 	};
 
 c_call_func:
 	TK_IDENTIFICADOR '(' c_call_parameters ')'
 	{
 		$$ = create_node_func_call($1, $3);
+
+		free_lexeme($2);
+		free_lexeme($4);
 	};
 
 c_call_parameters:
@@ -481,6 +515,8 @@ c_call_list_exp:
 	{
 		$$ = $3;
 		$$->seq = $1;
+
+		free_lexeme($2);
 	};
 
 c_shift:
@@ -495,34 +531,49 @@ c_shift_symbol:
 	TK_OC_SR
 	{
 		$$ = create_node_shift_right();
+
+		free_lexeme($1);
 	}|
 	TK_OC_SL
 	{
 		$$ = create_node_shift_left();
+
+		free_lexeme($1);
 	};
 
 c_return:
 	TK_PR_RETURN expression
 	{
 		$$ = create_node_return($2);
+
+		free_lexeme($1);
 	};
 
 c_continue:
 	TK_PR_CONTINUE
 	{
 		$$ = create_node_continue();
+
+		free_lexeme($1);
 	};
 
 c_break:
 	TK_PR_BREAK
 	{
 		$$ = create_node_break();
+
+		free_lexeme($1);
 	};
 
 c_if:
 	TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else
 	{
 		$$ = create_node_if($3, $6, $7);
+
+		free_lexeme($1);
+		free_lexeme($2);
+		free_lexeme($4);
+		free_lexeme($5);
 	};
 
 c_else:
@@ -533,12 +584,20 @@ c_else:
 	TK_PR_ELSE commands_block
 	{
 		$$ = $2;
+
+		free_lexeme($1);
 	};
 
 c_for:
 	TK_PR_FOR '(' c_for_command_list ':' expression ':' c_for_command_list ')' commands_block
 	{
 		$$ = create_node_for($3, $5, $7, $9);
+
+		free_lexeme($1);
+		free_lexeme($2);
+		free_lexeme($4);
+		free_lexeme($6);
+		free_lexeme($8);
 	};
 
 c_for_command_list:
@@ -550,6 +609,8 @@ c_for_command_list:
 	{
 		$$ = $3;
 		$$->seq = $1;
+
+		free_lexeme($2);
 	};
 
 c_for_no_comma:
@@ -594,6 +655,11 @@ c_while:
 	TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block
 	{
 		$$ = create_node_while($3,$6);
+
+		free_lexeme($1);
+		free_lexeme($2);
+		free_lexeme($4);
+		free_lexeme($5);
 	};
 
 expression:
@@ -673,10 +739,16 @@ expression:
 	expression QUESTION expression ':' expression %prec QUESTION
 	{
 		$$ = create_node_ter_op($1, $3, $5);
+
+		free_lexeme($2);
+		free_lexeme($4);
 	}|
 	'(' expression ')'
 	{
 		$$ = $2;
+
+		free_lexeme($1);
+		free_lexeme($3);
 	};
 
 operand:
@@ -701,6 +773,9 @@ identifier:
 	TK_IDENTIFICADOR '[' expression ']'
 	{
 		$$ = create_node_var_access($1, $3);
+
+		free_lexeme($2);
+		free_lexeme($4);
 	};
 
 optional_vector_index:
@@ -711,6 +786,9 @@ optional_vector_index:
 	'[' expression ']'
 	{
 		$$ = $2;
+
+		free_lexeme($1);
+		free_lexeme($3);
 	};
 
 un_op:
