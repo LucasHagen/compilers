@@ -253,7 +253,7 @@ global_var:
 var:
 	TK_IDENTIFICADOR optional_vector_index static type
 	{
-		$$ = create_node_global_var_decl($1, $2, $4, $3, 0, NULL);
+		$$ = create_node_global_var_decl($1, $2, $4, $3, NULL);
 	};
 
 static:

@@ -170,7 +170,7 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
 struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_const);
 struct node* create_node_var_access(Lexeme* identifier, Node* index);
 struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value);
-struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value);
+struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, Node* value);
 struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value);
 struct node* create_node_input(Node* input);
 struct node* create_node_output(Node* output);

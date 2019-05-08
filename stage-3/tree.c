@@ -14,7 +14,6 @@
 // To show debug messages, uncomment the line bellow and compile again
 //#define COMP_DEBUG
 
-int count = 0;
 /**
  * Creates a new node structure and allocates the nedded memory
  *
@@ -379,7 +378,7 @@ struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, 
     return node;
 }
 
-struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value)
+struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, Node* value)
 {
     struct node* node = new_node(NODE_TYPE_GLOBAL_VAR_DECL);
 
@@ -387,7 +386,7 @@ struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme*
     node->n_var_decl.size         = size;
     node->n_var_decl.type         = type;
     node->n_var_decl.is_static    = is_static;
-    node->n_var_decl.is_const     = is_const;
+    node->n_var_decl.is_const     = 0;
     node->n_var_decl.value        = value;
 
     return node;
