@@ -4,7 +4,7 @@
 #		- Gabriel Pakulski da Silva - 00274701
 #		- Lucas Sonntag Hagen       - 00274698
 
-stages="1 2 3"
+stages="1 2 3 4"
 
 echo
 echo Gerando TGZs...
