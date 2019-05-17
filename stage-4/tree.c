@@ -473,4 +473,6 @@ struct node* create_node_command_block(Node* first_command)
     struct node* node = new_node(NODE_TYPE_COMMAND_BLOCK);
 
     node->n_cmd_block.command = first_command;
+
+    return node;
 }

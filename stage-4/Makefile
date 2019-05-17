@@ -12,4 +12,4 @@ bison: parser.y
 	${CC} -c scanner.yy.c parser.tab.c tree.c
 	${CC} -o ${ETAPA} scanner.yy.o parser.tab.o tree.o printer.c main.c ${CFLAGS}
 clean:
-	rm -rf *.out *.o *.yy.c *.out.c *.tab.c *.tab.h *.yy.c ${ETAPA}
+	rm -rf *.out *.o *.yy.c *.out.c *.tab.c *.tab.h *.yy.c *.h.gch ${ETAPA}

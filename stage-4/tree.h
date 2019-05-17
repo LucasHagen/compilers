@@ -183,6 +183,4 @@ struct node* create_node_literal(Lexeme* value);
 struct node* create_node_command_block(Node* first_command);
 
 
-
-
 #endif // TREE_H
