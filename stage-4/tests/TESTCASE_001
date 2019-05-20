@@ -29,17 +29,14 @@ int big_parameters_list (int x, float y, string z, char w) {
 
 }
 
-int big_parameters_list (int x, float y, string z, char w) {
-
-}
-
-
 //Testing command blocks:
 int cm_ex () {
     float x;
     {
+        float x;
         x = x + 1;
         {
+            float x;
             x = x * 2;
         };
         x = x + 2;

@@ -219,6 +219,8 @@ big_list:
 
 		$$ = $2;
 		$$->seq = $1;
+
+		add_register(top(scope_stack), create_var_register($$));
 	}|
 	big_list function
 	{
@@ -251,6 +253,8 @@ big_list:
 		}
 
 		$$ = $1;
+
+		add_register(top(scope_stack), create_var_register($$));
 	};
 
 literal:
@@ -471,6 +475,11 @@ command:
 c_declare_variable:
 	static const type TK_IDENTIFICADOR c_declare_variable_attr
 	{
+		if(identifier_in_scope(top(scope_stack), $4->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, yylineno);
+		}
+
 		$$ = create_node_var_decl(
 			$4,
 			NULL,
@@ -479,6 +488,8 @@ c_declare_variable:
 			$2,
 			$5
 		);
+
+		add_register(top(scope_stack), create_var_register($$));
 	};
 
 c_declare_variable_attr:
@@ -543,6 +554,12 @@ c_output_exp_list:
 c_call_func:
 	TK_IDENTIFICADOR '(' c_call_parameters ')'
 	{
+		if(!identifier_in_stack(scope_stack, $1->token_value.v_string))
+		{
+			throw_error(ERR_UNDECLARED, yylineno);
+		}
+		// TODO: verify if is func and parameters
+
 		$$ = create_node_func_call($1, $3);
 
 		free_lexeme($2);

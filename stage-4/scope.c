@@ -65,6 +65,23 @@ ST_LINE* create_function_register(Node* node)
     return reg;
 }
 
+ST_LINE* create_var_register(Node* node)
+{
+    ST_LINE* reg = (ST_LINE*) malloc(sizeof(ST_LINE));
+
+    reg->id                 = node->n_var_decl.identifier->token_value.v_string;
+    reg->declaration_line   = node->n_var_decl.identifier->line_number;
+    reg->nature             = NATUREZA_VARIAVEL;
+    reg->token_type         = node->n_var_decl.type_id;
+    reg->token_size         = strlen(reg->id);
+    reg->is_static          = node->n_var_decl.is_static;
+    reg->is_const           = node->n_var_decl.is_const;
+    reg->lexeme             = node->n_var_decl.identifier;
+    // TODO: PARAMS
+
+    return reg;
+}
+
 void throw_error(int error_code, int line_number)
 {
     const char* err_format = "Erro na linha %d: %s;\n";
