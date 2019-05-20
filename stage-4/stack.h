@@ -44,6 +44,6 @@ int is_empty(Stack* stack);
  */
 Scope* top(Stack* stack);
 
-int identifier_in_stack(Stack* stack, char* id);
+ST_LINE* identifier_in_stack(Stack* stack, char* id);
 
 #endif

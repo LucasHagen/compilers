@@ -101,15 +101,17 @@ Scope* top(Stack* stack)
     return result;
 }
 
-int identifier_in_stack(Stack* stack, char* id)
+ST_LINE* identifier_in_stack(Stack* stack, char* id)
 {
     for(int i = 0; i < stack->size; i++)
     {
-        if(identifier_in_scope(stack->children[i], id))
+        ST_LINE* l = identifier_in_scope(stack->children[i], id);
+
+        if(l != NULL)
         {
-            return 1;
+            return l;
         }
     }
 
-    return 0;
+    return NULL;
 }

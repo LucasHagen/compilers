@@ -63,7 +63,7 @@ Scope* create_empty_scope();
  */
 void add_register(Scope* stack, ST_LINE* value);
 
-int identifier_in_scope(Scope* scope, char* id);
+ST_LINE* identifier_in_scope(Scope* scope, char* id);
 
 ST_LINE* create_function_register(Node* node);
 ST_LINE* create_var_register(Node* node);

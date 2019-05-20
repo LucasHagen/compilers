@@ -35,17 +35,17 @@ void add_register(Scope* stack, ST_LINE* value)
     stack->size++;
 }
 
-int identifier_in_scope(Scope* scope, char* id)
+ST_LINE* identifier_in_scope(Scope* scope, char* id)
 {
     for(int i = 0; i < scope->size; i++)
     {
         if(strcmp(scope->children[i]->id, id) == 0)
         {
-            return 1;
+            return scope->children[i];
         }
     }
 
-    return 0;
+    return NULL;
 }
 
 ST_LINE* create_function_register(Node* node)

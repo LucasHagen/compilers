@@ -1,9 +1,3 @@
-// Testing the function structure:
-int inc (int x){
-return x + 1;
-}
-
-
 // Testing global variables:
 x int;
 vetor[50] float;
@@ -12,6 +6,8 @@ test static int;
 outro static char;
 var bool;
 var2 string;
+
+// Testing the function structure:
 
 static float test1 () {
 
@@ -33,7 +29,6 @@ int big_parameters_list (int x, float y, string z, char w) {
 int cm_ex () {
     float x;
     {
-        float x;
         x = x + 1;
         {
             float x;
@@ -47,6 +42,11 @@ int cm_ex () {
 
 //Testing simple commands:
 
+int print_xis(int i)
+{
+
+}
+
 int simple_commands () {
   // Variable declaration:
   int xis;
@@ -54,7 +54,7 @@ int simple_commands () {
   static const float y <= 3.1415;
 
   // Attribuition commands:
-  xis = 2;
+  xis = 123;
   vector[2] = xis * xis;
 
   // I/O commands:
@@ -81,6 +81,8 @@ int simple_commands () {
   {
     x=2;
     y=3;
+    int z <= 1;
+    int k;
     if(z==4) then
     {
       k=k+1;
@@ -95,6 +97,8 @@ int simple_commands () {
     k=0;
   };
 
+  int i;
+  int j;
   for(i=0:i<100:i=i+1)
   {
     j=j+1;
@@ -104,6 +108,8 @@ int simple_commands () {
   {
     output("AAAAAAAAAAAAAAAA\n");
   };
+
+  int vector;
 
   // Testing expressions:
   test = +x;
@@ -124,6 +130,8 @@ int simple_commands () {
   test = xis ? (1+9) * 10 : 0;
 }
 
+int funcaooo() {}
+int funcaaooo2() {}
 
 int main() {
     int x <= 10;
@@ -136,4 +144,8 @@ int main() {
     funcaaooo2(10, 20, true, x);
 
     x[10] << 1;
+}
+
+int inc (int x) {
+return x + 1;
 }

@@ -214,7 +214,7 @@ big_list:
 	{
 		if(identifier_in_stack(scope_stack, $2->n_var_decl.identifier->token_value.v_string))
 		{
-			throw_error(ERR_DECLARED, yylineno);
+			throw_error(ERR_UNDECLARED, $2->n_var_decl.identifier->line_number);
 		}
 
 		$$ = $2;
@@ -249,7 +249,7 @@ big_list:
 	{
 		if(identifier_in_stack(scope_stack, $1->n_var_decl.identifier->token_value.v_string))
 		{
-			throw_error(ERR_DECLARED, yylineno);
+			throw_error(ERR_DECLARED, $1->n_var_decl.identifier->line_number);
 		}
 
 		$$ = $1;
@@ -477,7 +477,7 @@ c_declare_variable:
 	{
 		if(identifier_in_scope(top(scope_stack), $4->token_value.v_string))
 		{
-			throw_error(ERR_DECLARED, yylineno);
+			throw_error(ERR_DECLARED, $4->line_number);
 		}
 
 		$$ = create_node_var_decl(
@@ -511,6 +511,16 @@ c_declare_attr_value:
 	}|
 	TK_IDENTIFICADOR
 	{
+		ST_LINE* line = identifier_in_stack(scope_stack, $1->token_value.v_string);
+		if(!line)
+		{
+			throw_error(ERR_UNDECLARED, $1->line_number);
+		}
+		if(line->nature != NATUREZA_VARIAVEL)
+		{
+			throw_error(ERR_VARIABLE, $1->line_number);
+		}
+
 		$$ = create_node_var_access($1, NULL);
 	};
 
@@ -554,11 +564,16 @@ c_output_exp_list:
 c_call_func:
 	TK_IDENTIFICADOR '(' c_call_parameters ')'
 	{
-		if(!identifier_in_stack(scope_stack, $1->token_value.v_string))
+		ST_LINE* l = identifier_in_stack(scope_stack, $1->token_value.v_string);
+		if(!l)
 		{
-			throw_error(ERR_UNDECLARED, yylineno);
+			throw_error(ERR_UNDECLARED, $1->line_number);
 		}
-		// TODO: verify if is func and parameters
+		if(l->nature != NATUREZA_FUNCAO)
+		{
+			throw_error(ERR_FUNCTION, $1->line_number);
+		}
+		// TODO: verify parameters
 
 		$$ = create_node_func_call($1, $3);
 
@@ -838,10 +853,31 @@ operand:
 identifier:
 	TK_IDENTIFICADOR
 	{
+		ST_LINE* line = identifier_in_stack(scope_stack, $1->token_value.v_string);
+		if(!line)
+		{
+			throw_error(ERR_UNDECLARED, $1->line_number);
+		}
+		if(line->nature != NATUREZA_VARIAVEL)
+		{
+			throw_error(ERR_VARIABLE, $1->line_number);
+		}
+
 		$$ = create_node_var_access($1, NULL);
 	}|
 	TK_IDENTIFICADOR '[' expression ']'
 	{
+		ST_LINE* line = identifier_in_stack(scope_stack, $1->token_value.v_string);
+		if(!line)
+		{
+			throw_error(ERR_UNDECLARED, $1->line_number);
+		}
+		if(line->nature != NATUREZA_VARIAVEL)
+		{
+			throw_error(ERR_VARIABLE, $1->line_number);
+		}
+		// Check if is vector
+
 		$$ = create_node_var_access($1, $3);
 
 		free_lexeme($2);
