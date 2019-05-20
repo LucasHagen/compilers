@@ -72,9 +72,9 @@ typedef struct line {
   int token_size;
   int is_static;
   int is_const;
-  //function_args* function_args;
-  //int num_function_args;
   Lexeme* lexeme;
+  int num_function_args;
+  //function_args* function_args;
 
 } ST_LINE;
 

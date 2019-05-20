@@ -1,6 +1,7 @@
 %{
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "lexeme.h"
 #include "tree.h"
@@ -170,35 +171,85 @@ void create_scope_stack();
 %%
 
 programa:
-	big_list
+	initialize big_list destroy
 	{
-		$$ = $1;
+		$$ = $2;
 		arvore = $$;
 	}|
-	%empty
+	initialize destroy
 	{
 		$$ = NULL;
+	};
+
+initialize:
+	%empty
+	{
+		create_scope_stack();
+	};
+
+destroy:
+	%empty
+	{
+
+	};
+
+push_scope:
+	'{'
+	{
+		free_lexeme($1);
+
+		push(scope_stack, create_empty_scope());
+	};
+
+pop_scope:
+	'}'
+	{
+		free_lexeme($1);
+
+		pop(scope_stack);
 	};
 
 big_list:
 	big_list global_var
 	{
+		if(identifier_in_stack(scope_stack, $2->n_var_decl.identifier->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, yylineno);
+		}
+
 		$$ = $2;
 		$$->seq = $1;
 	}|
 	big_list function
 	{
+		if(identifier_in_stack(scope_stack, $2->n_func_decl.identifier->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, $2->n_func_decl.identifier->line_number);
+		}
+
 		$$ = $2;
 		$$->seq = $1;
+
+		add_register(top(scope_stack), create_function_register($$));
 	}|
 	function
 	{
-		create_scope_stack();
+		if(identifier_in_stack(scope_stack, $1->n_func_decl.identifier->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, $1->n_func_decl.identifier->line_number);
+		}
+
 		$$ = $1;
+
+		add_register(top(scope_stack), create_function_register($$));
 	}|
 	global_var
 	{
-		create_scope_stack();
+		if(identifier_in_stack(scope_stack, $1->n_var_decl.identifier->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, yylineno);
+		}
+
 		$$ = $1;
 	};
 
@@ -339,19 +390,13 @@ body:
 	};
 
 commands_block:
-	'{' commands_list '}'
+	push_scope commands_list pop_scope
 	{
 		$$ = create_node_command_block($2);
-
-		free_lexeme($1);
-		free_lexeme($3);
 	} |
-	'{' '}'
+	push_scope pop_scope
 	{
 		$$ = create_node_command_block(NULL);
-
-		free_lexeme($1);
-		free_lexeme($2);
 	};
 
 commands_list:

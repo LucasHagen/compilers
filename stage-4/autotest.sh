@@ -16,8 +16,8 @@ echo
 
 for s in $files; do
 
-    ./etapa3 < tests/TESTCASE_$s > run/T_1_$s
-    ./etapa3 < run/T_1_$s > run/T_2_$s
+    ./etapa4 < tests/TESTCASE_$s > run/T_1_$s
+    ./etapa4 < run/T_1_$s > run/T_2_$s
     diff run/T_1_$s run/T_2_$s > /dev/null
     echo "TESTCASE_$s: $?"
 

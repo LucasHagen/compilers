@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * Creates a empty stack
@@ -54,16 +55,14 @@ void push(Stack* stack, Scope* value)
  * Pops the top element from the stack and saves it to the value_out pointer,
  * the value_out pointer must be allocated previously.
  */
-int pop(Stack* stack, Scope** value_out)
+Scope* pop(Stack* stack)
 {
-    int result = 0;
+    Scope* result = NULL;
 
-    if(!is_empty(stack) && value_out != NULL)
+    if(!is_empty(stack))
     {
         stack->size--;
-        *value_out = stack->children[stack->size];
-
-        result = 1;
+        result = stack->children[stack->size];
     }
 
     return result;
@@ -90,14 +89,27 @@ int is_empty(Stack* stack)
  * saves it to the value_out pointer, the value_out pointer must be allocated
  * previously.
  */
-int top(Stack* stack, Scope** value_out)
+Scope* top(Stack* stack)
 {
-    int result = 0;
+    Scope* result = NULL;
 
-    if(!is_empty(stack) && value_out != NULL)
+    if(!is_empty(stack))
     {
-        *value_out = stack->children[stack->size - 1];
+        result = stack->children[stack->size - 1];
     }
 
     return result;
+}
+
+int identifier_in_stack(Stack* stack, char* id)
+{
+    for(int i = 0; i < stack->size; i++)
+    {
+        if(identifier_in_scope(stack->children[i], id))
+        {
+            return 1;
+        }
+    }
+
+    return 0;
 }

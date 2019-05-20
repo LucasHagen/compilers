@@ -75,6 +75,7 @@ struct node_func_decl {
 	struct node*   param;
 	struct node*   code;
 	struct lexeme* type;
+	int 		   type_id;
 	int 		   is_static;
 };
 
@@ -82,6 +83,7 @@ struct node_var_decl {
 	struct lexeme* identifier;
 	struct node*   size;
 	struct lexeme* type;
+	int 		   type_id;
 	int 		   is_static;
 	int 		   is_const;
 	struct node*   value;
@@ -181,6 +183,8 @@ struct node* create_node_break();
 struct node* create_node_continue();
 struct node* create_node_literal(Lexeme* value);
 struct node* create_node_command_block(Node* first_command);
+
+int get_type_id(Lexeme* type);
 
 
 #endif // TREE_H

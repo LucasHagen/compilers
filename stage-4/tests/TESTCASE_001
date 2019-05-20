@@ -1,3 +1,9 @@
+// Testing the function structure:
+int inc (int x){
+return x + 1;
+}
+
+
 // Testing global variables:
 x int;
 vetor[50] float;
@@ -6,12 +12,6 @@ test static int;
 outro static char;
 var bool;
 var2 string;
-
-
-// Testing the function structure:
-int inc (int x){
-  return x + 1;
-}
 
 static float test1 () {
 
@@ -22,6 +22,10 @@ char return_a () {
 }
 
 static int do_nothing () {
+
+}
+
+int big_parameters_list (int x, float y, string z, char w) {
 
 }
 

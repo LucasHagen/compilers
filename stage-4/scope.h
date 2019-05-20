@@ -3,6 +3,8 @@
 
 #include "lexeme.h"
 
+#include "tree.h"
+
 /* Verificação de declarações */
 #define ERR_UNDECLARED  10 //identificador não declarado
 #define ERR_DECLARED    11 //identificador já declarado
@@ -61,8 +63,11 @@ Scope* create_empty_scope();
  */
 void add_register(Scope* stack, ST_LINE* value);
 
+int identifier_in_scope(Scope* scope, char* id);
 
-ST_LINE* create_function_register(Lexeme* func, int type, int is_const, int is_static);
+ST_LINE* create_function_register(Node* node);
+
+void throw_error(int error_code, int line_number);
 
 
 #endif

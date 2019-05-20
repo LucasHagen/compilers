@@ -30,7 +30,7 @@ void push(Stack* stack, Scope* value);
  * Pops the top element from the stack and saves it to the value_out pointer,
  * the value_out pointer must be allocated previously.
  */
-int pop(Stack* stack, Scope** value_out);
+Scope* pop(Stack* stack);
 
 /**
  * Checks if the stack is empty
@@ -42,6 +42,8 @@ int is_empty(Stack* stack);
  * saves it to the value_out pointer, the value_out pointer must be allocated
  * previously.
  */
-int top(Stack* stack, Scope** value_out);
+Scope* top(Stack* stack);
+
+int identifier_in_stack(Stack* stack, char* id);
 
 #endif

@@ -335,6 +335,7 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
     node->n_func_decl.param       = parameters;
     node->n_func_decl.code        = code;
     node->n_func_decl.type        = type;
+    node->n_func_decl.type_id     = get_type_id(type);
     node->n_func_decl.is_static   = is_static;
 
     return node;
@@ -347,6 +348,7 @@ struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_con
     node->n_var_decl.identifier  = identifier;
     node->n_var_decl.size        = NULL;
     node->n_var_decl.type        = type;
+    node->n_func_decl.type_id    = get_type_id(type);
     node->n_var_decl.is_static   = FALSE;
     node->n_var_decl.is_const    = is_const;
     node->n_var_decl.value       = NULL;
@@ -371,6 +373,7 @@ struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, 
     node->n_var_decl.identifier   = identifier;
     node->n_var_decl.size         = size;
     node->n_var_decl.type         = type;
+    node->n_func_decl.type_id     = get_type_id(type);
     node->n_var_decl.is_static    = is_static;
     node->n_var_decl.is_const     = is_const;
     node->n_var_decl.value        = value;
@@ -385,6 +388,7 @@ struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme*
     node->n_var_decl.identifier   = identifier;
     node->n_var_decl.size         = size;
     node->n_var_decl.type         = type;
+    node->n_func_decl.type_id     = get_type_id(type);
     node->n_var_decl.is_static    = is_static;
     node->n_var_decl.is_const     = 0;
     node->n_var_decl.value        = value;
@@ -475,4 +479,30 @@ struct node* create_node_command_block(Node* first_command)
     node->n_cmd_block.command = first_command;
 
     return node;
+}
+
+int get_type_id(Lexeme* type)
+{
+    if(strcmp(type->token_value.v_string, "int") == 0)
+    {
+        return INT;
+    }
+    else if(strcmp(type->token_value.v_string, "float") == 0)
+    {
+        return FLOAT;
+    }
+    else if(strcmp(type->token_value.v_string, "bool") == 0)
+    {
+        return BOOL;
+    }
+    else if(strcmp(type->token_value.v_string, "char") == 0)
+    {
+        return CHAR;
+    }
+    else if(strcmp(type->token_value.v_string, "string") == 0)
+    {
+        return STRING;
+    }
+
+    return -1;
 }
