@@ -22,6 +22,7 @@
 Node* new_node(int type)
 {
     Node* node           = (Node*) malloc(sizeof(Node));
+    node->val_type       = NO_TYPE;
     node->type           = type;
     node->seq            = NULL;
     return node;
@@ -331,11 +332,11 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
 {
     struct node* node = new_node(NODE_TYPE_FUNC_DECL);
 
+    node->val_type                = get_type_id(type);
     node->n_func_decl.identifier  = identifier;
     node->n_func_decl.param       = parameters;
     node->n_func_decl.code        = code;
     node->n_func_decl.type        = type;
-    node->n_func_decl.type_id     = get_type_id(type);
     node->n_func_decl.is_static   = is_static;
 
     return node;
@@ -345,10 +346,10 @@ struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_con
 {
     struct node* node = new_node(NODE_TYPE_FUNC_PARAM);
 
+    node->val_type               = get_type_id(type);
     node->n_var_decl.identifier  = identifier;
     node->n_var_decl.size        = NULL;
     node->n_var_decl.type        = type;
-    node->n_func_decl.type_id    = get_type_id(type);
     node->n_var_decl.is_static   = FALSE;
     node->n_var_decl.is_const    = is_const;
     node->n_var_decl.value       = NULL;
@@ -370,10 +371,10 @@ struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, 
 {
     struct node* node = new_node(NODE_TYPE_VAR_DECL);
 
+    node->val_type                = get_type_id(type);
     node->n_var_decl.identifier   = identifier;
     node->n_var_decl.size         = size;
     node->n_var_decl.type         = type;
-    node->n_func_decl.type_id     = get_type_id(type);
     node->n_var_decl.is_static    = is_static;
     node->n_var_decl.is_const     = is_const;
     node->n_var_decl.value        = value;
@@ -385,10 +386,10 @@ struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme*
 {
     struct node* node = new_node(NODE_TYPE_GLOBAL_VAR_DECL);
 
+    node->val_type                = get_type_id(type);
     node->n_var_decl.identifier   = identifier;
     node->n_var_decl.size         = size;
     node->n_var_decl.type         = type;
-    node->n_func_decl.type_id     = get_type_id(type);
     node->n_var_decl.is_static    = is_static;
     node->n_var_decl.is_const     = 0;
     node->n_var_decl.value        = value;

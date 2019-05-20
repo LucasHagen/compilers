@@ -35,6 +35,7 @@ TIPOS DOS LITERAIS
 #define BOOL    1007
 #define CHAR    1008
 #define STRING  1009
+#define NO_TYPE -1
 
 #define TRUE 1
 #define FALSE 0

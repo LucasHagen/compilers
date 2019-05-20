@@ -55,7 +55,7 @@ ST_LINE* create_function_register(Node* node)
     reg->id                 = node->n_func_decl.identifier->token_value.v_string;
     reg->declaration_line   = node->n_func_decl.identifier->line_number;
     reg->nature             = NATUREZA_FUNCAO;
-    reg->token_type         = node->n_func_decl.type_id;
+    reg->token_type         = node->val_type;
     reg->token_size         = strlen(reg->id);
     reg->is_static          = node->n_func_decl.is_static;
     reg->is_const           = 0;
@@ -72,7 +72,7 @@ ST_LINE* create_var_register(Node* node)
     reg->id                 = node->n_var_decl.identifier->token_value.v_string;
     reg->declaration_line   = node->n_var_decl.identifier->line_number;
     reg->nature             = NATUREZA_VARIAVEL;
-    reg->token_type         = node->n_var_decl.type_id;
+    reg->token_type         = node->val_type;
     reg->token_size         = strlen(reg->id);
     reg->is_static          = node->n_var_decl.is_static;
     reg->is_const           = node->n_var_decl.is_const;
