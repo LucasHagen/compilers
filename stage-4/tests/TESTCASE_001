@@ -1,6 +1,6 @@
 // Testing global variables:
 x int;
-vetor[50] float;
+vector[50] float;
 xis[30] char;
 test static int;
 outro static char;
@@ -75,6 +75,7 @@ int simple_commands () {
   return xis;
   break;
   continue;
+  int  k;
 
   // if, for, while:
   if (x==1) then
@@ -143,7 +144,7 @@ int main() {
     funcaooo();
     funcaaooo2(10, 20, true, x);
 
-    x[10] << 1;
+    x << 1;
 }
 
 int inc (int x) {

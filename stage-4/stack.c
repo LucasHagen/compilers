@@ -103,7 +103,7 @@ Scope* top(Stack* stack)
 
 ST_LINE* identifier_in_stack(Stack* stack, char* id)
 {
-    for(int i = 0; i < stack->size; i++)
+    for(int i = stack->size - 1; i >= 0; i--)
     {
         ST_LINE* l = identifier_in_scope(stack->children[i], id);
 

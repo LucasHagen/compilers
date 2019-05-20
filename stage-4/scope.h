@@ -36,7 +36,8 @@
 #define NATUREZA_LITERAL_STRING     4
 #define NATUREZA_LITERAL_BOOL       5
 #define NATUREZA_VARIAVEL           6
-#define NATUREZA_FUNCAO             7
+#define NATUREZA_VECTOR             7
+#define NATUREZA_FUNCAO             8
 
 /* Definições de tamanhos */
 #define SIZE_CHAR     1

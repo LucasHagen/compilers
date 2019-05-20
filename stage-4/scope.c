@@ -37,7 +37,7 @@ void add_register(Scope* stack, ST_LINE* value)
 
 ST_LINE* identifier_in_scope(Scope* scope, char* id)
 {
-    for(int i = 0; i < scope->size; i++)
+    for(int i = scope->size - 1; i >= 0; i--)
     {
         if(strcmp(scope->children[i]->id, id) == 0)
         {

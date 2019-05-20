@@ -212,49 +212,21 @@ pop_scope:
 big_list:
 	big_list global_var
 	{
-		if(identifier_in_stack(scope_stack, $2->n_var_decl.identifier->token_value.v_string))
-		{
-			throw_error(ERR_UNDECLARED, $2->n_var_decl.identifier->line_number);
-		}
-
 		$$ = $2;
 		$$->seq = $1;
-
-		add_register(top(scope_stack), create_var_register($$));
 	}|
 	big_list function
 	{
-		if(identifier_in_stack(scope_stack, $2->n_func_decl.identifier->token_value.v_string))
-		{
-			throw_error(ERR_DECLARED, $2->n_func_decl.identifier->line_number);
-		}
-
 		$$ = $2;
 		$$->seq = $1;
-
-		add_register(top(scope_stack), create_function_register($$));
 	}|
 	function
 	{
-		if(identifier_in_stack(scope_stack, $1->n_func_decl.identifier->token_value.v_string))
-		{
-			throw_error(ERR_DECLARED, $1->n_func_decl.identifier->line_number);
-		}
-
 		$$ = $1;
-
-		add_register(top(scope_stack), create_function_register($$));
 	}|
 	global_var
 	{
-		if(identifier_in_stack(scope_stack, $1->n_var_decl.identifier->token_value.v_string))
-		{
-			throw_error(ERR_DECLARED, $1->n_var_decl.identifier->line_number);
-		}
-
 		$$ = $1;
-
-		add_register(top(scope_stack), create_var_register($$));
 	};
 
 literal:
@@ -316,7 +288,21 @@ global_var:
 var:
 	TK_IDENTIFICADOR optional_vector_index static type
 	{
+		if(identifier_in_stack(scope_stack, $1->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, $1->line_number);
+		}
+
 		$$ = create_node_global_var_decl($1, $2, $4, $3, NULL);
+
+		ST_LINE* line = create_var_register($$);
+
+		if($2 != NULL)
+		{
+			line->nature = NATUREZA_VECTOR;
+		}
+
+		add_register(top(scope_stack), line);
 	};
 
 static:
@@ -346,6 +332,11 @@ const:
 function:
 	static type TK_IDENTIFICADOR '(' function_parameters ')' body
 	{
+		if(identifier_in_stack(scope_stack, $3->token_value.v_string))
+		{
+			throw_error(ERR_DECLARED, $2->line_number);
+		}
+
 		$$ = create_node_func_decl(
 			$3,
 			$2,
@@ -356,6 +347,8 @@ function:
 
 		free_lexeme($4);
 		free_lexeme($6);
+
+		add_register(top(scope_stack), create_function_register($$));
 	};
 
 function_parameters:
@@ -516,9 +509,13 @@ c_declare_attr_value:
 		{
 			throw_error(ERR_UNDECLARED, $1->line_number);
 		}
-		if(line->nature != NATUREZA_VARIAVEL)
+		if(line->nature == NATUREZA_FUNCAO)
 		{
-			throw_error(ERR_VARIABLE, $1->line_number);
+			throw_error(ERR_FUNCTION, $1->line_number);
+		}
+		if(line->nature == NATUREZA_VECTOR)
+		{
+			throw_error(ERR_VECTOR, $1->line_number);
 		}
 
 		$$ = create_node_var_access($1, NULL);
@@ -527,6 +524,24 @@ c_declare_attr_value:
 c_attr:
 	TK_IDENTIFICADOR optional_vector_index '=' expression
 	{
+		ST_LINE* line = identifier_in_stack(scope_stack, $1->token_value.v_string);
+		if(!line)
+		{
+			throw_error(ERR_UNDECLARED, $1->line_number);
+		}
+		if(line->nature == NATUREZA_FUNCAO)
+		{
+			throw_error(ERR_FUNCTION, $1->line_number);
+		}
+		if(line->nature == NATUREZA_VECTOR && $2 == NULL)
+		{
+			throw_error(ERR_VECTOR, $1->line_number);
+		}
+		if(line->nature == NATUREZA_VARIAVEL && $2 != NULL)
+		{
+			throw_error(ERR_VARIABLE, $1->line_number);
+		}
+
 		$$ = create_node_var_attr($1, $2, $4);
 
 		free_lexeme($3);
@@ -569,9 +584,13 @@ c_call_func:
 		{
 			throw_error(ERR_UNDECLARED, $1->line_number);
 		}
-		if(l->nature != NATUREZA_FUNCAO)
+		if(l->nature == NATUREZA_VARIAVEL)
 		{
-			throw_error(ERR_FUNCTION, $1->line_number);
+			throw_error(ERR_VARIABLE, $1->line_number);
+		}
+		if(l->nature == NATUREZA_VECTOR)
+		{
+			throw_error(ERR_VECTOR, $1->line_number);
 		}
 		// TODO: verify parameters
 
@@ -858,9 +877,13 @@ identifier:
 		{
 			throw_error(ERR_UNDECLARED, $1->line_number);
 		}
-		if(line->nature != NATUREZA_VARIAVEL)
+		if(line->nature == NATUREZA_FUNCAO)
 		{
-			throw_error(ERR_VARIABLE, $1->line_number);
+			throw_error(ERR_FUNCTION, $1->line_number);
+		}
+		if(line->nature == NATUREZA_VECTOR)
+		{
+			throw_error(ERR_VECTOR, $1->line_number);
 		}
 
 		$$ = create_node_var_access($1, NULL);
@@ -872,11 +895,14 @@ identifier:
 		{
 			throw_error(ERR_UNDECLARED, $1->line_number);
 		}
-		if(line->nature != NATUREZA_VARIAVEL)
+		if(line->nature == NATUREZA_FUNCAO)
+		{
+			throw_error(ERR_FUNCTION, $1->line_number);
+		}
+		if(line->nature == NATUREZA_VARIAVEL)
 		{
 			throw_error(ERR_VARIABLE, $1->line_number);
 		}
-		// Check if is vector
 
 		$$ = create_node_var_access($1, $3);
 
