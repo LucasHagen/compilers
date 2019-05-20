@@ -64,4 +64,18 @@ typedef struct lexeme {
     union literal_value token_value;
 } Lexeme;
 
+typedef struct line {
+  char* id;
+  int declaration_line;
+  int nature;
+  int token_type;
+  int token_size;
+  int is_static;
+  int is_const;
+  //function_args* function_args;
+  //int num_function_args;
+  Lexeme* lexeme;
+
+} ST_LINE;
+
 #endif

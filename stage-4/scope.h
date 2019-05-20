@@ -1,5 +1,7 @@
-#ifndef ERRORS_H
-#define ERRORS_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#include "lexeme.h"
 
 /* Verificação de declarações */
 #define ERR_UNDECLARED  10 //identificador não declarado
@@ -24,3 +26,43 @@
 #define ERR_WRONG_PAR_INPUT  50 //parâmetro não é identificador
 #define ERR_WRONG_PAR_OUTPUT 51 //parâmetro não é literal string ou expressão
 #define ERR_WRONG_PAR_RETURN 52 //parâmetro não é expressão compatível com tipo do retorno
+
+/* Definições de Natureza */
+#define NATUREZA_LITERAL_INT        1
+#define NATUREZA_LITERAL_FLOAT      2
+#define NATUREZA_LITERAL_CHAR       3
+#define NATUREZA_LITERAL_STRING     4
+#define NATUREZA_LITERAL_BOOL       5
+#define NATUREZA_VARIAVEL           6
+#define NATUREZA_FUNCAO             7
+
+/* Definições de tamanhos */
+#define SIZE_CHAR     1
+#define SIZE_STRING   1 //Multiplicado pelo comprimento do string
+#define SIZE_INT      4
+#define SIZE_FLOAT    8
+#define SIZE_BOOL     1
+
+typedef struct scope_struct {
+
+    ST_LINE** children;
+    int       max_size;
+    int       size    ;
+
+} Scope;
+
+/**
+ * Creates a empty scope
+ */
+Scope* create_empty_scope();
+
+/**
+ * Adds a register in the scope
+ */
+void add_register(Scope* stack, ST_LINE* value);
+
+
+ST_LINE* create_function_register(Lexeme* func, int type, int is_const, int is_static);
+
+
+#endif

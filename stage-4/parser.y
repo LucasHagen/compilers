@@ -1,9 +1,12 @@
 %{
 
 #include <stdio.h>
+
 #include "lexeme.h"
 #include "tree.h"
 #include "printer.h"
+#include "stack.h"
+#include "scope.h"
 
 /*
 	Authors:
@@ -14,9 +17,12 @@
 extern int yylineno;
 extern void* arvore;
 
+Stack* scope_stack = NULL;
+
 int yylex(void);
 void yyerror (char const *s);
-Lexeme* create_lexeme(char c);
+
+void create_scope_stack();
 
 %}
 
@@ -187,10 +193,12 @@ big_list:
 	}|
 	function
 	{
+		create_scope_stack();
 		$$ = $1;
 	}|
 	global_var
 	{
+		create_scope_stack();
 		$$ = $1;
 	};
 
@@ -850,11 +858,13 @@ void libera (void *tree) {
 	free_tree((Node*) tree);
 }
 
-Lexeme* create_lexeme(char c) {
-	Lexeme* lex = (Lexeme*) malloc(sizeof(Lexeme));
-	lex->line_number = -1;
-	lex->literal_type = NOT_LITERAL;
-	lex->token_value.v_char = c;
-	lex->token_type = SPECIAL_CHAR;
-	return lex;
+/**
+ * Checks if stack was created, if not, creates one
+ */
+void create_scope_stack() {
+	if(scope_stack == NULL)
+	{
+		scope_stack = create_empty_stack();
+		push(scope_stack, create_empty_scope());
+	}
 }

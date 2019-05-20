@@ -10,7 +10,7 @@ Stack* create_empty_stack()
 {
     Stack* s = (Stack*) malloc(sizeof(Stack));
 
-    s->children = (stack_value**) malloc(sizeof(stack_value**));
+    s->children = (Scope**) malloc(sizeof(Scope**));
     s->max_size = 1;
     s->size = 0;
 
@@ -20,11 +20,11 @@ Stack* create_empty_stack()
 /**
  * Creates a stack with one element
  */
-Stack* create_stack(stack_value* value)
+Stack* create_stack(Scope* value)
 {
     Stack* s = (Stack*) malloc(sizeof(Stack));
 
-    s->children = (stack_value**) malloc(sizeof(stack_value**));
+    s->children = (Scope**) malloc(sizeof(Scope**));
     s->max_size = 1;
     s->size = 1;
 
@@ -36,14 +36,14 @@ Stack* create_stack(stack_value* value)
 /**
  * Pushes a value on top of the stack
  */
-void push(Stack* stack, stack_value* value)
+void push(Stack* stack, Scope* value)
 {
     if(stack->size >= stack->max_size)
     {
-        stack->max_size *= 2;
+        stack->max_size++;
 
-        stack->children = (stack_value**) realloc(stack->children,
-            stack->max_size * sizeof(stack_value**));
+        stack->children = (Scope**) realloc(stack->children,
+            stack->max_size * sizeof(Scope**));
     }
 
     stack->children[stack->size] = value;
@@ -54,7 +54,7 @@ void push(Stack* stack, stack_value* value)
  * Pops the top element from the stack and saves it to the value_out pointer,
  * the value_out pointer must be allocated previously.
  */
-int pop(Stack* stack, stack_value** value_out)
+int pop(Stack* stack, Scope** value_out)
 {
     int result = 0;
 
@@ -90,7 +90,7 @@ int is_empty(Stack* stack)
  * saves it to the value_out pointer, the value_out pointer must be allocated
  * previously.
  */
-int top(Stack* stack, stack_value** value_out)
+int top(Stack* stack, Scope** value_out)
 {
     int result = 0;
 
