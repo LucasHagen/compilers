@@ -31,6 +31,7 @@ ST_LINE* create_literal(Lexeme* node, int nature);
 
 void throw_error(int error_code, int line_number);
 
+
 //A lista de argumentos está invertida !!!!!!!!!!!!!!
 void add_function_args(ST_LINE* reg, Node* params);
 function_arg new_function_arg(Node* param);

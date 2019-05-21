@@ -23,7 +23,8 @@ static int do_nothing () {
 }
 
 int big_parameters_list (int x, float y, string z, char w) {
-
+    x = x + 1;
+    return y;
 }
 
 //Testing command blocks:

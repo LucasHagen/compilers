@@ -20,11 +20,14 @@ extern void* arvore;
 
 Stack* scope_stack = NULL;
 
+int flag = 0;
+Node* param;
+
 int yylex(void);
 void yyerror (char const *s);
 
 void create_scope_stack();
-
+void add_func_params(Stack* stack, Node* function);
 %}
 
 %union {
@@ -184,6 +187,7 @@ programa:
 initialize:
 	%empty
 	{
+		param = new_node(NODE_TYPE_VAR_DECL);
 		create_scope_stack();
 	};
 
@@ -336,7 +340,7 @@ const:
 	};
 
 function:
-	static type TK_IDENTIFICADOR '(' function_parameters ')' body
+	static type TK_IDENTIFICADOR '(' function_parameters ')' push_scope {add_func_params(scope_stack,$5);} body pop_scope
 	{
 		if(identifier_in_stack(scope_stack, $3->token_value.v_string))
 		{
@@ -348,12 +352,12 @@ function:
 			$2,
 			$1,
 			$5,
-			$7
+			$9
 		);
 
+		flag = 1;
 		free_lexeme($4);
 		free_lexeme($6);
-
 		add_register(top(scope_stack), create_function_register($$));
 	};
 
@@ -387,10 +391,16 @@ parameter:
 	};
 
 body:
-	commands_block
+	commands_list
 	{
-		$$ = $1;
+		$$ = create_node_command_block($1);
+	}
+	|
+	%empty
+	{
+		$$ = create_node_command_block(NULL);
 	};
+
 
 commands_block:
 	push_scope commands_list pop_scope
@@ -998,4 +1008,20 @@ void create_scope_stack() {
 		scope_stack = create_empty_stack();
 		push(scope_stack, create_empty_scope());
 	}
+}
+
+void add_func_params(Stack* stack, Node* params){
+	ST_LINE* line = (ST_LINE*) malloc(sizeof(ST_LINE));
+	if(params != NULL){
+		Node* aux = params;
+    	ST_LINE* line = (ST_LINE*) malloc(sizeof(ST_LINE));
+		line = create_var_register(aux);
+		add_register(top(stack), line);
+		while(aux->seq != NULL){
+			aux=aux->seq;
+			line = create_var_register(aux);
+			add_register(top(stack), line);
+		}
+	}
+	free(line);
 }
