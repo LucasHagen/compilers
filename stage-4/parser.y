@@ -595,6 +595,8 @@ c_call_func:
 	TK_IDENTIFICADOR '(' c_call_parameters ')'
 	{
 		ST_LINE* l = identifier_in_stack(scope_stack, $1->token_value.v_string);
+
+		Node* aux = $3;
 		if(!l)
 		{
 			throw_error(ERR_UNDECLARED, $1->line_number);
@@ -607,7 +609,10 @@ c_call_func:
 		{
 			throw_error(ERR_VECTOR, $1->line_number);
 		}
-		// TODO: verify parameters
+		if(match_decl_with_call(l,$3) != 0)
+		{
+			throw_error(match_decl_with_call(l,$3), $1->line_number);
+		}
 
 		$$ = create_node_func_call($1, $3, l->token_type);
 

@@ -37,4 +37,12 @@ void add_function_args(ST_LINE* reg, Node* params);
 function_arg new_function_arg(Node* param);
 int get_lexeme_type(Lexeme* keyword);
 
+/** Compares a function call with its declaration.
+*   Returns
+*       0 <- if the function call is correct.
+*       ERR_MISSING_ARGS
+*       ERR_EXCESS_ARGS
+*       ERR_WRONG_TYPE_ARGS
+*/
+int match_decl_with_call(ST_LINE* decl, Node* params);
 #endif

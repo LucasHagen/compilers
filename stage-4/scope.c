@@ -64,37 +64,43 @@ ST_LINE* create_function_register(Node* node)
     return reg;
 }
 
-
+int count_params(Node* params){
+    Node* aux = params;
+    int i = 0;
+    if(params){
+        do{
+            i++;
+            aux = aux->seq;
+        }while(aux != NULL);
+    }
+    return i;
+}
 
 void add_function_args(ST_LINE* reg, Node* params){
-  Node* aux = params;
-  int i = 0;
-  if(params){
-    do{
-      i++;
-      aux = aux->seq;
-    }while(aux != NULL);
-    aux = params;
-
-    reg->function_args = (function_arg*) malloc(i*sizeof(function_arg));
-    reg->function_args[0] = new_function_arg(aux);
-    reg->num_function_args++;
-    while(aux->seq != NULL){
-      aux = aux->seq;
+    Node* aux = params;
+    int i = 0;;
+    if(params){
+        i = count_params(params);
+        aux = params;
+        reg->function_args = (function_arg*) malloc(i*sizeof(function_arg));
+        reg->function_args[0] = new_function_arg(aux);
+        reg->num_function_args++;
+        while(aux->seq != NULL){
+            aux = aux->seq;
       //reg->function_args = realloc(reg->function_args,reg->num_function_args*sizeof(struct fuction_argument));
-      reg->function_args[reg->num_function_args] = new_function_arg(aux);
-      reg->num_function_args++;
+            reg->function_args[reg->num_function_args] = new_function_arg(aux);
+            reg->num_function_args++;
+        }
     }
-  }
 
 #ifdef COMP_DEBUG
   printf("Added %d arguments\n",reg->num_function_args);
   for(i=0;i<reg->num_function_args;i++){
-    printf("Type: %d\nId: %s\n",reg->function_args[i].type,reg->function_args[i].identifier);
+    printf("Type: %d \tId: %s\n",reg->function_args[i].type,reg->function_args[i].identifier);
   }
 #endif
-  aux = NULL;
-  return;
+    aux = NULL;
+    return;
 }
 
 function_arg new_function_arg(Node* param){
@@ -163,4 +169,31 @@ ST_LINE* create_var_register(Node* node)
     // TODO: PARAMS
 
     return reg;
+}
+
+int match_decl_with_call(ST_LINE* decl, Node* params){
+    ST_LINE* call = (ST_LINE*) calloc(1,sizeof(ST_LINE));
+    Node* aux = params;
+
+    //Missing args.
+    if(decl->num_function_args > count_params(params)){
+        return ERR_MISSING_ARGS;
+    }
+    //Excess args.
+    else if(decl->num_function_args < count_params(params)){
+        return ERR_EXCESS_ARGS;
+    }
+    //Type mismatch.
+    int i;
+    for(i=0;i<decl->num_function_args;i++){
+#ifdef COMP_DEBUG
+        printf("Func Decl: %0d \t Func Call: %0d\n",decl->function_args[i].type,aux->val_type);
+#endif
+        if(decl->function_args[i].type != aux->val_type){
+            return ERR_WRONG_TYPE_ARGS;
+        }
+        aux = aux->seq;
+    }
+
+    return 0;
 }
