@@ -28,6 +28,10 @@ void yyerror (char const *s);
 
 void create_scope_stack();
 void add_func_params(Stack* stack, Node* function);
+void free_stack();
+void free_lines(Scope* scope);
+Scope* list[100];
+int tam_list = 0;
 %}
 
 %union {
@@ -194,7 +198,7 @@ initialize:
 destroy:
 	%empty
 	{
-
+		
 	};
 
 push_scope:
@@ -203,14 +207,17 @@ push_scope:
 		free_lexeme($1);
 
 		push(scope_stack, create_empty_scope());
+		list[tam_list] = (scope_stack->children[tam_list]);
+		tam_list++;
 	};
 
 pop_scope:
 	'}'
 	{
 		free_lexeme($1);
-
-		pop(scope_stack);
+		Scope* s = pop(scope_stack);
+		free_lines(s);
+		free(s);
 	};
 
 big_list:
@@ -368,6 +375,7 @@ function:
 		);
 
 		flag = 1;
+
 
 	};
 
@@ -1062,4 +1070,20 @@ void add_func_params(Stack* stack, Node* params){
 		}
 
 	}
+}
+
+void free_stack(){
+	int i;
+	for(i=0;i<tam_list;i++){
+		free_lines(list[i]);
+	}
+}
+
+void free_lines(Scope* scope){
+	if(scope != NULL){
+	int i;
+	for(i = 0; i < scope->size; i++){
+		free(scope->children[i]);
+	}
+}
 }

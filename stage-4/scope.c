@@ -23,12 +23,15 @@ Scope* create_empty_scope()
  */
 void add_register(Scope* stack, ST_LINE* value)
 {
+    ST_LINE** children;
     if(stack->size >= stack->max_size)
     {
         stack->max_size++;
 
-        stack->children = (ST_LINE**) realloc(stack->children,
+        children = (ST_LINE**) realloc(stack->children,
             stack->max_size * sizeof(ST_LINE**));
+        if(children != NULL)
+            stack->children = children;
     }
 
     stack->children[stack->size] = value;

@@ -5,7 +5,7 @@
 
 typedef struct stack_struct {
 
-    Scope** children;
+    Scope**       children;
     int           max_size;
     int           size    ;
 
