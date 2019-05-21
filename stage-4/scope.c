@@ -147,22 +147,43 @@ int get_lexeme_type(Lexeme* keyword){
   return NO_TYPE;
 }
 
-ST_LINE* create_literal(Lexeme* node, int nature){
-  ST_LINE* reg = (ST_LINE*) malloc(sizeof(ST_LINE));
-
-  switch(nature){
-    case NATUREZA_LITERAL_INT:
-      break;
-    case NATUREZA_LITERAL_FLOAT:
-      break;
-    case NATUREZA_LITERAL_CHAR:
-      break;
-    case NATUREZA_LITERAL_STRING:
-      break;
-    case NATUREZA_LITERAL_BOOL:
-      break;
-  }
-  return reg;
+ST_LINE* create_literal(Lexeme* lex, int nature){
+    ST_LINE* reg = (ST_LINE*) malloc(sizeof(ST_LINE));
+    reg->id                 = "";
+    reg->declaration_line   = lex->line_number;
+    reg->is_static          = 0;
+    reg->is_const           = 1;
+    reg->lexeme             = lex;
+    reg->num_function_args  = 0;
+    reg->function_args      = NULL;
+    switch(nature){
+        case NATUREZA_LITERAL_INT:
+            reg->token_type = INT;
+            reg->nature     = NATUREZA_LITERAL_INT;
+            reg->token_size = SIZE_INT;
+        break;
+        case NATUREZA_LITERAL_FLOAT:
+            reg->token_type = FLOAT;
+            reg->nature     = NATUREZA_LITERAL_FLOAT;
+            reg->token_size = SIZE_FLOAT;
+        break;
+        case NATUREZA_LITERAL_CHAR:
+            reg->token_type = CHAR;
+            reg->nature     = NATUREZA_LITERAL_CHAR;
+            reg->token_size = SIZE_CHAR;
+        break;
+        case NATUREZA_LITERAL_STRING:
+            reg->token_type = STRING;
+            reg->nature     = NATUREZA_LITERAL_STRING;
+            reg->token_size = SIZE_STRING*strlen(reg->id);
+        break;
+        case NATUREZA_LITERAL_BOOL:
+            reg->token_type = BOOL;
+            reg->nature     = NATUREZA_LITERAL_BOOL;
+            reg->token_size = SIZE_BOOL;
+        break;
+    }
+    return reg;
 }
 
 ST_LINE* create_var_register(Node* node)
@@ -179,7 +200,6 @@ ST_LINE* create_var_register(Node* node)
     reg->lexeme             = node->n_var_decl.identifier;
     reg->num_function_args  = 0;
     reg->function_args      = NULL;
-    // TODO: PARAMS
 
     return reg;
 }
