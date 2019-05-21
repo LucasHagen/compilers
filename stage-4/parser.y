@@ -555,7 +555,7 @@ c_attr:
 c_input:
 	TK_PR_INPUT expression
 	{
-		$$ = create_node_input($2);
+		$$ = create_node_input($2, $1->line_number);
 
 		free_lexeme($1);
 	};
@@ -563,7 +563,7 @@ c_input:
 c_output:
 	TK_PR_OUTPUT c_output_exp_list
 	{
-		$$ = create_node_output($2);
+		$$ = create_node_output($2, $1->line_number);
 
 		free_lexeme($1);
 	};

@@ -467,27 +467,42 @@ struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value, 
     }
     if(value->val_type != var_type)
     {
-        printf("%d -> %d (%d)\n", value->val_type, var_type, value->type);
         type_infer(var_type, value->val_type, identifier->line_number);
     }
 
     return node;
 }
 
-struct node* create_node_input(Node* input)
+struct node* create_node_input(Node* input, int line)
 {
     Node* node = new_node(NODE_TYPE_INPUT);
 
     node->n_io.params = input;
 
+    if(input != NULL && input->type != NODE_TYPE_VAR_ACCESS)
+    {
+        throw_error(ERR_WRONG_PAR_INPUT, line);
+    }
+
     return node;
 }
 
-struct node* create_node_output(Node* output)
+struct node* create_node_output(Node* output, int line)
 {
     struct node* node = new_node(NODE_TYPE_OUTPUT);
 
     node->n_io.params = output;
+
+    Node* aux = output;
+    while(aux != NULL)
+    {
+        if(!(aux->type == NODE_TYPE_LITERAL && aux->n_literal.literal->literal_type == STRING) &&
+        !(aux->type == NODE_TYPE_BIN_OP) && !(aux->type == NODE_TYPE_TER_OP) && !(node->type == NODE_TYPE_UN_OP))
+        {
+            throw_error(ERR_WRONG_PAR_OUTPUT, line);
+        }
+        aux = aux->seq;
+    }
 
     return node;
 }

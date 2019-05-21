@@ -124,6 +124,7 @@ int get_lexeme_type(Lexeme* keyword){
     else
       return NO_TYPE;
   }
+  return NO_TYPE;
 }
 
 ST_LINE* create_literal(Lexeme* node, int nature){

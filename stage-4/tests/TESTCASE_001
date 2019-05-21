@@ -61,8 +61,11 @@ int simple_commands () {
   vector[2] = xis * xis;
 
   // I/O commands:
-  output("Digite um valor para xis");
-  input(&xis);
+  output ("Digite um valor para xis");
+  output 1 + 2;
+  // output 'a';
+  // output true;
+  input xis;
 
   // Function call:
   print_xis(xis);
