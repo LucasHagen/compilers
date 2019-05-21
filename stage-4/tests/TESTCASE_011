@@ -1,0 +1,3 @@
+xis int;
+int function (int x, float y, char c, char xa, int z) {
+}

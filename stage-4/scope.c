@@ -84,10 +84,12 @@ void add_function_args(ST_LINE* reg, Node* params){
       reg->num_function_args++;
     }
   }
+#ifdef COMP_DEBUG
   printf("Added %d arguments\n",reg->num_function_args);
   for(i=0;i<reg->num_function_args;i++){
     printf("Type: %d\nId: %s\n",reg->function_args[i].type,reg->function_args[i].identifier);
   }
+#endif
   aux = NULL;
   return;
 }
