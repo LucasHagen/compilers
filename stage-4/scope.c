@@ -202,7 +202,12 @@ int match_decl_with_call(ST_LINE* decl, Node* params){
 #ifdef COMP_DEBUG
         printf("Func Decl: %0d \t Func Call: %0d\n",decl->function_args[i].type,aux->val_type);
 #endif
-        if(decl->function_args[i].type != aux->val_type){
+        int t1 = decl->function_args[i].type;
+        int t2 = aux->val_type;
+        if(t1 != t2 &&
+            !((t1 == BOOL || t1 == INT || t1 == FLOAT) &&
+             (t2 == BOOL || t2 == INT || t2 == FLOAT))
+        ){
             return ERR_WRONG_TYPE_ARGS;
         }
         aux = aux->seq;
