@@ -1,9 +1,11 @@
 #include "tree.h"
-#include "printer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "printer.h"
+#include "defines.h"
 
 /*
 	Authors:
@@ -250,14 +252,32 @@ int free_lexeme(Lexeme* lex)
     return 1;
 }
 
-
-struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse)
+struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse, int line)
 {
     struct node* node = new_node(NODE_TYPE_TER_OP);
 
     node->n_if.condition = condition;
     node->n_if.n_true    = ifTrue;
     node->n_if.n_false   = ifFalse;
+
+    type_infer(condition->val_type, BOOL, line);
+
+    if(ifTrue != NULL && ifFalse != NULL)
+    {
+        if(ifTrue->val_type == NO_TYPE || ifFalse->val_type == NO_TYPE)
+        {
+            throw_error(ERR_WRONG_TYPE, line);
+        }
+        else if(ifTrue->val_type == ifFalse->val_type)
+        {
+            node->val_type = ifTrue->val_type;
+        }
+        else
+        {
+            node->val_type = type_infer(ifTrue->val_type, ifFalse->val_type, line);
+        }
+    }
+
 
     return node;
 }
@@ -270,6 +290,8 @@ struct node* create_node_bin_op(Lexeme* op, Node* left, Node* right)
     node->n_bin_op.left = left;
     node->n_bin_op.right = right;
 
+    node->val_type = type_infer(left->val_type, right->val_type, op->line_number);
+
     return node;
 }
 
@@ -277,13 +299,17 @@ struct node* create_node_un_op(Lexeme* op, Node* operand)
 {
     struct node* node = new_node(NODE_TYPE_UN_OP);
 
+    if(operand != NULL)
+    {
+        node->val_type = operand->val_type;
+    }
     node->n_un_op.op = op;
     node->n_un_op.operand = operand;
 
     return node;
 }
 
-struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse)
+struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse, int line)
 {
     struct node* node = new_node(NODE_TYPE_IF);
 
@@ -291,10 +317,12 @@ struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse)
     node->n_if.n_true = ifTrue;
     node->n_if.n_false = ifFalse;
 
+    type_infer(condition->val_type, BOOL, line);
+
     return node;
 }
 
-struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code)
+struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code, int line)
 {
     struct node* node = new_node(NODE_TYPE_FOR);
 
@@ -303,27 +331,34 @@ struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node
     node->n_for.increment   = increment;
     node->n_for.code        = code;
 
+    type_infer(condition->val_type, BOOL, line);
+
     return node;
 }
 
 
-struct node* create_node_while(Node* condition, Node* code)
+struct node* create_node_while(Node* condition, Node* code, int line)
 {
     struct node* node = new_node(NODE_TYPE_WHILE);
 
     node->n_while.condition = condition;
     node->n_while.code      = code;
 
+    type_infer(condition->val_type, BOOL, line);
+
     return node;
 }
 
 
-struct node* create_node_func_call(Lexeme* identifier, Node* parameters)
+struct node* create_node_func_call(Lexeme* identifier, Node* parameters, int type)
 {
     struct node* node = new_node(NODE_TYPE_FUNC_CALL);
 
+    node->val_type = type;
     node->n_call_or_access.identifier       = identifier;
     node->n_call_or_access.index_or_param   = parameters;
+
+    // check params
 
     return node;
 }
@@ -357,27 +392,38 @@ struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_con
     return node;
 }
 
-struct node* create_node_var_access(Lexeme* identifier, Node* index)
+struct node* create_node_var_access(Lexeme* identifier, Node* index, int type)
 {
     struct node* node = new_node(NODE_TYPE_VAR_ACCESS);
 
+    node->val_type = type;
     node->n_call_or_access.identifier     = identifier;
     node->n_call_or_access.index_or_param = index;
+
+    if(index != NULL)
+    {
+        type_infer(index->val_type, INT, identifier->line_number);
+    }
 
     return node;
 }
 
-struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value)
+struct node* create_node_var_decl(Lexeme* identifier, Lexeme* type, int is_static, int is_const, Node* value)
 {
     struct node* node = new_node(NODE_TYPE_VAR_DECL);
 
     node->val_type                = get_type_id(type);
     node->n_var_decl.identifier   = identifier;
-    node->n_var_decl.size         = size;
+    node->n_var_decl.size         = NULL;
     node->n_var_decl.type         = type;
     node->n_var_decl.is_static    = is_static;
     node->n_var_decl.is_const     = is_const;
     node->n_var_decl.value        = value;
+
+    if(value != NULL && value->val_type != get_type_id(type))
+    {
+        type_infer(node->val_type, value->val_type, identifier->line_number);
+    }
 
     return node;
 }
@@ -394,16 +440,36 @@ struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme*
     node->n_var_decl.is_const     = 0;
     node->n_var_decl.value        = value;
 
+    if(size != NULL)
+    {
+        type_infer(size->val_type, INT, identifier->line_number);
+    }
+
+    if(value != NULL && value->val_type != get_type_id(type))
+    {
+        type_infer(node->val_type, value->val_type, identifier->line_number);
+    }
+
     return node;
 }
 
-struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value)
+struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value, int var_type)
 {
     struct node* node = new_node(NODE_TYPE_VAR_ATTR);
 
     node->n_var_attr.identifier = identifier;
     node->n_var_attr.index = index;
     node->n_var_attr.value = value;
+
+    if(index != NULL)
+    {
+        type_infer(index->val_type, INT, identifier->line_number);
+    }
+    if(value->val_type != var_type)
+    {
+        printf("%d -> %d (%d)\n", value->val_type, var_type, value->type);
+        type_infer(var_type, value->val_type, identifier->line_number);
+    }
 
     return node;
 }
@@ -440,7 +506,6 @@ struct node* create_node_shift_right()
     return node;
 }
 
-
 struct node* create_node_return(Node* expression)
 {
     struct node* node = new_node(NODE_TYPE_RETURN);
@@ -469,6 +534,7 @@ struct node* create_node_literal(Lexeme* value)
     struct node* node = new_node(NODE_TYPE_LITERAL);
 
     node->n_literal.literal = value;
+    node->val_type = value->literal_type;
 
     return node;
 }
@@ -506,4 +572,104 @@ int get_type_id(Lexeme* type)
     }
 
     return -1;
+}
+
+void throw_error(int error_code, int line_number)
+{
+    const char* err_format = "Erro na linha %d: %s;\n";
+    switch(error_code)
+    {
+        case ERR_UNDECLARED:
+        	printf(err_format, line_number, "identificador não declarado");
+        	break;
+
+        case ERR_DECLARED:
+        	printf(err_format, line_number, "identificador já declarado");
+        	break;
+
+        case ERR_VARIABLE:
+        	printf(err_format, line_number, "identificador deve ser utilizado como variável");
+        	break;
+
+        case ERR_VECTOR:
+        	printf(err_format, line_number, "identificador deve ser utilizado como vetor");
+        	break;
+
+        case ERR_FUNCTION:
+        	printf(err_format, line_number, "identificador deve ser utilizado como função");
+        	break;
+
+        case ERR_WRONG_TYPE:
+        	printf(err_format, line_number, "tipos incompatíveis");
+        	break;
+
+        case ERR_STRING_TO_X:
+        	printf(err_format, line_number, "coerção impossível de var do tipo string");
+        	break;
+
+        case ERR_CHAR_TO_X:
+        	printf(err_format, line_number, "coerção impossível de var do tipo char");
+        	break;
+
+        case ERR_MISSING_ARGS:
+        	printf(err_format, line_number, "faltam argumentos");
+        	break;
+
+        case ERR_EXCESS_ARGS:
+        	printf(err_format, line_number, "sobram argumentos");
+        	break;
+
+        case ERR_WRONG_TYPE_ARGS:
+        	printf(err_format, line_number, "argumentos incompatíveis");
+        	break;
+
+        case ERR_WRONG_PAR_INPUT:
+        	printf(err_format, line_number, "parâmetro não é identificador");
+        	break;
+
+        case ERR_WRONG_PAR_OUTPUT:
+        	printf(err_format, line_number, "parâmetro não é literal string ou expressão");
+        	break;
+
+        case ERR_WRONG_PAR_RETURN:
+        	printf(err_format, line_number, "parâmetro não é expressão compatível com tipo do retorno");
+        	break;
+
+        default:
+            printf("Erro na linha %d;\n", line_number);
+            break;
+    }
+    exit(error_code);
+}
+
+int type_infer(int type1, int type2, int line_number)
+{
+    if(type1 == NO_TYPE || type2 == NO_TYPE) {
+        throw_error(ERR_WRONG_TYPE, line_number);
+    }
+    if(type1 == STRING || type2 == STRING) {
+        throw_error(ERR_STRING_TO_X, line_number);
+    }
+    if(type1 == CHAR || type2 == CHAR) {
+        throw_error(ERR_CHAR_TO_X, line_number);
+    }
+
+    if(type1 == type2){
+        return type1;
+    }
+
+    if((type1 == FLOAT && (type2 == BOOL || type2 == INT)) ||
+       (type2 == FLOAT && (type1 == BOOL || type1 == INT)))
+    {
+        return FLOAT;
+    }
+
+    if((type1 == INT && type2 == BOOL) ||
+       (type2 == INT && type1 == BOOL))
+    {
+        return INT;
+    }
+
+    throw_error(ERR_WRONG_TYPE, line_number);
+    return NO_TYPE;
 }

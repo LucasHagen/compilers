@@ -10,7 +10,8 @@ var2 string;
 // Testing the function structure:
 
 static float test1 () {
-
+    float s <= 1;
+    bool as <= 1;
 }
 
 char return_a () {
@@ -55,6 +56,8 @@ int simple_commands () {
 
   // Attribuition commands:
   xis = 123;
+  char h <= 'a';
+  xis = xis ? 123 : 12345;
   vector[2] = xis * xis;
 
   // I/O commands:

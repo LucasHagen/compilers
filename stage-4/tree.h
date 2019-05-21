@@ -160,19 +160,19 @@ void free_node(Node* node);
 
 //  ===== CREATE SPECIFIC NODES FOR EACH THING =====
 
-struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse);
+struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse, int line);
 struct node* create_node_bin_op(Lexeme* op, Node* left, Node* right);
 struct node* create_node_un_op(Lexeme* op, Node* operand);
-struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse);
-struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code);
-struct node* create_node_while(Node* condition, Node* code);
-struct node* create_node_func_call(Lexeme* identifier, Node* parameters);
+struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse, int line);
+struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node* code, int line);
+struct node* create_node_while(Node* condition, Node* code, int line);
+struct node* create_node_func_call(Lexeme* identifier, Node* parameters, int type);
 struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_static, Node* parameters, Node* code);
 struct node* create_node_func_param(Lexeme* identifier, Lexeme* type, int is_const);
-struct node* create_node_var_access(Lexeme* identifier, Node* index);
-struct node* create_node_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, int is_const, Node* value);
+struct node* create_node_var_access(Lexeme* identifier, Node* index, int type);
+struct node* create_node_var_decl(Lexeme* identifier, Lexeme* type, int is_static, int is_const, Node* value);
 struct node* create_node_global_var_decl(Lexeme* identifier, Node* size, Lexeme* type, int is_static, Node* value);
-struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value);
+struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value, int type);
 struct node* create_node_input(Node* input);
 struct node* create_node_output(Node* output);
 struct node* create_node_shift_left();
@@ -184,6 +184,10 @@ struct node* create_node_literal(Lexeme* value);
 struct node* create_node_command_block(Node* first_command);
 
 int get_type_id(Lexeme* type);
+
+int type_infer(int type1, int type2, int line);
+
+void throw_error(int error_code, int line_number);
 
 
 #endif // TREE_H

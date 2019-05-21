@@ -475,7 +475,6 @@ c_declare_variable:
 
 		$$ = create_node_var_decl(
 			$4,
-			NULL,
 			$3,
 			$1,
 			$2,
@@ -518,7 +517,7 @@ c_declare_attr_value:
 			throw_error(ERR_VECTOR, $1->line_number);
 		}
 
-		$$ = create_node_var_access($1, NULL);
+		$$ = create_node_var_access($1, NULL, line->token_type);
 	};
 
 c_attr:
@@ -542,7 +541,7 @@ c_attr:
 			throw_error(ERR_VARIABLE, $1->line_number);
 		}
 
-		$$ = create_node_var_attr($1, $2, $4);
+		$$ = create_node_var_attr($1, $2, $4, line->token_type);
 
 		free_lexeme($3);
 	};
@@ -594,7 +593,7 @@ c_call_func:
 		}
 		// TODO: verify parameters
 
-		$$ = create_node_func_call($1, $3);
+		$$ = create_node_func_call($1, $3, l->token_type);
 
 		free_lexeme($2);
 		free_lexeme($4);
@@ -672,7 +671,7 @@ c_break:
 c_if:
 	TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else
 	{
-		$$ = create_node_if($3, $6, $7);
+		$$ = create_node_if($3, $6, $7, $1->line_number);
 
 		free_lexeme($1);
 		free_lexeme($2);
@@ -695,7 +694,7 @@ c_else:
 c_for:
 	TK_PR_FOR '(' c_for_command_list ':' expression ':' c_for_command_list ')' commands_block
 	{
-		$$ = create_node_for($3, $5, $7, $9);
+		$$ = create_node_for($3, $5, $7, $9, $1->line_number);
 
 		free_lexeme($1);
 		free_lexeme($2);
@@ -758,7 +757,7 @@ c_for_no_comma:
 c_while:
 	TK_PR_WHILE '(' expression ')' TK_PR_DO commands_block
 	{
-		$$ = create_node_while($3,$6);
+		$$ = create_node_while($3,$6,$1->line_number);
 
 		free_lexeme($1);
 		free_lexeme($2);
@@ -839,10 +838,12 @@ expression:
 	{
 		$$ = $1;
 		$$->n_un_op.operand = $2;
+
+		$$->val_type = $2->val_type;
 	}|
 	expression QUESTION expression ':' expression %prec QUESTION
 	{
-		$$ = create_node_ter_op($1, $3, $5);
+		$$ = create_node_ter_op($1, $3, $5, $4->line_number);
 
 		free_lexeme($2);
 		free_lexeme($4);
@@ -886,7 +887,7 @@ identifier:
 			throw_error(ERR_VECTOR, $1->line_number);
 		}
 
-		$$ = create_node_var_access($1, NULL);
+		$$ = create_node_var_access($1, NULL, line->token_type);
 	}|
 	TK_IDENTIFICADOR '[' expression ']'
 	{
@@ -904,7 +905,7 @@ identifier:
 			throw_error(ERR_VARIABLE, $1->line_number);
 		}
 
-		$$ = create_node_var_access($1, $3);
+		$$ = create_node_var_access($1, $3, line->token_type);
 
 		free_lexeme($2);
 		free_lexeme($4);
