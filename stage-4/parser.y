@@ -656,6 +656,8 @@ c_call_list_exp:
 c_shift:
 	identifier c_shift_symbol expression
 	{
+		type_infer($3->val_type, INT, $1->n_call_or_access.identifier->line_number);
+
 		$$ = $2;
 		$$->n_shift.var = $1;
 		$$->n_shift.count = $3;

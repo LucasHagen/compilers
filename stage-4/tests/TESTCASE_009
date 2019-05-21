@@ -42,16 +42,22 @@ int cm_ex () {
   return x;
 }
 
+vector[10] int;
 
 //Testing simple commands:
+
+int print_xis(int xx)
+{
+
+}
 
 int simple_commands () {
   // Variable declaration:
   int xis;
   static float x;
   static const float y <= 3.1415;
-  y = '\n';
-  y = "string";
+  char y2 <= '\n';
+  string hhh <= "string";
 
   // Attribuition commands:
   xis = 2;
@@ -59,7 +65,7 @@ int simple_commands () {
 
   // I/O commands:
   output("Digite um valor para xis");
-  input(&xis);
+  input xis;
 
   // Function call:
   print_xis(xis);
@@ -75,7 +81,8 @@ int simple_commands () {
   return xis;
   break;
   continue;
-
+  int z;
+  float k;
   // if, for, while:
   if (x==1) then
   {
@@ -95,6 +102,8 @@ int simple_commands () {
     k=0;
   };
 
+  int i;
+  int j;
   for(i=0:i<100:i=i+1)
   {
     j=j+1;
@@ -114,7 +123,7 @@ int simple_commands () {
   test = *xis;
   test = &(*(x+1));
   test = ?(!false);
-  test = #vector;
+  test = vector[1];
   test = xis + xis + xis;
   test = xis * xis / xis;
   test = xis % 4;
@@ -124,6 +133,15 @@ int simple_commands () {
   test = xis ? (1+9) * 10 : 0;
 }
 
+char funcaooo()
+{
+
+}
+
+string funcaaooo2(int a, int b, int c, int d)
+{
+
+}
 
 int main() {
     int x <= 10;
@@ -135,5 +153,5 @@ int main() {
     funcaooo();
     funcaaooo2(10, 20, true, x);
 
-    x[10] << 1;
+    x << 1;
 }

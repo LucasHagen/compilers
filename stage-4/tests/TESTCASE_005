@@ -1,4 +1,5 @@
 int main () {
+  char y;
   y = '\a';
   y = '\b';
   y = '\f';

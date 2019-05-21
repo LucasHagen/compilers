@@ -139,7 +139,7 @@ int simple_commands () {
 }
 
 int funcaooo() {}
-int funcaaooo2(int a, int b, bool c, int d) {}
+int funcaaooo2(int a, int b, int c, int d) {}
 
 int main() {
     int x <= 10;

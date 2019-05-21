@@ -1,4 +1,4 @@
-int main(char h){
+int main(int h){
     int x;
     if(true) then {
         x = 1;
@@ -6,7 +6,7 @@ int main(char h){
         x = 2;
     };
 
-    if( 123123 + 111 + main(x * 2.0)) then {
+    if(123123 + 111 + main(x * 2.0)) then {
         x = 20;
     };
     x = 1 + 2 * 3 * (4+2);
