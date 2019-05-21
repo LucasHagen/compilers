@@ -64,16 +64,17 @@ ST_LINE* create_function_register(Node* node)
     return reg;
 }
 
+
 void add_function_args(ST_LINE* reg, Node* params){
   Node* aux = params;
-  int i = -1;
-  do{
-    i++;
-    aux = aux->seq;
-  }while(aux != NULL);
-
-  aux = params;
+  int i = 0;
   if(params){
+    do{
+      i++;
+      aux = aux->seq;
+    }while(aux != NULL);
+    aux = params;
+
     reg->function_args = (function_arg*) malloc(i*sizeof(function_arg));
     reg->function_args[0] = new_function_arg(aux);
     reg->num_function_args++;
@@ -84,6 +85,7 @@ void add_function_args(ST_LINE* reg, Node* params){
       reg->num_function_args++;
     }
   }
+
 #ifdef COMP_DEBUG
   printf("Added %d arguments\n",reg->num_function_args);
   for(i=0;i<reg->num_function_args;i++){
