@@ -233,26 +233,32 @@ literal:
 	TK_LIT_TRUE
 	{
 		$$ = create_node_literal($1);
+		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_FALSE
 	{
 		$$ = create_node_literal($1);
+		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_STRING
 	{
 		$$ = create_node_literal($1);
+		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_STRING));
 	}|
 	TK_LIT_CHAR
 	{
 		$$ = create_node_literal($1);
+		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_CHAR));
 	}|
 	TK_LIT_INT
 	{
 		$$ = create_node_literal($1);
+		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_INT));
 	}|
 	TK_LIT_FLOAT
 	{
 		$$ = create_node_literal($1);
+		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_FLOAT));
 	};
 
 type:

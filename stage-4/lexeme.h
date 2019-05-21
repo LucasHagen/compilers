@@ -65,6 +65,12 @@ typedef struct lexeme {
     union literal_value token_value;
 } Lexeme;
 
+typedef struct fuction_argument{
+  int type;
+  char* identifier;
+  int is_const;
+}function_arg;
+
 typedef struct line {
   char* id;
   int declaration_line;
@@ -75,8 +81,7 @@ typedef struct line {
   int is_const;
   Lexeme* lexeme;
   int num_function_args;
-  //function_args* function_args;
-
+  function_arg* function_args;
 } ST_LINE;
 
 #endif

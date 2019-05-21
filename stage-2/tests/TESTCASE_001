@@ -20,7 +20,7 @@ char return_a () {
   return 'a';
 }
 
-static const int do_nothing () {
+static int do_nothing () {
 
 }
 
@@ -50,6 +50,8 @@ int simple_commands () {
   int xis;
   static float x;
   static const float y <= 3.1415;
+  y = '\n';
+  y = "string";
 
   // Attribuition commands:
   xis = 2;

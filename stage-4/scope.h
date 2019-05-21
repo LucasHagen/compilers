@@ -27,5 +27,13 @@ ST_LINE* identifier_in_scope(Scope* scope, char* id);
 
 ST_LINE* create_function_register(Node* node);
 ST_LINE* create_var_register(Node* node);
+ST_LINE* create_literal(Lexeme* node, int nature);
+
+void throw_error(int error_code, int line_number);
+
+//A lista de argumentos está invertida !!!!!!!!!!!!!!
+void add_function_args(ST_LINE* reg, Node* params);
+function_arg new_function_arg(Node* param);
+int get_lexeme_type(Lexeme* keyword);
 
 #endif
