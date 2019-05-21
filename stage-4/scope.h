@@ -23,9 +23,11 @@ Scope* create_empty_scope();
  */
 void add_register(Scope* stack, ST_LINE* value);
 
+ST_LINE* get_top_register(Scope* scope);
+
 ST_LINE* identifier_in_scope(Scope* scope, char* id);
 
-ST_LINE* create_function_register(Node* node);
+ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type, int is_static);
 ST_LINE* create_var_register(Node* node);
 ST_LINE* create_literal(Lexeme* node, int nature);
 

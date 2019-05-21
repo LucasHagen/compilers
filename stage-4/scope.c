@@ -35,6 +35,18 @@ void add_register(Scope* stack, ST_LINE* value)
     stack->size++;
 }
 
+ST_LINE* get_top_register(Scope* scope)
+{
+    ST_LINE* result = NULL;
+
+    if(scope->size != 0)
+    {
+        result = scope->children[scope->size - 1];
+    }
+
+    return result;
+}
+
 ST_LINE* identifier_in_scope(Scope* scope, char* id)
 {
     for(int i = scope->size - 1; i >= 0; i--)
@@ -48,19 +60,20 @@ ST_LINE* identifier_in_scope(Scope* scope, char* id)
     return NULL;
 }
 
-ST_LINE* create_function_register(Node* node)
+ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type, int is_static)
 {
     ST_LINE* reg = (ST_LINE*) malloc(sizeof(ST_LINE));
-    reg->id                 = node->n_func_decl.identifier->token_value.v_string;
-    reg->declaration_line   = node->n_func_decl.identifier->line_number;
+    reg->id                 = identifier->token_value.v_string;
+    reg->declaration_line   = identifier->line_number;
     reg->nature             = NATUREZA_FUNCAO;
-    reg->token_type         = node->val_type;
+    reg->token_type         = val_type;
     reg->token_size         = strlen(reg->id);
-    reg->is_static          = node->n_func_decl.is_static;
+    reg->is_static          = is_static;
     reg->is_const           = 0;
-    reg->lexeme             = node->n_func_decl.identifier;
+    reg->lexeme             = identifier;
     reg->num_function_args  = 0;
-    add_function_args(reg,node->n_func_decl.param);
+
+    add_function_args(reg, params);
     return reg;
 }
 
@@ -172,7 +185,7 @@ ST_LINE* create_var_register(Node* node)
 }
 
 int match_decl_with_call(ST_LINE* decl, Node* params){
-    ST_LINE* call = (ST_LINE*) calloc(1,sizeof(ST_LINE));
+    //ST_LINE* call = (ST_LINE*) calloc(1,sizeof(ST_LINE));
     Node* aux = params;
 
     //Missing args.

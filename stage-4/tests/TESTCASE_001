@@ -14,8 +14,8 @@ static float test1 () {
     bool as <= 1;
 }
 
-char return_a () {
-  return 'a';
+int return_a () {
+  return true;
 }
 
 static int do_nothing () {
@@ -44,9 +44,9 @@ int cm_ex () {
 
 //Testing simple commands:
 
-int print_xis(int i)
+string print_xis(int i)
 {
-
+    return "asasd";
 }
 
 int simple_commands () {
@@ -139,7 +139,7 @@ int simple_commands () {
 }
 
 int funcaooo() {}
-int funcaaooo2() {}
+int funcaaooo2(int a, int b, bool c, int d) {}
 
 int main() {
     int x <= 10;

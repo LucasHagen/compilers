@@ -340,25 +340,35 @@ const:
 	};
 
 function:
-	static type TK_IDENTIFICADOR '(' function_parameters ')' push_scope {add_func_params(scope_stack,$5);} body pop_scope
+	static type TK_IDENTIFICADOR '(' function_parameters ')'
 	{
 		if(identifier_in_stack(scope_stack, $3->token_value.v_string))
 		{
 			throw_error(ERR_DECLARED, $2->line_number);
 		}
 
+		ST_LINE* line = create_function_register($3, $5, get_type_id($2), $1);
+
+		add_register(top(scope_stack), line);
+		free_lexeme($4);
+		free_lexeme($6);
+	}
+	push_scope
+	{
+		add_func_params(scope_stack, $5);
+	}
+	body pop_scope
+	{
 		$$ = create_node_func_decl(
 			$3,
 			$2,
 			$1,
 			$5,
-			$9
+			$10
 		);
 
 		flag = 1;
-		free_lexeme($4);
-		free_lexeme($6);
-		add_register(top(scope_stack), create_function_register($$));
+
 	};
 
 function_parameters:
@@ -669,6 +679,20 @@ c_return:
 	TK_PR_RETURN expression
 	{
 		$$ = create_node_return($2);
+
+		ST_LINE* func = get_top_register(scope_stack->children[0]);
+
+		if(func->token_type != $$->n_io.params->val_type || $$->n_io.params->val_type == NO_TYPE)
+		{
+			int t1 = func->token_type;
+			int t2 = $$->n_io.params->val_type;
+
+			if(!(t1 == INT || t1 == FLOAT || t1 == BOOL) ||
+				!(t2 == INT || t2 == FLOAT || t2 == BOOL))
+			{
+				throw_error(ERR_WRONG_PAR_RETURN, $1->line_number);
+			}
+		}
 
 		free_lexeme($1);
 	};
