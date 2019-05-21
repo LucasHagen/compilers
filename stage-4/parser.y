@@ -1040,17 +1040,24 @@ void create_scope_stack() {
 }
 
 void add_func_params(Stack* stack, Node* params){
-	ST_LINE* line = (ST_LINE*) malloc(sizeof(ST_LINE));
+
 	if(params != NULL){
+
 		Node* aux = params;
-    	ST_LINE* line = (ST_LINE*) malloc(sizeof(ST_LINE));
-		line = create_var_register(aux);
+    	ST_LINE* line = create_var_register(aux);
 		add_register(top(stack), line);
+
 		while(aux->seq != NULL){
-			aux=aux->seq;
+			aux = aux->seq;
+
+			if(identifier_in_scope(top(stack), aux->n_var_decl.identifier->token_value.v_string))
+			{
+				throw_error(ERR_DECLARED, aux->n_var_decl.identifier->line_number);
+			}
+
 			line = create_var_register(aux);
 			add_register(top(stack), line);
 		}
+
 	}
-	free(line);
 }
