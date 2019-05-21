@@ -51,7 +51,7 @@ ST_LINE* identifier_in_scope(Scope* scope, char* id)
 {
     for(int i = scope->size - 1; i >= 0; i--)
     {
-        if(strcmp(scope->children[i]->id, id) == 0)
+        if(scope->children[i]->nature > NATUREZA_LITERAL_BOOL && strcmp(scope->children[i]->id, id) == 0)
         {
             return scope->children[i];
         }
