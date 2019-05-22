@@ -31,6 +31,8 @@ ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type
 ST_LINE* create_var_register(Node* node);
 ST_LINE* create_literal(Lexeme* node, int nature);
 
+int type_size(int type);
+
 void throw_error(int error_code, int line_number);
 
 

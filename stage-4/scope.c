@@ -70,7 +70,7 @@ ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type
     reg->declaration_line   = identifier->line_number;
     reg->nature             = NATUREZA_FUNCAO;
     reg->token_type         = val_type;
-    reg->token_size         = strlen(reg->id);
+    reg->token_size         = type_size(val_type);
     reg->is_static          = is_static;
     reg->is_const           = 0;
     reg->lexeme             = identifier;
@@ -155,7 +155,7 @@ int get_lexeme_type(Lexeme* keyword){
 
 ST_LINE* create_literal(Lexeme* lex, int nature){
     ST_LINE* reg = (ST_LINE*) malloc(sizeof(ST_LINE));
-    reg->id                 = "";
+    reg->id                 = (char*) "";
     reg->declaration_line   = lex->line_number;
     reg->is_static          = 0;
     reg->is_const           = 1;
@@ -200,7 +200,7 @@ ST_LINE* create_var_register(Node* node)
     reg->declaration_line   = node->n_var_decl.identifier->line_number;
     reg->nature             = NATUREZA_VARIAVEL;
     reg->token_type         = node->val_type;
-    reg->token_size         = strlen(reg->id);
+    reg->token_size         = type_size(node->val_type);
     reg->is_static          = node->n_var_decl.is_static;
     reg->is_const           = node->n_var_decl.is_const;
     reg->lexeme             = node->n_var_decl.identifier;
@@ -208,6 +208,29 @@ ST_LINE* create_var_register(Node* node)
     reg->function_args      = NULL;
 
     return reg;
+}
+
+int type_size(int type)
+{
+    switch(type)
+    {
+        case INT:
+            return SIZE_INT;
+            break;
+        case FLOAT:
+            return SIZE_FLOAT;
+            break;
+        case BOOL:
+            return SIZE_BOOL;
+            break;
+        case CHAR:
+            return SIZE_CHAR;
+            break;
+        case STRING:
+            return SIZE_STRING;
+            break;
+    }
+    return 1;
 }
 
 int match_decl_with_call(ST_LINE* decl, Node* params){
