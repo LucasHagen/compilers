@@ -120,16 +120,19 @@ void add_function_args(ST_LINE* reg, Node* params){
 }
 
 function_arg new_function_arg(Node* param){
-  function_arg arg;
-  int type = get_lexeme_type(param->n_var_decl.type);
-  if(type == NO_TYPE)
-    printf("Erro na captura do tipo do parametro de funcao\n");
-  else{
-    arg.type = type;
-    arg.is_const = param->n_var_decl.is_const;
-    arg.identifier = strdup(param->n_var_decl.identifier->token_value.v_string);
-  }
-  return arg;
+    function_arg arg;
+    int type = get_lexeme_type(param->n_var_decl.type);
+    if(type == NO_TYPE)
+    {
+        printf("Erro na captura do tipo do parametro de funcao\n");
+    }
+    else
+    {
+        arg.type = type;
+        arg.is_const = param->n_var_decl.is_const;
+        arg.identifier = param->n_var_decl.identifier->token_value.v_string;
+    }
+    return arg;
 }
 
 int get_lexeme_type(Lexeme* keyword){

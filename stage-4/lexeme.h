@@ -69,7 +69,7 @@ typedef struct fuction_argument{
   int type;
   char* identifier;
   int is_const;
-}function_arg;
+} function_arg;
 
 typedef struct line {
   char* id;

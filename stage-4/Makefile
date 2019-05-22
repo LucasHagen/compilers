@@ -5,7 +5,7 @@
 CC=gcc
 CFLAGS=-lfl -lm
 ETAPA=etapa4
-FILES=scanner.yy.c parser.tab.c tree.c stack.c printer.c table.c scope.c main.c
+FILES=scanner.yy.c parser.tab.c tree.c stack.c printer.c scope.c main.c
 
 bison: parser.y
 	bison -d parser.y
