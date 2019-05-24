@@ -186,6 +186,7 @@ struct node* create_node_command_block(Node* first_command);
 int get_type_id(Lexeme* type);
 
 int type_infer(int type1, int type2, int line);
+int can_set_type(int var_type, int value_type, int line);
 
 void throw_error(int error_code, int line_number);
 

@@ -53,9 +53,13 @@ void free_tree(Node* root)
 
 void free_node(Node* node){
     if(node != NULL){
+#ifdef COMP_DEBUG
         int seq_type = -1;
+#endif
         if(node->seq != NULL) {
+#ifdef COMP_DEBUG
             seq_type = node->seq->type;
+#endif
             free_node(node->seq);
             node->seq = NULL;
         }
@@ -496,8 +500,14 @@ struct node* create_node_output(Node* output, int line)
     Node* aux = output;
     while(aux != NULL)
     {
-        if(!(aux->type == NODE_TYPE_LITERAL && aux->n_literal.literal->literal_type == STRING) &&
-        !(aux->type == NODE_TYPE_BIN_OP) && !(aux->type == NODE_TYPE_TER_OP) && !(node->type == NODE_TYPE_UN_OP))
+        if(!(aux->type == NODE_TYPE_LITERAL && (aux->n_literal.literal->literal_type == STRING ||
+                                                aux->n_literal.literal->literal_type == INT ||
+                                                aux->n_literal.literal->literal_type == FLOAT ||
+                                                aux->n_literal.literal->literal_type == BOOL)) &&
+           aux->type != NODE_TYPE_BIN_OP && aux->type != NODE_TYPE_TER_OP && node->type != NODE_TYPE_UN_OP &&
+           !((aux->type == NODE_TYPE_VAR_ACCESS || aux->type == NODE_TYPE_FUNC_CALL) && (aux->val_type == INT ||
+                                                   aux->val_type == BOOL ||
+                                                   aux->val_type == FLOAT)))
         {
             throw_error(ERR_WRONG_PAR_OUTPUT, line);
         }
@@ -687,4 +697,40 @@ int type_infer(int type1, int type2, int line_number)
 
     throw_error(ERR_WRONG_TYPE, line_number);
     return NO_TYPE;
+}
+
+int can_set_type(int var_type, int value_type, int line)
+{
+    int result = 0;
+    switch(value_type)
+    {
+        case INT:
+        case BOOL:
+        case FLOAT:
+            if(var_type != INT && var_type != FLOAT && var_type != BOOL) {
+                throw_error(ERR_WRONG_TYPE, line);
+            } else {
+                result = 1;
+            }
+            break;
+        case CHAR:
+            if(var_type != CHAR)
+            {
+                throw_error(ERR_CHAR_TO_X, line);
+            } else {
+                result = 1;
+            }
+            break;
+        case STRING:
+            if(var_type != STRING)
+            {
+                throw_error(ERR_STRING_TO_X, line);
+            } else {
+                result = 1;
+            }
+            break;
+        default:
+            throw_error(ERR_WRONG_TYPE, line);
+    }
+    return result;
 }
