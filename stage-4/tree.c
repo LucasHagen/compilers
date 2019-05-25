@@ -467,11 +467,11 @@ struct node* create_node_var_attr(Lexeme* identifier, Node* index, Node* value, 
 
     if(index != NULL)
     {
-        type_infer(index->val_type, INT, identifier->line_number);
+        can_set_type(INT, index->val_type, identifier->line_number);
     }
     if(value->val_type != var_type)
     {
-        type_infer(var_type, value->val_type, identifier->line_number);
+        can_set_type(var_type, value->val_type, identifier->line_number);
     }
 
     return node;
