@@ -233,32 +233,21 @@ int type_size(int type)
     return 1;
 }
 
-int match_decl_with_call(ST_LINE* decl, Node* params){
-    //ST_LINE* call = (ST_LINE*) calloc(1,sizeof(ST_LINE));
-    Node* aux = params;
+int match_decl_with_call(ST_LINE* decl, Node* params, int line){
+    // Missing args.
+    if(decl->num_function_args > count_params(params)) {
+        throw_error(ERR_MISSING_ARGS, line);
+    }
+    // Excess args.
+    else if(decl->num_function_args < count_params(params)) {
+        throw_error(ERR_EXCESS_ARGS, line);
+    }
 
-    //Missing args.
-    if(decl->num_function_args > count_params(params)){
-        return ERR_MISSING_ARGS;
-    }
-    //Excess args.
-    else if(decl->num_function_args < count_params(params)){
-        return ERR_EXCESS_ARGS;
-    }
-    //Type mismatch.
-    int i;
-    for(i=0;i<decl->num_function_args;i++){
-#ifdef COMP_DEBUG
-        printf("Func Decl: %0d \t Func Call: %0d\n",decl->function_args[i].type,aux->val_type);
-#endif
-        int t1 = decl->function_args[i].type;
-        int t2 = aux->val_type;
-        if(t1 != t2 &&
-            !((t1 == BOOL || t1 == INT || t1 == FLOAT) &&
-             (t2 == BOOL || t2 == INT || t2 == FLOAT))
-        ){
-            return ERR_WRONG_TYPE_ARGS;
-        }
+    // Type mismatch.
+    Node* aux = params;
+    for(int i = 0; i < decl->num_function_args; i++)
+    {
+        can_convert(decl->function_args[i].type, aux->val_type, 0, ERR_WRONG_TYPE_ARGS);
         aux = aux->seq;
     }
 

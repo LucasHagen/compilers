@@ -264,7 +264,7 @@ struct node* create_node_ter_op(Node* condition, Node* ifTrue, Node* ifFalse, in
     node->n_if.n_true    = ifTrue;
     node->n_if.n_false   = ifFalse;
 
-    type_infer(condition->val_type, BOOL, line);
+    can_set_type(BOOL, condition->val_type, line);
 
     if(ifTrue != NULL && ifFalse != NULL)
     {
@@ -321,7 +321,7 @@ struct node* create_node_if(Node* condition, Node* ifTrue, Node* ifFalse, int li
     node->n_if.n_true = ifTrue;
     node->n_if.n_false = ifFalse;
 
-    type_infer(condition->val_type, BOOL, line);
+    can_set_type(BOOL, condition->val_type, line);
 
     return node;
 }
@@ -335,7 +335,7 @@ struct node* create_node_for(Node* setup, Node* condition, Node* increment, Node
     node->n_for.increment   = increment;
     node->n_for.code        = code;
 
-    type_infer(condition->val_type, BOOL, line);
+    can_set_type(BOOL, condition->val_type, line);
 
     return node;
 }
@@ -348,7 +348,7 @@ struct node* create_node_while(Node* condition, Node* code, int line)
     node->n_while.condition = condition;
     node->n_while.code      = code;
 
-    type_infer(condition->val_type, BOOL, line);
+    can_set_type(BOOL, condition->val_type, line);
 
     return node;
 }
@@ -406,7 +406,7 @@ struct node* create_node_var_access(Lexeme* identifier, Node* index, int type)
 
     if(index != NULL)
     {
-        type_infer(index->val_type, INT, identifier->line_number);
+        can_set_type(INT, index->val_type, identifier->line_number);
     }
 
     return node;
@@ -500,14 +500,15 @@ struct node* create_node_output(Node* output, int line)
     Node* aux = output;
     while(aux != NULL)
     {
-        if(!(aux->type == NODE_TYPE_LITERAL && (aux->n_literal.literal->literal_type == STRING ||
+        if(aux->type != NODE_TYPE_BIN_OP && aux->type != NODE_TYPE_TER_OP && node->type != NODE_TYPE_UN_OP &&
+           !(aux->type == NODE_TYPE_LITERAL && (aux->n_literal.literal->literal_type == STRING ||
                                                 aux->n_literal.literal->literal_type == INT ||
                                                 aux->n_literal.literal->literal_type == FLOAT ||
                                                 aux->n_literal.literal->literal_type == BOOL)) &&
-           aux->type != NODE_TYPE_BIN_OP && aux->type != NODE_TYPE_TER_OP && node->type != NODE_TYPE_UN_OP &&
-           !((aux->type == NODE_TYPE_VAR_ACCESS || aux->type == NODE_TYPE_FUNC_CALL) && (aux->val_type == INT ||
-                                                   aux->val_type == BOOL ||
-                                                   aux->val_type == FLOAT)))
+           !((aux->type == NODE_TYPE_VAR_ACCESS || aux->type == NODE_TYPE_FUNC_CALL) && (
+                                                aux->val_type == INT ||
+                                                aux->val_type == BOOL ||
+                                                aux->val_type == FLOAT)))
         {
             throw_error(ERR_WRONG_PAR_OUTPUT, line);
         }
@@ -731,6 +732,42 @@ int can_set_type(int var_type, int value_type, int line)
             break;
         default:
             throw_error(ERR_WRONG_TYPE, line);
+    }
+    return result;
+}
+
+int can_convert(int var_type, int value_type, int line, int error)
+{
+    int result = 0;
+    switch(value_type)
+    {
+        case INT:
+        case BOOL:
+        case FLOAT:
+            if(var_type != INT && var_type != FLOAT && var_type != BOOL) {
+                throw_error(error, line);
+            } else {
+                result = 1;
+            }
+            break;
+        case CHAR:
+            if(var_type != CHAR)
+            {
+                throw_error(error, line);
+            } else {
+                result = 1;
+            }
+            break;
+        case STRING:
+            if(var_type != STRING)
+            {
+                throw_error(error, line);
+            } else {
+                result = 1;
+            }
+            break;
+        default:
+            throw_error(error, line);
     }
     return result;
 }

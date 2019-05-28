@@ -618,10 +618,8 @@ c_call_func:
 		{
 			throw_error(ERR_VECTOR, $1->line_number);
 		}
-		if(match_decl_with_call(l,$3) != 0)
-		{
-			throw_error(match_decl_with_call(l,$3), $1->line_number);
-		}
+
+		match_decl_with_call(l, $3, $1->line_number);
 
 		$$ = create_node_func_call($1, $3, l->token_type);
 
@@ -655,7 +653,7 @@ c_call_list_exp:
 c_shift:
 	identifier c_shift_symbol expression
 	{
-		type_infer($3->val_type, INT, $1->n_call_or_access.identifier->line_number);
+		can_set_type(INT, $3->val_type, $1->n_call_or_access.identifier->line_number);
 
 		$$ = $2;
 		$$->n_shift.var = $1;
@@ -682,18 +680,7 @@ c_return:
 		$$ = create_node_return($2);
 
 		ST_LINE* func = get_top_register(scope_stack->children[0]);
-
-		if(func->token_type != $$->n_io.params->val_type || $$->n_io.params->val_type == NO_TYPE)
-		{
-			int t1 = func->token_type;
-			int t2 = $$->n_io.params->val_type;
-
-			if(!(t1 == INT || t1 == FLOAT || t1 == BOOL) ||
-				!(t2 == INT || t2 == FLOAT || t2 == BOOL))
-			{
-				throw_error(ERR_WRONG_PAR_RETURN, $1->line_number);
-			}
-		}
+		can_convert(func->token_type, $$->n_io.params->val_type, $1->line_number, ERR_WRONG_PAR_RETURN);
 
 		free_lexeme($1);
 	};

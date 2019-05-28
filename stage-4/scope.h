@@ -48,5 +48,5 @@ int get_lexeme_type(Lexeme* keyword);
 *       ERR_EXCESS_ARGS
 *       ERR_WRONG_TYPE_ARGS
 */
-int match_decl_with_call(ST_LINE* decl, Node* params);
+int match_decl_with_call(ST_LINE* decl, Node* params, int line);
 #endif
