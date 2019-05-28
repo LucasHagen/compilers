@@ -1,0 +1,4 @@
+xis int;
+xis2 float;
+
+static string funcao1 ()  {}

@@ -1,0 +1,159 @@
+// Testing global variables:
+x int;
+vector[50] float;
+xis[30] char;
+test static int;
+outro static char;
+var bool;
+var2 string;
+
+// Testing the function structure:
+
+static float test1 () {
+    float s <= 1;
+    bool as <= 1;
+}
+
+int return_a () {
+  return true;
+}
+
+static int do_nothing () {
+
+}
+
+int big_parameters_list (int x, float y, string z, char w) {
+    x = x + 1;
+    return y;
+}
+
+//Testing command blocks:
+int cm_ex () {
+    float x;
+    {
+        x = x + 1;
+        {
+            float x;
+            x = x * 2;
+        };
+        x = x + 2;
+    };
+    return x;
+}
+
+
+//Testing simple commands:
+
+string print_xis(int i)
+{
+    return "asasd";
+}
+
+int simple_commands () {
+  // Variable declaration:
+  int xis;
+  static float x;
+  static const float y <= 3.1415;
+
+  // Attribuition commands:
+  xis = 123;
+  char h <= 'a';
+  xis = xis ? 123 : 12345;
+  vector[2] = xis * xis;
+
+  // I/O commands:
+  output ("Digite um valor para xis");
+  output 1 + 2;
+  // output 'a';
+  // output true;
+  input xis;
+
+  // Function call:
+  print_xis(xis);
+  print_xis(2*3*xis);
+
+  // Shift commands:
+  xis << 2;
+  xis << xis;
+  xis >> 10;
+  xis >> (xis + (x ^ 2));
+
+  // Return, break, continue:
+  return xis;
+  break;
+  continue;
+  int  k;
+
+  // if, for, while:
+  if (x==1) then
+  {
+    x=2;
+    y=3;
+    int z <= 1;
+    int k;
+    if(z==4) then
+    {
+      k=k+1;
+    }
+    else
+    {
+      k=k+2;
+    };
+  }
+  else
+  {
+    k=0;
+  };
+
+  int i;
+  int j;
+  for(i=0:i<100:i=i+1)
+  {
+    j=j+1;
+  };
+
+  while(true) do
+  {
+    output("AAAAAAAAAAAAAAAA\n");
+  };
+
+  int vector;
+
+  // Testing expressions:
+  test = +x;
+  test = -x;
+  test = -(-(x^3));
+  test = !true;
+  test = &xis;
+  test = *xis;
+  test = &(*(x+1));
+  test = ?(!false);
+  test = #vector;
+  test = xis + xis + xis;
+  test = xis * xis / xis;
+  test = xis % 4;
+  test = x | y;
+  test = y & x;
+  test = (x ^ 4) ^ 5;
+  test = xis ? (1+9) * 10 : 0;
+}
+
+int funcaooo() {}
+int funcaaooo2(int a, int b, int c, int d) {}
+
+int main() {
+    int x <= 10;
+    {
+        static const int y <= 20;
+        y = x;
+    };
+
+    funcaooo();
+    funcaaooo2(10, 20, true, x);
+
+    x << 1;
+}
+
+int inc (int x) {
+return x + 1;
+}
