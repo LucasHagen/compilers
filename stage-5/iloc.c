@@ -6,6 +6,12 @@
 
 #include "defines.h"
 
+/**
+ * Gets the string for the operation from the operation code
+ *
+ * @param op Operation Code
+ * @return A pointer to the instruction string
+ */
 char* get_op_string(int op)
 {
     char* str;
@@ -206,6 +212,11 @@ char* get_op_string(int op)
     return str;
 }
 
+/**
+ * Prints a instruction with its parameters (including a line-break in the end)
+ *
+ * @param inst Pointer to a ILOC structure
+ */
 void print_instuction(ILOC* inst)
 {
     if (inst == ILOC_NOP)
@@ -218,4 +229,62 @@ void print_instuction(ILOC* inst)
         printf("%s %s, %s => %s\n", inst_str, inst->param1, inst->param2, inst->param3);
         free(inst_str);
     }
+    else if (inst->op_code >= ILOC_LOADI && inst->op_code <= ILOC_I2C)
+    {
+        char* inst_str = get_op_string(inst->op_code);
+        printf("%s %s => %s\n", inst_str, inst->param1, inst->param2);
+        free(inst_str);
+    }
+    else if (inst->op_code >= ILOC_CSTOREAI && inst->op_code <= ILOC_STOREA0)
+    {
+        char* inst_str = get_op_string(inst->op_code);
+        printf("%s %s => %s, %s\n", inst_str, inst->param1, inst->param2, inst->param3);
+        free(inst_str);
+    }
+    else if (inst->op_code >= ILOC_JUMPI && inst->op_code <= ILOC_JUMP)
+    {
+        char* inst_str = get_op_string(inst->op_code);
+        printf("%s -> %s\n", inst_str, inst->param1);
+        free(inst_str);
+    }
+    else if (inst->op_code == ILOC_CBR)
+    {
+        char* inst_str = get_op_string(inst->op_code);
+        printf("%s %s -> %s, %s\n", inst_str, inst->param1, inst->param2, inst->param3);
+        free(inst_str);
+    }
+    else if (inst->op_code >= ILOC_CMP_LT && inst->op_code <= ILOC_CMP_NE)
+    {
+        char* inst_str = get_op_string(inst->op_code);
+        printf("%s %s, %s -> %s\n", inst_str, inst->param1, inst->param2, inst->param3);
+        free(inst_str);
+    }
+}
+
+/**
+ * Frees a ILOC structure (parameters and the structure itself)
+ *
+ * @param iloc Pointer to the structure
+ * @return NULL
+ */
+ILOC* free_iloc(ILOC* iloc)
+{
+    if(iloc != NULL)
+    {
+        if(iloc->param1 != NULL)
+        {
+            free(iloc->param1);
+        }
+        if(iloc->param2 != NULL)
+        {
+            free(iloc->param2);
+        }
+        if(iloc->param3 != NULL)
+        {
+            free(iloc->param3);
+        }
+        free(iloc);
+    }
+
+    return NULL;
 }
