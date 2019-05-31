@@ -8,6 +8,7 @@
 #include "printer.h"
 #include "stack.h"
 #include "scope.h"
+#include "iloc.h"
 
 /*
 	Authors:
@@ -1004,7 +1005,17 @@ void yyerror (char const *s){
  * @param arvore AST Pointer
  */
 void descompila (void *arvore) {
-	print_tree((Node*) arvore);
+	if(arvore != NULL)
+	{
+		Node* tree = (Node*) arvore;
+		if(tree->code != NULL)
+		{
+			for(int i = 0; i < tree->code->count; i++)
+			{
+				print_instuction(tree->code->children[i]);
+			}
+		}
+	}
 }
 
 /**

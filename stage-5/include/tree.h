@@ -8,6 +8,7 @@
 */
 
 #include "lexeme.h"
+#include "iloc.h"
 
 #define NODE_TYPE_TER_OP 			0
 #define NODE_TYPE_BIN_OP			1
@@ -109,6 +110,7 @@ struct node_literal {
 typedef struct node {
 	int			  type;
 	int 		  val_type;
+	ILOC_List*	  code;
 	struct node*  seq;
 
 	union {

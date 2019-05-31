@@ -259,6 +259,10 @@ void print_instuction(ILOC* inst)
         printf("%s %s, %s -> %s\n", inst_str, inst->param1, inst->param2, inst->param3);
         free(inst_str);
     }
+    else if (inst->op_code == ILOC_LABEL)
+    {
+        printf("%s:\n", inst->param1);
+    }
 }
 
 /**
@@ -287,4 +291,94 @@ ILOC* free_iloc(ILOC* iloc)
     }
 
     return NULL;
+}
+
+/**
+ * Creates a empty iloc list
+ */
+ILOC_List* create_empty_list()
+{
+    ILOC_List* list = (ILOC_List*) malloc(sizeof(ILOC_List));
+
+    list->children = NULL;
+    list->count    = 0;
+
+    return list;
+}
+
+/**
+ * Creates a list with one element
+ */
+ILOC_List* create_list(ILOC* value)
+{
+    ILOC_List* list = (ILOC_List*) malloc(sizeof(ILOC_List));
+
+    list->children = (ILOC**) malloc(sizeof(ILOC*));
+    list->count = 1;
+
+    list->children[0] = value;
+
+    return list;
+}
+
+/**
+ * Adds a value to the ILOC_List
+ */
+void add_iloc(ILOC_List* list, ILOC* value)
+{
+    if(list->count == 0)
+    {
+        list->count = 1;
+        list->children = (ILOC**) malloc(sizeof(ILOC*));
+    }
+    else
+    {
+        list->count++;
+        list->children = (ILOC**) realloc(list->children,
+            list->count * sizeof(ILOC*));
+    }
+
+    list->children[list->count - 1] = value;
+}
+
+/**
+ * Adds all elements from src to dest (deep-copy)
+ */
+void concat_list(ILOC_List* dest, ILOC_List* src)
+{
+    int size1 = dest->count;
+    dest->count += src->count;
+    dest->children = (ILOC**) realloc(dest->children, dest->count * sizeof(ILOC*));
+
+    for(int i = 0; i < src->count; i++)
+    {
+        dest->children[i + size1] = copy_iloc(src->children[i]);
+    }
+}
+
+/**
+ * Duplicates a ILOC (allocates a new pointer)
+ */
+ILOC* copy_iloc(ILOC* src)
+{
+    ILOC* dest = (ILOC*) malloc(sizeof(ILOC));
+    dest->op_code = src->op_code;
+
+    if(src->param1 != NULL) {
+        dest->param1 = strdup(dest->param1);
+    } else {
+        dest->param1 = NULL;
+    }
+    if(src->param2 != NULL) {
+        dest->param2 = strdup(dest->param2);
+    } else {
+        dest->param2 = NULL;
+    }
+    if(src->param3 != NULL) {
+        dest->param3 = strdup(dest->param3);
+    } else {
+        dest->param3 = NULL;
+    }
+
+    return dest;
 }

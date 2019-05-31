@@ -23,10 +23,12 @@
  */
 Node* new_node(int type)
 {
-    Node* node           = (Node*) malloc(sizeof(Node));
-    node->val_type       = NO_TYPE;
-    node->type           = type;
-    node->seq            = NULL;
+    Node* node      = (Node*) malloc(sizeof(Node));
+    node->val_type  = NO_TYPE;
+    node->type      = type;
+    node->seq       = NULL;
+    node->code      = NULL;
+    
     return node;
 }
 

@@ -91,5 +91,6 @@
 #define ILOC_CMP_GE		44	// r1, r2  ->  r3      ( r3 = true se r1 \geq r2, senão r3 = false )
 #define ILOC_CMP_GT		45	// r1, r2  ->  r3      ( r3 = true se r1 > r2, senão r3 = false )
 #define ILOC_CMP_NE		46	// r1, r2  ->  r3      ( r3 = true se r1 \ne r2, senão r3 = false )
+#define ILOC_LABEL      47  // l1:
 
 #endif
