@@ -3,14 +3,13 @@
 #		- Lucas Sonntag Hagen       - 00274698
 
 CC=gcc
-CFLAGS=-lfl -lm
+CFLAGS=-lfl -lm -I include
 ETAPA=etapa5
-FILES=scanner.yy.c parser.tab.c tree.c stack.c printer.c scope.c main.c
 
-bison: parser.y
+all:
 	bison -d parser.y
 	flex  -o scanner.yy.c scanner.l
-	$(CC) $(FILES) -o $(ETAPA) $(CFLAGS)
+	$(CC) *.c src/*.c -o $(ETAPA) $(CFLAGS)
 
 clean:
-	rm -rf *.out *.o *.yy.c *.out.c *.tab.c *.tab.h *.yy.c *.h.gch $(ETAPA)
+	rm -rf *.out *.o *.yy.c *.out.c *.tab.c *.tab.h *.yy.c *.h.gch include/*.h.gch $(ETAPA)
