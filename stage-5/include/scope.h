@@ -10,22 +10,25 @@ typedef struct scope_struct {
     ST_LINE** children;
     int       max_size;
     int       size    ;
+    char*     offset_reg;
 
 } Scope;
 
 /**
  * Creates a empty scope
  */
-Scope* create_empty_scope();
+Scope* create_empty_scope(char* offset_reg);
 
 /**
  * Adds a register in the scope
  */
-void add_register(Scope* stack, ST_LINE* value);
+void add_register(Scope* scope, ST_LINE* value);
 
 ST_LINE* get_top_register(Scope* scope);
 
 ST_LINE* identifier_in_scope(Scope* scope, char* id);
+
+int get_current_offset(Scope* scope);
 
 ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type, int is_static);
 ST_LINE* create_var_register(Node* node);

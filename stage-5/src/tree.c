@@ -28,6 +28,7 @@ Node* new_node(int type)
     node->type      = type;
     node->seq       = NULL;
     node->code      = NULL;
+    node->temp      = NULL;
 
     return node;
 }
@@ -377,16 +378,6 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
     node->n_func_decl.code        = code;
     node->n_func_decl.type        = type;
     node->n_func_decl.is_static   = is_static;
-
-    if(code != NULL && code->code != NULL)
-    {
-        node->code = code->code;
-
-        for(int i = 0; i < node->code->count; i++)
-        {
-            print_instuction(code->code->children[i]);
-        }
-    }
 
     return node;
 }

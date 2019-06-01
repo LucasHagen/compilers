@@ -86,6 +86,7 @@ struct node_var_decl {
 	int 		   is_static;
 	int 		   is_const;
 	struct node*   value;
+	int 		   offset;
 };
 
 struct node_var_attr {
@@ -110,8 +111,10 @@ struct node_literal {
 typedef struct node {
 	int			  type;
 	int 		  val_type;
-	ILOC_List*	  code;
 	struct node*  seq;
+
+	ILOC_List*	  code;
+	char*		  temp; // register name
 
 	union {
 		struct node_if				n_if;

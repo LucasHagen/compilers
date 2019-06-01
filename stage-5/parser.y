@@ -205,7 +205,7 @@ push_scope:
 	{
 		free_lexeme($1);
 
-		push(scope_stack, create_empty_scope());
+		push(scope_stack, create_empty_scope("rfp"));
 	};
 
 pop_scope:
@@ -1036,7 +1036,7 @@ void create_scope_stack() {
 	if(scope_stack == NULL)
 	{
 		scope_stack = create_empty_stack();
-		push(scope_stack, create_empty_scope());
+		push(scope_stack, create_empty_scope("rbss"));
 	}
 }
 

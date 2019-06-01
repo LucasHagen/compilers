@@ -7,13 +7,14 @@
 /**
  * Creates a empty scope
  */
-Scope* create_empty_scope()
+Scope* create_empty_scope(char* offset_reg)
 {
     Scope* s = (Scope*) malloc(sizeof(Scope));
 
     s->children = (ST_LINE**) malloc(sizeof(ST_LINE**));
     s->max_size = 1;
     s->size = 0;
+    s->offset_reg = offset_reg;
 
     return s;
 }
@@ -21,21 +22,29 @@ Scope* create_empty_scope()
 /**
  * Adds a register in the scope
  */
-void add_register(Scope* stack, ST_LINE* value)
+void add_register(Scope* scope, ST_LINE* value)
 {
     ST_LINE** children;
-    if(stack->size >= stack->max_size)
+    if(scope->size >= scope->max_size)
     {
-        stack->max_size++;
+        scope->max_size++;
 
-        children = (ST_LINE**) realloc(stack->children,
-            stack->max_size * sizeof(ST_LINE**));
+        children = (ST_LINE**) realloc(scope->children,
+            scope->max_size * sizeof(ST_LINE**));
         if(children != NULL)
-            stack->children = children;
+            scope->children = children;
     }
 
-    stack->children[stack->size] = value;
-    stack->size++;
+    // IMPLEMENTED ONLY FOR INTEGER VARIABLES AND LITERALS
+    if(value->nature == NATUREZA_LITERAL_INT ||
+        (value->nature == NATUREZA_VARIAVEL &&
+            value->token_type == INT))
+    {
+        value->offset = get_current_offset(scope);
+    }
+
+    scope->children[scope->size] = value;
+    scope->size++;
 }
 
 ST_LINE* get_top_register(Scope* scope)
@@ -45,6 +54,23 @@ ST_LINE* get_top_register(Scope* scope)
     if(scope->size != 0)
     {
         result = scope->children[scope->size - 1];
+    }
+
+    return result;
+}
+
+int get_current_offset(Scope* scope)
+{
+    // IMPLEMENTED ONLY FOR INTEGER VARIABLES AND LITERALS
+    int result = 0;
+    for(int i = scope->size - 1; i >= 0; i--)
+    {
+        if(scope->children[i]->nature == NATUREZA_LITERAL_INT ||
+            (scope->children[i]->nature == NATUREZA_VARIAVEL &&
+                scope->children[i]->token_type == INT))
+        {
+            result += scope->children[i]->token_size;
+        }
     }
 
     return result;
@@ -75,6 +101,7 @@ ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type
     reg->is_const           = 0;
     reg->lexeme             = identifier;
     reg->num_function_args  = 0;
+    reg->offset             = 0;
 
     add_function_args(reg, params);
     return reg;
@@ -162,6 +189,7 @@ ST_LINE* create_literal(Lexeme* lex, int nature){
     reg->lexeme             = lex;
     reg->num_function_args  = 0;
     reg->function_args      = NULL;
+    reg->offset             = 0;
     switch(nature){
         case NATUREZA_LITERAL_INT:
             reg->token_type = INT;
@@ -204,6 +232,7 @@ ST_LINE* create_var_register(Node* node)
     reg->is_static          = node->n_var_decl.is_static;
     reg->is_const           = node->n_var_decl.is_const;
     reg->lexeme             = node->n_var_decl.identifier;
+    reg->offset             = 0;
     reg->num_function_args  = 0;
     reg->function_args      = NULL;
 
