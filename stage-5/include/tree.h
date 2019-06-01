@@ -185,6 +185,8 @@ struct node* create_node_continue();
 struct node* create_node_literal(Lexeme* value);
 struct node* create_node_command_block(Node* first_command);
 
+void add_codes_rec(ILOC_List* dest, Node* node);
+
 int get_type_id(Lexeme* type);
 
 int type_infer(int type1, int type2, int line);

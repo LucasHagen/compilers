@@ -427,14 +427,16 @@ commands_list:
 	{
 		$$ = $1;
 
+		$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
 		free_lexeme($2);
 	}|
 	commands_list command ';'
 	{
 		$$ = $2;
 		$$->seq = $1;
-
 		free_lexeme($3);
+
+		$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
 	};
 
 command:
@@ -1007,14 +1009,14 @@ void yyerror (char const *s){
 void descompila (void *arvore) {
 	if(arvore != NULL)
 	{
-		Node* tree = (Node*) arvore;
-		if(tree->code != NULL)
-		{
-			for(int i = 0; i < tree->code->count; i++)
-			{
-				print_instuction(tree->code->children[i]);
-			}
-		}
+		// Node* tree = (Node*) arvore;
+		// if(tree->code != NULL)
+		// {
+		// 	for(int i = 0; i < tree->code->count; i++)
+		// 	{
+		// 		print_instuction(tree->code->children[i]);
+		// 	}
+		// }
 	}
 }
 

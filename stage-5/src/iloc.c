@@ -14,202 +14,104 @@
  */
 char* get_op_string(int op)
 {
-    char* str;
-
     switch (op) {
         case ILOC_NOP:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "nop");
-        	break;
+        	return "nop";
         case ILOC_ADD:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "add");
-        	break;
+        	return "add";
         case ILOC_SUB:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "sub");
-        	break;
+        	return "sub";
         case ILOC_MULT:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "mult");
-        	break;
+        	return "mult";
         case ILOC_DIV:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "div");
-        	break;
+        	return "div";
         case ILOC_ADDI:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "addI");
-        	break;
+        	return "addI";
         case ILOC_SUBI:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "subI");
-        	break;
+        	return "subI";
         case ILOC_RSUBI:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "rsubI");
-        	break;
+        	return "rsubI";
         case ILOC_MULTI:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "multI");
-        	break;
+        	return "multI";
         case ILOC_DIVI:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "divI");
-        	break;
+        	return "divI";
         case ILOC_RDIVI:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "rdivI");
-        	break;
+        	return "rdivI";
         case ILOC_LSHIFT:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "lshift");
-        	break;
+        	return "lshift";
         case ILOC_LSHIFTI:
-        	str = (char*) malloc(sizeof(char) * 8);
-        	strcpy(str, "lshiftI");
-        	break;
+        	return "lshiftI";
         case ILOC_RSHIFT:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "rshift");
-        	break;
+        	return "rshift";
         case ILOC_RSHIFTI:
-        	str = (char*) malloc(sizeof(char) * 8);
-        	strcpy(str, "rshiftI");
-        	break;
+        	return "rshiftI";
         case ILOC_AND:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "and");
-        	break;
+        	return "and";
         case ILOC_ANDI:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "andI");
-        	break;
+        	return "andI";
         case ILOC_OR:
-        	str = (char*) malloc(sizeof(char) * 3);
-        	strcpy(str, "or");
-        	break;
+        	return "or";
         case ILOC_ORI:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "orI");
-        	break;
+        	return "orI";
         case ILOC_XOR:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "xor");
-        	break;
+        	return "xor";
         case ILOC_XORI:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "xorI");
-        	break;
+        	return "xorI";
         case ILOC_LOADI:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "loadI");
-        	break;
+        	return "loadI";
         case ILOC_LOAD:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "load");
-        	break;
+        	return "load";
         case ILOC_LOADAI:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "loadAI");
-        	break;
+        	return "loadAI";
         case ILOC_LOADA0:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "loadA0");
-        	break;
+        	return "loadA0";
         case ILOC_CLOAD:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "cload");
-        	break;
+        	return "cload";
         case ILOC_CLOADAI:
-        	str = (char*) malloc(sizeof(char) * 8);
-        	strcpy(str, "cloadAI");
-        	break;
+        	return "cloadAI";
         case ILOC_CLOADA0:
-        	str = (char*) malloc(sizeof(char) * 8);
-        	strcpy(str, "cloadA0");
-        	break;
+        	return "cloadA0";
         case ILOC_STORE:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "store");
-        	break;
+        	return "store";
         case ILOC_STOREAI:
-        	str = (char*) malloc(sizeof(char) * 8);
-        	strcpy(str, "storeAI");
-        	break;
+        	return "storeAI";
         case ILOC_STOREA0:
-        	str = (char*) malloc(sizeof(char) * 8);
-        	strcpy(str, "storeA0");
-        	break;
+        	return "storeA0";
         case ILOC_CSTORE:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cstore");
-        	break;
+        	return "cstore";
         case ILOC_CSTOREAI:
-        	str = (char*) malloc(sizeof(char) * 9);
-        	strcpy(str, "cstoreAI");
-        	break;
+        	return "cstoreAI";
         case ILOC_CSTOREA0:
-        	str = (char*) malloc(sizeof(char) * 9);
-        	strcpy(str, "cstoreA0");
-        	break;
+        	return "cstoreA0";
         case ILOC_I2I:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "i2i");
-        	break;
+        	return "i2i";
         case ILOC_C2C:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "c2c");
-        	break;
+        	return "c2c";
         case ILOC_C2I:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "c2i");
-        	break;
+        	return "c2i";
         case ILOC_I2C:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "i2c");
-        	break;
+        	return "i2c";
         case ILOC_JUMPI:
-        	str = (char*) malloc(sizeof(char) * 6);
-        	strcpy(str, "jumpI");
-        	break;
+        	return "jumpI";
         case ILOC_JUMP:
-        	str = (char*) malloc(sizeof(char) * 5);
-        	strcpy(str, "jump");
-        	break;
+        	return "jump";
         case ILOC_CBR:
-        	str = (char*) malloc(sizeof(char) * 4);
-        	strcpy(str, "cbr");
-        	break;
+        	return "cbr";
         case ILOC_CMP_LT:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cmp_LT");
-        	break;
+        	return "cmp_LT";
         case ILOC_CMP_LE:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cmp_LE");
-        	break;
+        	return "cmp_LE";
         case ILOC_CMP_EQ:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cmp_EQ");
-        	break;
+        	return "cmp_EQ";
         case ILOC_CMP_GE:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cmp_GE");
-        	break;
+        	return "cmp_GE";
         case ILOC_CMP_GT:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cmp_GT");
-        	break;
+        	return "cmp_GT";
         case ILOC_CMP_NE:
-        	str = (char*) malloc(sizeof(char) * 7);
-        	strcpy(str, "cmp_NE");
-        	break;
-        default:
-            str = NULL;
+        	return "cmp_NE";
     }
 
-    return str;
+    return "";
 }
 
 /**
@@ -219,50 +121,54 @@ char* get_op_string(int op)
  */
 void print_instuction(ILOC* inst)
 {
-    if (inst == ILOC_NOP)
+    if(inst == NULL)
+    {
+        return;
+    }
+    else if (inst->op_code == ILOC_NOP)
     {
         printf("nop\n");
     }
     else if (inst->op_code >= ILOC_ADD && inst->op_code <= ILOC_CLOADA0)
     {
-        char* inst_str = get_op_string(inst->op_code);
-        printf("%s %s, %s => %s\n", inst_str, inst->param1, inst->param2, inst->param3);
-        free(inst_str);
+        printf("%s %s, %s => %s\n", get_op_string(inst->op_code), inst->param1, inst->param2, inst->param3);
     }
     else if (inst->op_code >= ILOC_LOADI && inst->op_code <= ILOC_I2C)
     {
-        char* inst_str = get_op_string(inst->op_code);
-        printf("%s %s => %s\n", inst_str, inst->param1, inst->param2);
-        free(inst_str);
+        printf("%s %s => %s\n", get_op_string(inst->op_code), inst->param1, inst->param2);
     }
     else if (inst->op_code >= ILOC_CSTOREAI && inst->op_code <= ILOC_STOREA0)
     {
-        char* inst_str = get_op_string(inst->op_code);
-        printf("%s %s => %s, %s\n", inst_str, inst->param1, inst->param2, inst->param3);
-        free(inst_str);
+        printf("%s %s => %s, %s\n", get_op_string(inst->op_code), inst->param1, inst->param2, inst->param3);
     }
     else if (inst->op_code >= ILOC_JUMPI && inst->op_code <= ILOC_JUMP)
     {
-        char* inst_str = get_op_string(inst->op_code);
-        printf("%s -> %s\n", inst_str, inst->param1);
-        free(inst_str);
+        printf("%s -> %s\n", get_op_string(inst->op_code), inst->param1);
     }
     else if (inst->op_code == ILOC_CBR)
     {
-        char* inst_str = get_op_string(inst->op_code);
-        printf("%s %s -> %s, %s\n", inst_str, inst->param1, inst->param2, inst->param3);
-        free(inst_str);
+        printf("%s %s -> %s, %s\n", get_op_string(inst->op_code), inst->param1, inst->param2, inst->param3);
     }
     else if (inst->op_code >= ILOC_CMP_LT && inst->op_code <= ILOC_CMP_NE)
     {
-        char* inst_str = get_op_string(inst->op_code);
-        printf("%s %s, %s -> %s\n", inst_str, inst->param1, inst->param2, inst->param3);
-        free(inst_str);
+        printf("%s %s, %s -> %s\n", get_op_string(inst->op_code), inst->param1, inst->param2, inst->param3);
     }
     else if (inst->op_code == ILOC_LABEL)
     {
         printf("%s:\n", inst->param1);
     }
+}
+
+ILOC* create_iloc(int op_code, char* param1, char* param2, char* param3)
+{
+    ILOC* result = (ILOC*) malloc(sizeof(ILOC));
+
+    result->op_code = op_code;
+    result->param1  = param1;
+    result->param2  = param2;
+    result->param3  = param3;
+
+    return result;
 }
 
 /**
@@ -342,17 +248,24 @@ void add_iloc(ILOC_List* list, ILOC* value)
 }
 
 /**
- * Adds all elements from src to dest (deep-copy)
+ * Adds all elements from src to the beggining of dest
+ *
+ * ILOCs are NOT deep copied
  */
-void concat_list(ILOC_List* dest, ILOC_List* src)
+void add_all_beg(ILOC_List* dest, ILOC_List* src)
 {
-    int size1 = dest->count;
-    dest->count += src->count;
-    dest->children = (ILOC**) realloc(dest->children, dest->count * sizeof(ILOC*));
-
-    for(int i = 0; i < src->count; i++)
+    if(src != NULL && src->count > 0)
     {
-        dest->children[i + size1] = copy_iloc(src->children[i]);
+        int oldSize = dest->count;
+        ILOC** old = dest->children;
+
+        dest->count += src->count;
+        dest->children = (ILOC**) malloc(dest->count * sizeof(ILOC*));
+
+        memcpy(dest->children, src->children, src->count * sizeof(ILOC*));
+        memcpy(dest->children + src->count, old, oldSize * sizeof(ILOC*));
+
+        free(old);
     }
 }
 

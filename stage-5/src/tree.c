@@ -28,7 +28,7 @@ Node* new_node(int type)
     node->type      = type;
     node->seq       = NULL;
     node->code      = NULL;
-    
+
     return node;
 }
 
@@ -380,6 +380,16 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
     node->n_func_decl.type        = type;
     node->n_func_decl.is_static   = is_static;
 
+    if(code != NULL && code->code != NULL)
+    {
+        node->code = code->code;
+
+        for(int i = 0; i < node->code->count; i++)
+        {
+            print_instuction(code->code->children[i]);
+        }
+    }
+
     return node;
 }
 
@@ -572,8 +582,24 @@ struct node* create_node_command_block(Node* first_command)
     struct node* node = new_node(NODE_TYPE_COMMAND_BLOCK);
 
     node->n_cmd_block.command = first_command;
+    node->code = create_empty_list();
+
+    add_codes_rec(node->code, first_command);
 
     return node;
+}
+
+void add_codes_rec(ILOC_List* dest, Node* node)
+{
+    if(node != NULL)
+    {
+        if(node->seq != NULL)
+        {
+            add_codes_rec(dest, node->seq);
+        }
+
+        add_all_beg(dest, node->code);
+    }
 }
 
 int get_type_id(Lexeme* type)

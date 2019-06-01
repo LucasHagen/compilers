@@ -30,6 +30,8 @@ char* get_op_string(int op);
  */
 void print_instuction(ILOC* inst);
 
+ILOC* create_iloc(int op_code, char* param1, char* param2, char* param3);
+
 /**
  * Frees a ILOC structure (parameters and the structure itself)
  *
@@ -54,12 +56,18 @@ ILOC_List* create_list(ILOC* value);
 void add_iloc(ILOC_List* list, ILOC* value);
 
 /**
- * Adds all elements from src to dest (deep-copy)
+ * Creates a new ILOC_List containing all ILOCs from left + right
  *
- * @param dest Destination list
- * @param src Source list
+ * ILOCs are NOT deep copied
  */
-void concat_list(ILOC_List* dest, ILOC_List* src);
+ILOC_List* concat_list(ILOC_List* left, ILOC_List* right);
+
+/**
+ * Adds all elements from src to the beggining of dest
+ *
+ * ILOCs are NOT deep copied
+ */
+void add_all_beg(ILOC_List* dest, ILOC_List* src);
 
 /**
  * Duplicates a ILOC (deep-copy)
