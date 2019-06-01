@@ -30,6 +30,14 @@ char* get_op_string(int op);
  */
 void print_instuction(ILOC* inst);
 
+/**
+ * Creates the ILOC with the parameters given
+ *
+ * @param op_code Instruction
+ * @parma param1 Param 1 or NULL
+ * @parma param2 Param 2 or NULL
+ * @parma param3 Param 3 or NULL
+ */
 ILOC* create_iloc(int op_code, char* param1, char* param2, char* param3);
 
 /**
@@ -76,5 +84,15 @@ void add_all_beg(ILOC_List* dest, ILOC_List* src);
  * @return Pointer to new ILOC with same contents
  */
 ILOC* copy_iloc(ILOC* src);
+
+/**
+ * Generates a new UNIQUE label
+ */
+ILOC* new_label();
+
+/**
+ * Generates a new UNIQUE register
+ */
+char* new_register();
 
 #endif

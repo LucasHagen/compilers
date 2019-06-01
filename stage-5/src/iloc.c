@@ -6,6 +6,9 @@
 
 #include "defines.h"
 
+int next_iloc_label = 0;
+int next_iloc_register = 0;
+
 /**
  * Gets the string for the operation from the operation code
  *
@@ -294,4 +297,30 @@ ILOC* copy_iloc(ILOC* src)
     }
 
     return dest;
+}
+
+/**
+ * Generates a new UNIQUE label
+ */
+ILOC* new_label()
+{
+    int label = next_iloc_label++;
+    char* lText = (char*) malloc(sizeof(char) * 16);
+
+    sprintf(lText, "L%d", label);
+
+    return create_iloc(ILOC_LABEL, lText, NULL, NULL);
+}
+
+/**
+ * Generates a new UNIQUE register
+ */
+char* new_register()
+{
+    int reg = next_iloc_register++;
+    char* rText = (char*) malloc(sizeof(char) * 16);
+
+    sprintf(rText, "r%d", reg);
+
+    return rText;
 }

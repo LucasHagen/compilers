@@ -364,8 +364,6 @@ struct node* create_node_func_call(Lexeme* identifier, Node* parameters, int typ
     node->n_call_or_access.identifier       = identifier;
     node->n_call_or_access.index_or_param   = parameters;
 
-    // check params
-
     return node;
 }
 
