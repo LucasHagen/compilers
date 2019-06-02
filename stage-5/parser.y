@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "lexeme.h"
 #include "tree.h"
@@ -239,33 +240,35 @@ big_list:
 literal:
 	TK_LIT_TRUE
 	{
-		$$ = create_node_literal($1);
-		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_BOOL));
+		$$ = create_node_literal($1, NULL);
+		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_FALSE
 	{
-		$$ = create_node_literal($1);
-		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_BOOL));
+		$$ = create_node_literal($1, NULL);
+		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_STRING
 	{
-		$$ = create_node_literal($1);
-		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_STRING));
+		$$ = create_node_literal($1, NULL);
+		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_STRING));
 	}|
 	TK_LIT_CHAR
 	{
-		$$ = create_node_literal($1);
-		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_CHAR));
+		$$ = create_node_literal($1, NULL);
+		// add_register(scope_stack->children[0], create_literal($1, NATUREZA_LITERAL_CHAR));
 	}|
 	TK_LIT_INT
 	{
-		$$ = create_node_literal($1);
-		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_INT));
+		ST_LINE* l = create_literal($1, NATUREZA_LITERAL_INT);
+
+		$$ = create_node_literal($1, l);
+		add_register(scope_stack->children[0], l);
 	}|
 	TK_LIT_FLOAT
 	{
-		$$ = create_node_literal($1);
-		add_register(top(scope_stack), create_literal($1,NATUREZA_LITERAL_FLOAT));
+		$$ = create_node_literal($1, NULL);
+		// add_register(scope_stack->children[0], create_literal($1, NATUREZA_LITERAL_FLOAT));
 	};
 
 type:
@@ -426,9 +429,12 @@ commands_list:
 	command ';'
 	{
 		$$ = $1;
-
-		$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
 		free_lexeme($2);
+
+		if($$->code == NULL)
+		{
+			$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
+		}
 	}|
 	commands_list command ';'
 	{
@@ -436,7 +442,10 @@ commands_list:
 		$$->seq = $1;
 		free_lexeme($3);
 
-		$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
+		if($$->code == NULL)
+		{
+			$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
+		}
 	};
 
 command:
@@ -809,18 +818,38 @@ expression:
 	expression PLUS expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+
+		$$->code = concat_list($1->code, $3->code);
+		$$->temp = new_register();
+
+		add_iloc($$->code, create_iloc(ILOC_ADD, $1->temp, $3->temp, $$->temp));
 	}|
 	expression MINUS expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+
+		$$->code = concat_list($1->code, $3->code);
+		$$->temp = new_register();
+
+		add_iloc($$->code, create_iloc(ILOC_SUB, $1->temp, $3->temp, $$->temp));
 	}|
 	expression MULT expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+
+		$$->code = concat_list($1->code, $3->code);
+		$$->temp = new_register();
+
+		add_iloc($$->code, create_iloc(ILOC_MULT, $1->temp, $3->temp, $$->temp));
 	}|
 	expression DIV expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+
+		$$->code = concat_list($1->code, $3->code);
+		$$->temp = new_register();
+
+		add_iloc($$->code, create_iloc(ILOC_DIV, $1->temp, $3->temp, $$->temp));
 	}|
 	expression R_DIV expression
 	{
@@ -896,10 +925,30 @@ operand:
 	identifier
 	{
 		$$ = $1;
+
+		ST_LINE* l = identifier_in_stack(scope_stack, $1->n_call_or_access.identifier->token_value.v_string);
+
+		$$->temp = new_register();
+		$$->code = create_list(
+			create_iloc(ILOC_LOADAI,
+						get_offset_register(scope_stack, l->id),
+						int_to_char(l->offset),
+						$$->temp)
+		);
 	}|
 	literal
 	{
 		$$ = $1;
+
+		ST_LINE* l = $1->n_literal.st_line;
+
+		$$->temp = new_register();
+		$$->code = create_list(
+			create_iloc(ILOC_LOADAI,
+						"rbss",
+						int_to_char(l->offset),
+						$$->temp)
+		);
 	}|
 	c_call_func
 	{

@@ -250,6 +250,22 @@ void add_iloc(ILOC_List* list, ILOC* value)
     list->children[list->count - 1] = value;
 }
 
+ILOC_List* concat_list(ILOC_List* left, ILOC_List* right)
+{
+    ILOC_List* result = create_empty_list();
+
+    for(int i = 0; i < left->count; i++)
+    {
+        add_iloc(result, left->children[i]);
+    }
+    for(int i = 0; i < right->count; i++)
+    {
+        add_iloc(result, right->children[i]);
+    }
+
+    return result;
+}
+
 /**
  * Adds all elements from src to the beggining of dest
  *
@@ -323,4 +339,13 @@ char* new_register()
     sprintf(rText, "r%d", reg);
 
     return rText;
+}
+
+char* int_to_char(int number)
+{
+    char* text = (char*) malloc(sizeof(char) * 16);
+
+    sprintf(text, "%d", number);
+
+    return text;
 }

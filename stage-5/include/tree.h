@@ -106,6 +106,7 @@ struct node_shift {
 
 struct node_literal {
 	struct lexeme* literal;
+	struct line*   st_line;
 };
 
 typedef struct node {
@@ -113,8 +114,15 @@ typedef struct node {
 	int 		  val_type;
 	struct node*  seq;
 
+	/**
+	 * NULL, or list of ILOCs representing the code
+	 */
 	ILOC_List*	  code;
-	char*		  temp; // register name
+	/**
+	 * Register where the temporary result
+	 * value will be stored after executing the code
+	 */
+	char*		  temp;
 
 	union {
 		struct node_if				n_if;
@@ -185,7 +193,7 @@ struct node* create_node_shift_right();
 struct node* create_node_return(Node* expression);
 struct node* create_node_break();
 struct node* create_node_continue();
-struct node* create_node_literal(Lexeme* value);
+struct node* create_node_literal(Lexeme* value, ST_LINE* line);
 struct node* create_node_command_block(Node* first_command);
 
 void add_codes_rec(ILOC_List* dest, Node* node);

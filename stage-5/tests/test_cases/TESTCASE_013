@@ -1,7 +1,8 @@
-x string;
-
+z int;
 int main(){
-    int x;
+    z = 20;
+    int x <= 10;
+    int y;
 
-    x = 10;
+    y = z + x;
 }

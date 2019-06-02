@@ -95,4 +95,9 @@ ILOC* new_label();
  */
 char* new_register();
 
+/**
+ * Allocates a new char* and writes the number on it
+ */
+char* int_to_char(int number);
+
 #endif

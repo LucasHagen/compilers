@@ -115,3 +115,18 @@ ST_LINE* identifier_in_stack(Stack* stack, char* id)
 
     return NULL;
 }
+
+char* get_offset_register(Stack* stack, char* identifier)
+{
+    for(int i = stack->size - 1; i >= 0; i--)
+    {
+        ST_LINE* l = identifier_in_scope(stack->children[i], identifier);
+
+        if(l != NULL)
+        {
+            return stack->children[i]->offset_reg;
+        }
+    }
+
+    return NULL;
+}

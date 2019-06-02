@@ -556,11 +556,12 @@ struct node* create_node_continue()
     return node;
 }
 
-struct node* create_node_literal(Lexeme* value)
+struct node* create_node_literal(Lexeme* value, ST_LINE* line)
 {
     struct node* node = new_node(NODE_TYPE_LITERAL);
 
     node->n_literal.literal = value;
+    node->n_literal.st_line = line;
     node->val_type = value->literal_type;
 
     return node;

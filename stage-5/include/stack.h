@@ -45,5 +45,6 @@ int is_empty(Stack* stack);
 Scope* top(Stack* stack);
 
 ST_LINE* identifier_in_stack(Stack* stack, char* id);
+char* get_offset_register(Stack* stack, char* identifier);
 
 #endif
