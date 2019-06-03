@@ -206,5 +206,11 @@ int can_convert(int var_type, int value_type, int line, int error);
 
 void throw_error(int error_code, int line_number);
 
+/**
+ * Creates a ILOC_List with the instructions for the operation: left OPERATION right
+ * This list is added to node
+ */
+void create_and_add_iloc_compare(Node* node, Node* left, Node* right, int operation);
+
 
 #endif // TREE_H

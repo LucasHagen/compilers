@@ -25,6 +25,9 @@
 #define ERR_WRONG_PAR_OUTPUT 51 //parâmetro não é literal string ou expressão
 #define ERR_WRONG_PAR_RETURN 52 //parâmetro não é expressão compatível com tipo do retorno
 
+/* Custom Errors */
+#define ERR_NOT_IMPLEMENTED 53
+
 /* Definições de Natureza */
 #define NATUREZA_LITERAL_INT        1
 #define NATUREZA_LITERAL_FLOAT      2

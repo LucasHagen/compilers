@@ -679,6 +679,10 @@ void throw_error(int error_code, int line_number)
         	printf(err_format, line_number, "parâmetro não é expressão compatível com tipo do retorno");
         	break;
 
+        case ERR_NOT_IMPLEMENTED:
+        	printf(err_format, line_number, "construção não implementada");
+        	break;
+
         default:
             printf("Erro na linha %d;\n", line_number);
             break;
@@ -788,4 +792,21 @@ int can_convert(int var_type, int value_type, int line, int error)
             throw_error(error, line);
     }
     return result;
+}
+
+/**
+ * Creates a ILOC_List with the instructions for the operation: left OPERATION right
+ * This list is added to node
+ */
+void create_and_add_iloc_compare(Node* node, Node* left, Node* right, int operation)
+{
+    ILOC_List* list = create_empty_list();
+
+    node->temp = new_register();
+    node->code = list;
+
+    add_all_end(list, left->code);
+    add_all_end(list, right->code);
+
+    add_iloc(list, create_iloc(operation, left->temp, right->temp, node->temp));
 }

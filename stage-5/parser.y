@@ -464,34 +464,42 @@ command:
 	c_input
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_output
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_call_func
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_shift
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_return
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_continue
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_break
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_for
 	{
 		$$ = $1;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_if
 	{
@@ -517,8 +525,20 @@ c_declare_variable:
 			$2,
 			$5
 		);
+		ST_LINE* line = create_var_register($$);
+		add_register(top(scope_stack), line);
 
-		add_register(top(scope_stack), create_var_register($$));
+		if($5 != NULL)
+		{
+			$$->code = create_empty_list();
+
+			add_all_end($$->code, $5->code);
+			add_iloc($$->code, create_iloc(ILOC_STOREAI,
+											$5->temp,
+											int_to_char(line->offset),
+											top(scope_stack)->offset_reg));
+		}
+
 	};
 
 c_declare_variable_attr:
@@ -579,6 +599,19 @@ c_attr:
 		}
 
 		$$ = create_node_var_attr($1, $2, $4, line->token_type);
+
+		if($2 != NULL)
+		{
+			throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
+		}
+
+		$$->code = create_empty_list();
+
+		add_all_end($$->code, $4->code);
+		add_iloc($$->code, create_iloc(ILOC_STOREAI,
+										$4->temp,
+										int_to_char(line->offset),
+										get_offset_register(scope_stack, line->id)));
 
 		free_lexeme($3);
 	};
@@ -854,38 +887,47 @@ expression:
 	expression R_DIV expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	expression BIT_OR expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	expression EXP expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	expression GREATER expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_GT);
 	}|
 	expression LESS expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_LT);
 	}|
 	expression TK_OC_LE expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_LE);
 	}|
 	expression TK_OC_GE expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_GE);
 	}|
 	expression TK_OC_EQ expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_EQ);
 	}|
 	expression TK_OC_NE expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_NE);
 	}|
 	expression TK_OC_AND expression
 	{
@@ -898,6 +940,7 @@ expression:
 	expression '&' expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	un_op expression %prec UOP
 	{
@@ -905,13 +948,15 @@ expression:
 		$$->n_un_op.operand = $2;
 
 		$$->val_type = $2->val_type;
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	expression QUESTION expression ':' expression %prec QUESTION
 	{
-		$$ = create_node_ter_op($1, $3, $5, $4->line_number);
-
 		free_lexeme($2);
 		free_lexeme($4);
+
+		$$ = create_node_ter_op($1, $3, $5, $4->line_number);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	'(' expression ')'
 	{
@@ -1063,7 +1108,7 @@ void descompila (void *arvore) {
 		// {
 		// 	for(int i = 0; i < tree->code->count; i++)
 		// 	{
-		// 		print_instuction(tree->code->children[i]);
+		// 		print_instruction(tree->code->children[i]);
 		// 	}
 		// }
 	}

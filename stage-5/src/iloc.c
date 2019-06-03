@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "defines.h"
+#include "tree.h"
 
 int next_iloc_label = 0;
 int next_iloc_register = 0;
@@ -122,7 +123,7 @@ char* get_op_string(int op)
  *
  * @param inst Pointer to a ILOC structure
  */
-void print_instuction(ILOC* inst)
+void print_instruction(ILOC* inst)
 {
     if(inst == NULL)
     {
@@ -289,6 +290,22 @@ void add_all_beg(ILOC_List* dest, ILOC_List* src)
 }
 
 /**
+ * Adds all elements from src to the end of dest
+ *
+ * ILOCs are NOT deep copied
+ */
+void add_all_end(ILOC_List* dest, ILOC_List* src)
+{
+    if(src != NULL && src->count > 0)
+    {
+        for(int i = 0; i < src->count; i++)
+        {
+            add_iloc(dest, src->children[i]);
+        }
+    }
+}
+
+/**
  * Duplicates a ILOC (allocates a new pointer)
  */
 ILOC* copy_iloc(ILOC* src)
@@ -341,6 +358,10 @@ char* new_register()
     return rText;
 }
 
+/**
+ * Converts a integer to a char*.
+ * The function allocates a new char* with 16 bytes.
+ */
 char* int_to_char(int number)
 {
     char* text = (char*) malloc(sizeof(char) * 16);

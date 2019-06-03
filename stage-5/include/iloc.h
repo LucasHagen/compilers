@@ -28,7 +28,7 @@ char* get_op_string(int op);
  *
  * @param inst Pointer to a ILOC structure
  */
-void print_instuction(ILOC* inst);
+void print_instruction(ILOC* inst);
 
 /**
  * Creates the ILOC with the parameters given
@@ -76,6 +76,13 @@ ILOC_List* concat_list(ILOC_List* left, ILOC_List* right);
  * ILOCs are NOT deep copied
  */
 void add_all_beg(ILOC_List* dest, ILOC_List* src);
+
+/**
+ * Adds all elements from src to the end of dest
+ *
+ * ILOCs are NOT deep copied
+ */
+void add_all_end(ILOC_List* dest, ILOC_List* src);
 
 /**
  * Duplicates a ILOC (deep-copy)
