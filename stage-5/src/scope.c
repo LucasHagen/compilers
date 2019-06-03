@@ -35,10 +35,8 @@ void add_register(Scope* scope, ST_LINE* value)
             scope->children = children;
     }
 
-    // IMPLEMENTED ONLY FOR INTEGER VARIABLES AND LITERALS
-    if(value->nature == NATUREZA_LITERAL_INT ||
-        (value->nature == NATUREZA_VARIAVEL &&
-            value->token_type == INT))
+    // IMPLEMENTED ONLY FOR INTEGER VARIABLES
+    if(value->nature == NATUREZA_VARIAVEL && value->token_type == INT)
     {
         value->offset = get_current_offset(scope);
     }
@@ -61,13 +59,12 @@ ST_LINE* get_top_register(Scope* scope)
 
 int get_current_offset(Scope* scope)
 {
-    // IMPLEMENTED ONLY FOR INTEGER VARIABLES AND LITERALS
+    // IMPLEMENTED ONLY FOR INTEGER VARIABLES
     int result = 0;
     for(int i = scope->size - 1; i >= 0; i--)
     {
-        if(scope->children[i]->nature == NATUREZA_LITERAL_INT ||
-            (scope->children[i]->nature == NATUREZA_VARIAVEL &&
-                scope->children[i]->token_type == INT))
+        if(scope->children[i]->nature == NATUREZA_VARIAVEL &&
+                scope->children[i]->token_type == INT)
         {
             result += scope->children[i]->token_size;
         }

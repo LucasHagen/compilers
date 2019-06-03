@@ -163,6 +163,17 @@ void print_instruction(ILOC* inst)
     }
 }
 
+void print_iloc_list(ILOC_List* list)
+{
+    if(list != NULL)
+    {
+        for(int i = 0; i < list->count; i++)
+        {
+            print_instruction(list->children[i]);
+        }
+    }
+}
+
 ILOC* create_iloc(int op_code, char* param1, char* param2, char* param3)
 {
     ILOC* result = (ILOC*) malloc(sizeof(ILOC));

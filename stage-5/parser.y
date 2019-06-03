@@ -241,33 +241,48 @@ literal:
 	TK_LIT_TRUE
 	{
 		$$ = create_node_literal($1, NULL);
+		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
 		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_FALSE
 	{
 		$$ = create_node_literal($1, NULL);
+		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
 		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_STRING
 	{
 		$$ = create_node_literal($1, NULL);
+		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
 		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_STRING));
 	}|
 	TK_LIT_CHAR
 	{
 		$$ = create_node_literal($1, NULL);
+		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
 		// add_register(scope_stack->children[0], create_literal($1, NATUREZA_LITERAL_CHAR));
 	}|
 	TK_LIT_INT
 	{
-		ST_LINE* l = create_literal($1, NATUREZA_LITERAL_INT);
+		$$ = create_node_literal($1, NULL);
 
-		$$ = create_node_literal($1, l);
-		add_register(scope_stack->children[0], l);
+		int value = $$->n_literal.literal->token_value.v_int;
+
+		$$->temp = new_register();
+		$$->code = create_list(
+			create_iloc(ILOC_LOADI,
+						int_to_char(value),
+						$$->temp,
+						NULL)
+		);
+
+		//ST_LINE* l = create_literal($1, NATUREZA_LITERAL_INT);
+		//add_register(scope_stack->children[0], l);
 	}|
 	TK_LIT_FLOAT
 	{
 		$$ = create_node_literal($1, NULL);
+		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
 		// add_register(scope_stack->children[0], create_literal($1, NATUREZA_LITERAL_FLOAT));
 	};
 
@@ -407,8 +422,9 @@ body:
 	commands_list
 	{
 		$$ = create_node_command_block($1);
-	}
-	|
+
+		print_iloc_list($$->code);
+	} |
 	%empty
 	{
 		$$ = create_node_command_block(NULL);
@@ -419,6 +435,7 @@ commands_block:
 	push_scope commands_list pop_scope
 	{
 		$$ = create_node_command_block($2);
+		print_iloc_list($$->code);
 	} |
 	push_scope pop_scope
 	{
@@ -430,22 +447,12 @@ commands_list:
 	{
 		$$ = $1;
 		free_lexeme($2);
-
-		if($$->code == NULL)
-		{
-			$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
-		}
 	}|
 	commands_list command ';'
 	{
 		$$ = $2;
 		$$->seq = $1;
 		free_lexeme($3);
-
-		if($$->code == NULL)
-		{
-			$$->code = create_list(create_iloc(ILOC_NOP, NULL, NULL, NULL));
-		}
 	};
 
 command:
@@ -984,16 +991,6 @@ operand:
 	literal
 	{
 		$$ = $1;
-
-		ST_LINE* l = $1->n_literal.st_line;
-
-		$$->temp = new_register();
-		$$->code = create_list(
-			create_iloc(ILOC_LOADAI,
-						"rbss",
-						int_to_char(l->offset),
-						$$->temp)
-		);
 	}|
 	c_call_func
 	{
@@ -1036,6 +1033,8 @@ identifier:
 		}
 
 		$$ = create_node_var_access($1, $3, line->token_type);
+
+		throw_error(ERR_NOT_IMPLEMENTED, $2->line_number);
 
 		free_lexeme($2);
 		free_lexeme($4);

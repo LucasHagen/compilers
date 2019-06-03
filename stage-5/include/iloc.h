@@ -31,6 +31,13 @@ char* get_op_string(int op);
 void print_instruction(ILOC* inst);
 
 /**
+ * Prints a list of instructions
+ *
+ * @param list pointer to the list
+ */
+void print_iloc_list(ILOC_List* list);
+
+/**
  * Creates the ILOC with the parameters given
  *
  * @param op_code Instruction

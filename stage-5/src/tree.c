@@ -588,7 +588,10 @@ void add_codes_rec(ILOC_List* dest, Node* node)
             add_codes_rec(dest, node->seq);
         }
 
-        add_all_beg(dest, node->code);
+        if(node->code != NULL)
+        {
+            add_all_end(dest, node->code);
+        }
     }
 }
 
