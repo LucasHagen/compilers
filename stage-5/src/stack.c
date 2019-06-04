@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+Authors:
+- Gabriel Pakulski da Silva - 00274701
+- Lucas Sonntag Hagen       - 00274698
+*/
+
 /**
  * Creates a empty stack
  */

@@ -1,14 +1,14 @@
 #include "printer.h"
 
-/*
-	Authors:
-		- Gabriel Pakulski da Silva - 00274701
-		- Lucas Sonntag Hagen       - 00274698
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/*
+Authors:
+- Gabriel Pakulski da Silva - 00274701
+- Lucas Sonntag Hagen       - 00274698
+*/
 
 void print_tree(Node* node)
 {

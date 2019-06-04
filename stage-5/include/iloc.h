@@ -1,6 +1,12 @@
 #ifndef ILOC_H
 #define ILOC_H
 
+/*
+	Authors:
+		- Gabriel Pakulski da Silva - 00274701
+		- Lucas Sonntag Hagen       - 00274698
+*/
+
 typedef struct iloc_instruction {
 
     int     op_code;
@@ -113,5 +119,14 @@ char* new_register();
  * Allocates a new char* and writes the number on it
  */
 char* int_to_char(int number);
+
+/**
+ * Adds the instructions needed to convert a integer (in register source) to a new register
+ *
+ * @param list List where the instructions will be Added
+ * @param source Source Register
+ * @return Register with the converted value
+ */
+char* reg_convert_int_to_bool(ILOC_List* list, char* source);
 
 #endif

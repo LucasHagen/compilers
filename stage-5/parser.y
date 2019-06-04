@@ -169,7 +169,6 @@ void free_line(ST_LINE* line);
 %type <node> expression
 %type <node> operand
 %type <node> identifier
-%type <node> un_op
 %type <node> optional_vector_index
 
 %start programa
@@ -241,13 +240,29 @@ literal:
 	TK_LIT_TRUE
 	{
 		$$ = create_node_literal($1, NULL);
-		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
+
+		$$->temp = new_register();
+		$$->code = create_list(
+			create_iloc(ILOC_LOADI,
+						"1",
+						$$->temp,
+						NULL)
+		);
+
 		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_FALSE
 	{
 		$$ = create_node_literal($1, NULL);
-		throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
+
+		$$->temp = new_register();
+		$$->code = create_list(
+			create_iloc(ILOC_LOADI,
+						"0",
+						$$->temp,
+						NULL)
+		);
+
 		//add_register(scope_stack->children[0], create_literal($1,NATUREZA_LITERAL_BOOL));
 	}|
 	TK_LIT_STRING
@@ -334,6 +349,11 @@ var:
 		}
 
 		add_register(top(scope_stack), line);
+
+		if(line->token_type != INT && line->token_type != BOOL)
+		{
+			throw_error(ERR_NOT_IMPLEMENTED, $1->line_number);
+		}
 	};
 
 static:
@@ -542,8 +562,8 @@ c_declare_variable:
 			add_all_end($$->code, $5->code);
 			add_iloc($$->code, create_iloc(ILOC_STOREAI,
 											$5->temp,
-											int_to_char(line->offset),
-											top(scope_stack)->offset_reg));
+											top(scope_stack)->offset_reg,
+											int_to_char(line->offset)));
 		}
 
 	};
@@ -615,10 +635,18 @@ c_attr:
 		$$->code = create_empty_list();
 
 		add_all_end($$->code, $4->code);
+
+		char* reg = $4->temp;
+
+		if(line->token_type == BOOL && $4->val_type != BOOL)
+		{
+			reg = reg_convert_int_to_bool($$->code, reg);
+		}
+
 		add_iloc($$->code, create_iloc(ILOC_STOREAI,
-										$4->temp,
-										int_to_char(line->offset),
-										get_offset_register(scope_stack, line->id)));
+										reg,
+										get_offset_register(scope_stack, line->id),
+										int_to_char(line->offset)));
 
 		free_lexeme($3);
 	};
@@ -909,52 +937,113 @@ expression:
 	expression GREATER expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
+
 		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_GT);
 	}|
 	expression LESS expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
+
 		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_LT);
 	}|
 	expression TK_OC_LE expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
+
 		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_LE);
 	}|
 	expression TK_OC_GE expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
+
 		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_GE);
 	}|
 	expression TK_OC_EQ expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
+
 		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_EQ);
 	}|
 	expression TK_OC_NE expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
+
 		create_and_add_iloc_compare($$, $1, $3, ILOC_CMP_NE);
 	}|
 	expression TK_OC_AND expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
 	}|
 	expression TK_OC_OR expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
+		$$->val_type = BOOL;
 	}|
 	expression '&' expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
 		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
-	un_op expression %prec UOP
+	PLUS expression %prec UOP
 	{
-		$$ = $1;
-		$$->n_un_op.operand = $2;
+		$$ = create_node_un_op($1, $2);
+		$$->code = $2->code;
+		$$->temp = $2->temp;
+	}|
+	MINUS expression %prec UOP
+	{
+		$$ = create_node_un_op($1, $2);
+		$$->temp = new_register();
+		$$->code = create_empty_list();
+		add_all_end($$->code, $2->code);
+		add_iloc($$->code, create_iloc(ILOC_RSUBI,
+										$2->temp,
+										"0",
+										$$->temp));
+	}|
+	EXCLAMATION expression %prec UOP
+	{
+		$$ = create_node_un_op($1, $2);
+		$$->val_type = BOOL;
 
-		$$->val_type = $2->val_type;
+		$$->code = create_empty_list();
+		$$->temp = new_register();
+
+		add_all_end($$->code, $2->code);
+
+		char* zero = new_register();
+		add_iloc($$->code, create_iloc(ILOC_LOADI, "0", zero, NULL));
+		add_iloc($$->code,
+				create_iloc(ILOC_CMP_EQ,
+					$2->temp,
+					zero,
+					$$->temp));
+	}|
+	'&' expression %prec UOP
+	{
+		$$ = create_node_un_op($1, $2);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
+	}|
+	MULT expression %prec UOP
+	{
+		$$ = create_node_un_op($1, $2);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
+	}|
+	HASHTAG expression %prec UOP
+	{
+		$$ = create_node_un_op($1, $2);
+		throw_error(ERR_NOT_IMPLEMENTED, -1);
+	}|
+	QUESTION expression %prec UOP
+	{
+		$$ = create_node_un_op($1, $2);
 		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	expression QUESTION expression ':' expression %prec QUESTION
@@ -1051,36 +1140,6 @@ optional_vector_index:
 
 		free_lexeme($1);
 		free_lexeme($3);
-	};
-
-un_op:
-	PLUS
-	{
-		$$ = create_node_un_op($1, NULL);
-	}|
-	MINUS
-	{
-		$$ = create_node_un_op($1, NULL);
-	}|
-	EXCLAMATION
-	{
-		$$ = create_node_un_op($1, NULL);
-	}|
-	'&'
-	{
-		$$ = create_node_un_op($1, NULL);
-	}|
- 	MULT
-	{
-		$$ = create_node_un_op($1, NULL);
-	}|
-	HASHTAG
-	{
-		$$ = create_node_un_op($1, NULL);
-	}|
-	QUESTION
-	{
-		$$ = create_node_un_op($1, NULL);
 	};
 
 %%

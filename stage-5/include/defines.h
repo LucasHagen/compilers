@@ -40,7 +40,7 @@
 
 /* Definições de tamanhos */
 #define SIZE_CHAR     1
-#define SIZE_STRING   1 //Multiplicado pelo comprimento do string
+#define SIZE_STRING   1 // Multiplicado pelo comprimento do string
 #define SIZE_INT      4
 #define SIZE_FLOAT    8
 #define SIZE_BOOL     1

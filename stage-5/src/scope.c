@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+Authors:
+- Gabriel Pakulski da Silva - 00274701
+- Lucas Sonntag Hagen       - 00274698
+*/
+
 /**
  * Creates a empty scope
  */
@@ -35,8 +41,8 @@ void add_register(Scope* scope, ST_LINE* value)
             scope->children = children;
     }
 
-    // IMPLEMENTED ONLY FOR INTEGER VARIABLES
-    if(value->nature == NATUREZA_VARIAVEL && value->token_type == INT)
+    // IMPLEMENTED ONLY FOR INTEGER AND BOOL VARIABLES
+    if(value->nature == NATUREZA_VARIAVEL && (value->token_type == INT || value->token_type == BOOL))
     {
         value->offset = get_current_offset(scope);
     }
@@ -59,12 +65,12 @@ ST_LINE* get_top_register(Scope* scope)
 
 int get_current_offset(Scope* scope)
 {
-    // IMPLEMENTED ONLY FOR INTEGER VARIABLES
+    // IMPLEMENTED ONLY FOR INTEGER AND BOOL VARIABLES
     int result = 0;
     for(int i = scope->size - 1; i >= 0; i--)
     {
         if(scope->children[i]->nature == NATUREZA_VARIAVEL &&
-                scope->children[i]->token_type == INT)
+                (scope->children[i]->token_type == INT || scope->children[i]->token_type == BOOL))
         {
             result += scope->children[i]->token_size;
         }

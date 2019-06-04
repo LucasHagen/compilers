@@ -7,6 +7,12 @@
 #include "defines.h"
 #include "tree.h"
 
+/*
+Authors:
+- Gabriel Pakulski da Silva - 00274701
+- Lucas Sonntag Hagen       - 00274698
+*/
+
 int next_iloc_label = 0;
 int next_iloc_register = 0;
 
@@ -380,4 +386,17 @@ char* int_to_char(int number)
     sprintf(text, "%d", number);
 
     return text;
+}
+
+char* reg_convert_int_to_bool(ILOC_List* list, char* source)
+{
+    char* reg = new_register();
+    char* zero = new_register();
+    add_iloc(list, create_iloc(ILOC_LOADI, "0", zero, NULL));
+    add_iloc(list, create_iloc(ILOC_CMP_NE,
+                        source,
+                        zero,
+                        reg));
+
+    return reg;
 }

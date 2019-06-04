@@ -5,6 +5,12 @@
 #include "defines.h"
 #include "tree.h"
 
+/*
+Authors:
+- Gabriel Pakulski da Silva - 00274701
+- Lucas Sonntag Hagen       - 00274698
+*/
+
 typedef struct scope_struct {
 
     ST_LINE** children;

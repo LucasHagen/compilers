@@ -1,14 +1,14 @@
 #ifndef TREE_H
 #define TREE_H
 
-/*
-	Authors:
-		- Gabriel Pakulski da Silva - 00274701
-		- Lucas Sonntag Hagen       - 00274698
-*/
-
 #include "lexeme.h"
 #include "iloc.h"
+
+/*
+Authors:
+- Gabriel Pakulski da Silva - 00274701
+- Lucas Sonntag Hagen       - 00274698
+*/
 
 #define NODE_TYPE_TER_OP 			0
 #define NODE_TYPE_BIN_OP			1
