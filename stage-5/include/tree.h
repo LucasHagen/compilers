@@ -41,6 +41,9 @@ struct node_if {
 	struct node* condition;
 	struct node* n_true;
 	struct node* n_false;
+	ILOC*		 t;
+	ILOC* 		 f;
+	ILOC*		 next;
 };
 
 struct node_bin_op {
@@ -212,5 +215,7 @@ void throw_error(int error_code, int line_number);
  */
 void create_and_add_iloc_compare(Node* node, Node* left, Node* right, int operation);
 
+void create_and_add_iloc_and(Node* node, Node* left, Node* right);
+void create_and_add_iloc_or(Node* node, Node* left, Node* right);
 
 #endif // TREE_H

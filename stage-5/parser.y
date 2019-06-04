@@ -782,14 +782,26 @@ c_break:
 	};
 
 c_if:
-	TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else
+	TK_PR_IF
 	{
-		$$ = create_node_if($3, $6, $7, $1->line_number);
+		//B.t=rot(); B.f=rot();
+	}
+	'(' expression ')'
+	{
+		//expression.next = S.next;
+	}
+	TK_PR_THEN commands_block c_else
+	{
+		$$ = create_node_if($4, $8, $9, $1->line_number);
 
 		free_lexeme($1);
-		free_lexeme($2);
-		free_lexeme($4);
+		free_lexeme($3);
 		free_lexeme($5);
+		free_lexeme($7);
+
+		//TODO: implement s/c
+		//S.code=B.code || gera(B.t:) || S1.code ||
+		//gera(B.f:);	|| S2.code
 	};
 
 c_else:
@@ -797,9 +809,9 @@ c_else:
 	{
 		$$ = NULL;
 	}|
-	TK_PR_ELSE commands_block
+	TK_PR_ELSE {/*TODO: commands_block.next = S.next;*/} commands_block
 	{
-		$$ = $2;
+		$$ = $3;
 
 		free_lexeme($1);
 	};
@@ -980,11 +992,15 @@ expression:
 	{
 		$$ = create_node_bin_op($2, $1, $3);
 		$$->val_type = BOOL;
+
+		create_and_add_iloc_and($$, $1, $3);
 	}|
 	expression TK_OC_OR expression
 	{
 		$$ = create_node_bin_op($2, $1, $3);
 		$$->val_type = BOOL;
+
+		create_and_add_iloc_or($$, $1, $3);
 	}|
 	expression '&' expression
 	{
