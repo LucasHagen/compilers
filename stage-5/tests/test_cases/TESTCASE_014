@@ -1,8 +1,8 @@
 int function (){
     bool x;
     bool y;
-    x = true;
-    y = false;
+    x = true && false;
+    y = false || true;
     if (true && true) then{
         x = false;
     }

@@ -825,12 +825,14 @@ void create_and_add_iloc_and(Node* node, Node* left, Node* right)
     node->code = list;
 
     add_all_end(list, left->code);
-    add_all_end(list, right->code);
+
 
     add_iloc(list, create_iloc(ILOC_CBR, left->temp, t->param1, f->param1));
     add_iloc(list, t);
     add_iloc(list, create_iloc(ILOC_AND, left->temp, right->temp, node->temp));
     add_iloc(list, create_iloc(ILOC_JUMP, next->param1, NULL, NULL));
+    add_all_end(list, right->code);
+
     add_iloc(list, f);
     add_iloc(list, create_iloc(ILOC_STORE, node->temp, left->temp, NULL));
     add_iloc(list, next);
@@ -838,7 +840,22 @@ void create_and_add_iloc_and(Node* node, Node* left, Node* right)
 void create_and_add_iloc_or(Node* node, Node* left, Node* right)
 {
     ILOC_List* list = create_empty_list();
+    ILOC* t = new_label();
+    ILOC* f = new_label();
+    ILOC* next = new_label();
 
     node->temp = new_register();
     node->code = list;
+
+    add_all_end(list, left->code);
+
+    add_iloc(list, create_iloc(ILOC_CBR, left->temp, t->param1, f->param1));
+    add_iloc(list, t);
+    add_iloc(list, create_iloc(ILOC_STORE, node->temp, left->temp, NULL));
+    add_iloc(list, create_iloc(ILOC_JUMP, next->param1, NULL, NULL));
+
+    add_iloc(list, f);
+    add_iloc(list, create_iloc(ILOC_OR, left->temp, right->temp, node->temp));
+    add_all_end(list, right->code);
+    add_iloc(list, next);
 }
