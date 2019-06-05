@@ -218,4 +218,6 @@ void create_and_add_iloc_compare(Node* node, Node* left, Node* right, int operat
 void create_and_add_iloc_and(Node* node, Node* left, Node* right);
 void create_and_add_iloc_or(Node* node, Node* left, Node* right);
 void create_and_add_iloc_if(Node* node_if, Node* expression, Node* s1, Node* s2);
+void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1);
+
 #endif // TREE_H

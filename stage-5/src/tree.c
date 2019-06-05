@@ -892,3 +892,22 @@ void create_and_add_iloc_if(Node* node_if, Node* expression, Node* s1, Node* s2)
     }
     add_iloc(list, node_if->n_if.next);
 }
+
+void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1)
+{
+    ILOC_List* list = create_empty_list();
+    ILOC* condition = new_label();
+    ILOC* t = new_label();
+    ILOC* f = new_label();
+
+    node_while->temp = new_register();
+    node_while->code = list;
+
+    add_all_end(list, expression->code);
+    add_iloc(list, condition);
+    add_iloc(list, create_iloc(ILOC_CBR, expression->temp, t->param1, f->param1));
+    add_iloc(list, t);
+    add_all_end(list, s1->code);
+    add_iloc(list, create_iloc(ILOC_JUMPI, condition->param1, NULL, NULL));
+    add_iloc(list, f);
+}

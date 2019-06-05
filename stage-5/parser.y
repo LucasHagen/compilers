@@ -877,6 +877,8 @@ c_while:
 		free_lexeme($2);
 		free_lexeme($4);
 		free_lexeme($5);
+
+		create_and_add_iloc_while($$, $3, $6);
 	};
 
 expression:
