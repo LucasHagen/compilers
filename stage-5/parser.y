@@ -799,6 +799,7 @@ c_if:
 		free_lexeme($5);
 		free_lexeme($7);
 
+		create_and_add_iloc_if($$, $4, $8, $9);
 		//TODO: implement s/c
 		//S.code=B.code || gera(B.t:) || S1.code ||
 		//gera(B.f:);	|| S2.code

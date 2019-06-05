@@ -837,6 +837,7 @@ void create_and_add_iloc_and(Node* node, Node* left, Node* right)
     add_iloc(list, create_iloc(ILOC_STORE, node->temp, left->temp, NULL));
     add_iloc(list, next);
 }
+
 void create_and_add_iloc_or(Node* node, Node* left, Node* right)
 {
     ILOC_List* list = create_empty_list();
@@ -858,4 +859,27 @@ void create_and_add_iloc_or(Node* node, Node* left, Node* right)
     add_iloc(list, create_iloc(ILOC_OR, left->temp, right->temp, node->temp));
     add_all_end(list, right->code);
     add_iloc(list, next);
+}
+
+void create_and_add_iloc_if(Node* node_if, Node* expression, Node* s1, Node* s2)
+{
+    ILOC_List* list = create_empty_list();
+    node_if->n_if.t = new_label();
+    node_if->n_if.f = new_label();
+    node_if->n_if.next = new_label();
+
+    node_if->temp = new_register();
+    node_if->code = list;
+
+    add_all_end(list, expression->code);
+
+    add_iloc(list, create_iloc(ILOC_CBR, expression->temp, node_if->n_if.t->param1, node_if->n_if.f->param1));
+    add_iloc(list, node_if->n_if.t);
+    add_all_end(list, s1->code);
+    if(s2 != NULL){
+    add_iloc(list, create_iloc(ILOC_JUMP, node_if->n_if.next->param1, NULL, NULL));
+        add_iloc(list, node_if->n_if.f);
+        add_all_end(list, s2->code);
+        add_iloc(list, node_if->n_if.next);
+    }
 }
