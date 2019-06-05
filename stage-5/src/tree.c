@@ -883,10 +883,12 @@ void create_and_add_iloc_if(Node* node_if, Node* expression, Node* s1, Node* s2)
     add_iloc(list, create_iloc(ILOC_CBR, expression->temp, node_if->n_if.t->param1, node_if->n_if.f->param1));
     add_iloc(list, node_if->n_if.t);
     add_all_end(list, s1->code);
-    if(s2 != NULL){
-    add_iloc(list, create_iloc(ILOC_JUMP, node_if->n_if.next->param1, NULL, NULL));
-        add_iloc(list, node_if->n_if.f);
+    add_iloc(list, create_iloc(ILOC_JUMPI, node_if->n_if.next->param1, NULL, NULL));
+
+    add_iloc(list, node_if->n_if.f);
+    if(s2 != NULL)
+    {
         add_all_end(list, s2->code);
-        add_iloc(list, node_if->n_if.next);
     }
+    add_iloc(list, node_if->n_if.next);
 }

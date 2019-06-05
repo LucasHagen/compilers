@@ -1,0 +1,22 @@
+x int;
+y int;
+
+int function (){
+    if(true) then
+    {
+        x = 1111;
+    }
+    else
+    {
+        x = 2222;
+    };
+
+    if(false && true) then
+    {
+        y = 1111;
+    }
+    else
+    {
+        y = 2222;
+    };
+}

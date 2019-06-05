@@ -455,7 +455,6 @@ commands_block:
 	push_scope commands_list pop_scope
 	{
 		$$ = create_node_command_block($2);
-		print_iloc_list($$->code);
 	} |
 	push_scope pop_scope
 	{
@@ -782,27 +781,16 @@ c_break:
 	};
 
 c_if:
-	TK_PR_IF
+	TK_PR_IF '(' expression ')' TK_PR_THEN commands_block c_else
 	{
-		//B.t=rot(); B.f=rot();
-	}
-	'(' expression ')'
-	{
-		//expression.next = S.next;
-	}
-	TK_PR_THEN commands_block c_else
-	{
-		$$ = create_node_if($4, $8, $9, $1->line_number);
+		$$ = create_node_if($3, $6, $7, $1->line_number);
 
 		free_lexeme($1);
-		free_lexeme($3);
+		free_lexeme($2);
+		free_lexeme($4);
 		free_lexeme($5);
-		free_lexeme($7);
 
-		create_and_add_iloc_if($$, $4, $8, $9);
-		//TODO: implement s/c
-		//S.code=B.code || gera(B.t:) || S1.code ||
-		//gera(B.f:);	|| S2.code
+		create_and_add_iloc_if($$, $3, $6, $7);
 	};
 
 c_else:
