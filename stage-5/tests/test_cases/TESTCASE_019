@@ -1,0 +1,12 @@
+x bool;
+int main(){
+    x = 1;
+    
+    bool x;
+    if(true) then
+    {
+        bool x;
+        x = 2;
+    };
+    x = 3;
+}
