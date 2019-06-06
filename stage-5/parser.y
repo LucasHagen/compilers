@@ -31,6 +31,10 @@ void add_func_params(Stack* stack, Node* function);
 void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
 
+Scope* parent_scope;
+Scope* new_scope;
+int current_scope = 0;
+
 %}
 
 %union {
@@ -189,6 +193,8 @@ programa:
 initialize:
 	%empty
 	{
+		new_scope = (Scope *) malloc(sizeof(Scope));
+		parent_scope = (Scope *) malloc(sizeof(Scope));
 		create_scope_stack();
 	};
 
@@ -206,6 +212,16 @@ push_scope:
 		free_lexeme($1);
 
 		push(scope_stack, create_empty_scope("rfp"));
+
+		current_scope++;
+#ifdef COMP_DEBUG
+		printf("\n%d -> %d\n", current_scope-1, current_scope);
+#endif
+		new_scope = top(scope_stack);
+		if(current_scope == 1){
+			parent_scope = new_scope;
+		}
+		new_scope->depth = current_scope;
 	};
 
 pop_scope:
@@ -214,6 +230,11 @@ pop_scope:
 		free_lexeme($1);
 		Scope* s = pop(scope_stack);
 		free_lines(s);
+
+		current_scope--;
+#ifdef COMP_DEBUG
+		printf("\n%d -> %d\n", current_scope+1, current_scope);
+#endif
 	};
 
 big_list:
@@ -393,10 +414,13 @@ function:
 		add_register(top(scope_stack), line);
 		free_lexeme($4);
 		free_lexeme($6);
+
+		add_func_params(scope_stack, $5);
 	}
 	push_scope
 	{
 		add_func_params(scope_stack, $5);
+
 	}
 	body pop_scope
 	{
@@ -407,6 +431,7 @@ function:
 			$5,
 			$10
 		);
+
 	};
 
 function_parameters:
@@ -554,15 +579,36 @@ c_declare_variable:
 		ST_LINE* line = create_var_register($$);
 		add_register(top(scope_stack), line);
 
+		// New line;
+		if(current_scope > 1){
+			line->matches_scope = 0;
+			add_register(parent_scope, line);
+#ifdef COMP_DEBUG
+			printf("\n***\nAdding register to the father's scope\n***\n");
+#endif
+			line->matches_scope = 1;
+		}
+
 		if($5 != NULL)
 		{
 			$$->code = create_empty_list();
 
 			add_all_end($$->code, $5->code);
-			add_iloc($$->code, create_iloc(ILOC_STOREAI,
-											$5->temp,
-											top(scope_stack)->offset_reg,
-											int_to_char(line->offset)));
+			if(current_scope > 1){
+#ifdef COMP_DEBUG
+				printf("\n***\nAdding store to the father's scope\n***\n");
+#endif
+				add_iloc($$->code, create_iloc(ILOC_STOREAI,
+												$5->temp,
+												parent_scope->offset_reg,
+												int_to_char(line->offset)));
+			}
+			else{
+				add_iloc($$->code, create_iloc(ILOC_STOREAI,
+												$5->temp,
+												top(scope_stack)->offset_reg,
+												int_to_char(line->offset)));
+			}
 		}
 
 	};
@@ -642,10 +688,20 @@ c_attr:
 			reg = reg_convert_int_to_bool($$->code, reg);
 		}
 
-		add_iloc($$->code, create_iloc(ILOC_STOREAI,
-										reg,
-										get_offset_register(scope_stack, line->id),
-										int_to_char(line->offset)));
+		Stack* aux = create_stack(parent_scope);
+		if(current_scope > 1){
+			line = identifier_in_stack(aux, $1->token_value.v_string);
+			add_iloc($$->code, create_iloc(ILOC_STOREAI,
+											reg,
+											get_offset_register(aux, line->id),
+											int_to_char(line->offset)));
+		}else{
+			add_iloc($$->code, create_iloc(ILOC_STOREAI,
+											reg,
+											get_offset_register(scope_stack, line->id),
+											int_to_char(line->offset)));
+		}
+		free(aux);
 
 		free_lexeme($3);
 	};
@@ -1077,12 +1133,29 @@ operand:
 		ST_LINE* l = identifier_in_stack(scope_stack, $1->n_call_or_access.identifier->token_value.v_string);
 
 		$$->temp = new_register();
-		$$->code = create_list(
-			create_iloc(ILOC_LOADAI,
-						get_offset_register(scope_stack, l->id),
-						int_to_char(l->offset),
-						$$->temp)
-		);
+
+		if(current_scope > 1){
+#ifdef COMP_DEBUG
+			printf("\n***\nAccessing an identifier that is on the parent scope\n***\n");
+#endif
+			Stack* aux = create_stack(parent_scope);
+			l = identifier_in_stack(aux, $1->n_call_or_access.identifier->token_value.v_string);
+			$$->code = create_list(
+				create_iloc(ILOC_LOADAI,
+							get_offset_register(aux, l->id),
+							int_to_char(l->offset),
+							$$->temp)
+						);
+			free(aux);
+		}else{
+
+			$$->code = create_list(
+				create_iloc(ILOC_LOADAI,
+							get_offset_register(scope_stack, l->id),
+							int_to_char(l->offset),
+							$$->temp)
+						);
+		}
 	}|
 	literal
 	{

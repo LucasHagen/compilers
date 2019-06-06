@@ -21,6 +21,7 @@ Scope* create_empty_scope(char* offset_reg)
     s->max_size = 1;
     s->size = 0;
     s->offset_reg = offset_reg;
+    s->depth = 0;
 
     return s;
 }
@@ -105,6 +106,7 @@ ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type
     reg->lexeme             = identifier;
     reg->num_function_args  = 0;
     reg->offset             = 0;
+    reg->matches_scope      = 1;
 
     add_function_args(reg, params);
     return reg;
@@ -193,6 +195,7 @@ ST_LINE* create_literal(Lexeme* lex, int nature){
     reg->num_function_args  = 0;
     reg->function_args      = NULL;
     reg->offset             = 0;
+    reg->matches_scope      = 1;
     switch(nature){
         case NATUREZA_LITERAL_INT:
             reg->token_type = INT;
@@ -238,6 +241,7 @@ ST_LINE* create_var_register(Node* node)
     reg->offset             = 0;
     reg->num_function_args  = 0;
     reg->function_args      = NULL;
+    reg->matches_scope      = 1;
 
     return reg;
 }
