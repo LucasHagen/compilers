@@ -83,7 +83,6 @@ typedef struct line {
   Lexeme* lexeme;
   int num_function_args;
   function_arg* function_args;
-  int matches_scope;
 } ST_LINE;
 
 #endif

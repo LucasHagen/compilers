@@ -98,6 +98,7 @@ int is_empty(Stack* stack)
 Scope* top(Stack* stack)
 {
     Scope* result = NULL;
+
     if(!is_empty(stack))
     {
         result = stack->children[stack->size - 1];

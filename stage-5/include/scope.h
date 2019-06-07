@@ -17,7 +17,6 @@ typedef struct scope_struct {
     int       max_size;
     int       size    ;
     char*     offset_reg;
-    int       depth;
 
 } Scope;
 
