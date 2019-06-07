@@ -1,4 +1,0 @@
-int function (int x, float y, char c, char xa, int z) {
-    return x;
-    x = x + 1;
-}

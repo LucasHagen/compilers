@@ -1,4 +1,0 @@
-x bool;
-int main(){
-    x = true || false;
-}

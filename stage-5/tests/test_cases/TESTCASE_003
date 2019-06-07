@@ -1,20 +1,10 @@
-int main(int h){
-    int x;
-    if(true) then {
-        x = 1;
-    } else {
-        x = 2;
-    };
-
-    if(123123 + 111 + main(x * 2.0)) then {
-        x = 20;
-    };
-    x = 1 + 2 * 3 * (4+2);
-    //y = (1+2) * 3;
-    //x = *y + 1;
-    //x = 1+2/2;
-    //x = 1+2^3;
-    //x = 2*3^4+1;
-
-    return x * 2.0;
+x bool;
+y bool;
+z bool;
+w bool;
+int function (){
+    x = true && true;
+    y = false && false;
+    z = true && false;
+    w = false && true;
 }

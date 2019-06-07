@@ -1,4 +1,26 @@
-xis int;
-xis2 float;
+x int;
+y int;
 
-static string funcao1 ()  {}
+int main(){
+    x = 2;
+
+    if ( y == 0 && true && (x == 0 || x == 2) ) then
+    {
+        y = 100;
+    };
+
+    while (y > 2) do
+    {
+        x = x + 1;
+        y = y - 1;
+    };
+
+    int x;
+
+    {
+        int x;
+        x = 2;
+    };
+
+    x = 3;
+}
