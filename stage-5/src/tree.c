@@ -903,8 +903,8 @@ void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1)
     node_while->temp = new_register();
     node_while->code = list;
 
-    add_all_end(list, expression->code);
     add_iloc(list, condition);
+    add_all_end(list, expression->code);
     add_iloc(list, create_iloc(ILOC_CBR, expression->temp, t->param1, f->param1));
     add_iloc(list, t);
     add_all_end(list, s1->code);
