@@ -18,17 +18,20 @@ typedef struct scope_struct {
     int       size    ;
     char*     offset_reg;
 
+    int       is_global_scope;
+    int       used_size;
+
 } Scope;
 
 /**
  * Creates a empty scope
  */
-Scope* create_empty_scope(char* offset_reg);
+Scope* create_empty_scope(char* offset_reg, int is_global_scope);
 
 /**
  * Adds a register in the scope
  */
-void add_register(Scope* scope, ST_LINE* value);
+void add_register(Scope* scope, ST_LINE* value, Scope* base_scope);
 
 ST_LINE* get_top_register(Scope* scope);
 

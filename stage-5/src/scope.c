@@ -13,7 +13,7 @@ Authors:
 /**
  * Creates a empty scope
  */
-Scope* create_empty_scope(char* offset_reg)
+Scope* create_empty_scope(char* offset_reg, int is_global_scope)
 {
     Scope* s = (Scope*) malloc(sizeof(Scope));
 
@@ -22,13 +22,16 @@ Scope* create_empty_scope(char* offset_reg)
     s->size = 0;
     s->offset_reg = offset_reg;
 
+    s->is_global_scope = is_global_scope;
+    s->used_size = 0;
+
     return s;
 }
 
 /**
  * Adds a register in the scope
  */
-void add_register(Scope* scope, ST_LINE* value)
+void add_register(Scope* scope, ST_LINE* value, Scope* base_scope)
 {
     ST_LINE** children;
     if(scope->size >= scope->max_size)
@@ -44,7 +47,8 @@ void add_register(Scope* scope, ST_LINE* value)
     // IMPLEMENTED ONLY FOR INTEGER AND BOOL VARIABLES
     if(value->nature == NATUREZA_VARIAVEL && (value->token_type == INT || value->token_type == BOOL))
     {
-        value->offset = get_current_offset(scope);
+        value->offset = base_scope->used_size;
+        base_scope->used_size += value->token_size;
     }
 
     scope->children[scope->size] = value;

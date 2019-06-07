@@ -205,7 +205,7 @@ push_scope:
 	{
 		free_lexeme($1);
 
-		push(scope_stack, create_empty_scope("rfp"));
+		push(scope_stack, create_empty_scope("rfp", 0));
 	};
 
 pop_scope:
@@ -348,7 +348,7 @@ var:
 			line->nature = NATUREZA_VECTOR;
 		}
 
-		add_register(top(scope_stack), line);
+		add_register(top(scope_stack), line, top(scope_stack));
 
 		if(line->token_type != INT && line->token_type != BOOL)
 		{
@@ -390,7 +390,7 @@ function:
 
 		ST_LINE* line = create_function_register($3, $5, get_type_id($2), $1);
 
-		add_register(top(scope_stack), line);
+		add_register(top(scope_stack), line, top(scope_stack));
 		free_lexeme($4);
 		free_lexeme($6);
 	}
@@ -552,7 +552,7 @@ c_declare_variable:
 			$5
 		);
 		ST_LINE* line = create_var_register($$);
-		add_register(top(scope_stack), line);
+		add_register(top(scope_stack), line, scope_stack->children[1]);
 
 		if($5 != NULL)
 		{
@@ -1195,7 +1195,7 @@ void create_scope_stack() {
 	if(scope_stack == NULL)
 	{
 		scope_stack = create_empty_stack();
-		push(scope_stack, create_empty_scope("rbss"));
+		push(scope_stack, create_empty_scope("rbss", 1));
 	}
 }
 
@@ -1205,7 +1205,7 @@ void add_func_params(Stack* stack, Node* params){
 
 		Node* aux = params;
     	ST_LINE* line = create_var_register(aux);
-		add_register(top(stack), line);
+		add_register(top(stack), line, top(stack));
 
 		while(aux->seq != NULL){
 			aux = aux->seq;
@@ -1216,7 +1216,7 @@ void add_func_params(Stack* stack, Node* params){
 			}
 
 			line = create_var_register(aux);
-			add_register(top(stack), line);
+			add_register(top(stack), line, top(stack));
 		}
 
 	}

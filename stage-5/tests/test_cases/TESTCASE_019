@@ -1,11 +1,10 @@
-x bool;
+x int;
 int main(){
     x = 1;
-    
-    bool x;
-    if(true) then
+
+    int x;
     {
-        bool x;
+        int x;
         x = 2;
     };
     x = 3;
