@@ -33,7 +33,6 @@ void free_line(ST_LINE* line);
 
 Scope* parent_scope;
 Scope* new_scope;
-Scope* global_scope;
 int current_scope = 0;
 
 %}
@@ -196,9 +195,7 @@ initialize:
 	{
 		new_scope = (Scope *) malloc(sizeof(Scope));
 		parent_scope = (Scope *) malloc(sizeof(Scope));
-		global_scope = (Scope *) malloc(sizeof(Scope));
 		create_scope_stack();
-		global_scope = top(scope_stack);
 	};
 
 destroy:
@@ -691,8 +688,7 @@ c_attr:
 			reg = reg_convert_int_to_bool($$->code, reg);
 		}
 
-		Stack* aux = create_stack(global_scope);
-		push(aux,parent_scope);
+		Stack* aux = create_stack(parent_scope);
 		if(current_scope > 1){
 			line = identifier_in_stack(aux, $1->token_value.v_string);
 			add_iloc($$->code, create_iloc(ILOC_STOREAI,
@@ -1142,8 +1138,7 @@ operand:
 #ifdef COMP_DEBUG
 			printf("\n***\nAccessing an identifier that is on the parent scope\n***\n");
 #endif
-			Stack* aux = create_stack(global_scope);
-			push(aux,parent_scope);
+			Stack* aux = create_stack(parent_scope);
 			l = identifier_in_stack(aux, $1->n_call_or_access.identifier->token_value.v_string);
 			$$->code = create_list(
 				create_iloc(ILOC_LOADAI,
