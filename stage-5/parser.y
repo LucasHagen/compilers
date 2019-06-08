@@ -806,9 +806,9 @@ c_else:
 	{
 		$$ = NULL;
 	}|
-	TK_PR_ELSE {/*TODO: commands_block.next = S.next;*/} commands_block
+	TK_PR_ELSE commands_block
 	{
-		$$ = $3;
+		$$ = $2;
 
 		free_lexeme($1);
 	};
