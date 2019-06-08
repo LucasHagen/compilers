@@ -31,6 +31,7 @@ void add_func_params(Stack* stack, Node* function);
 void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
 
+int main_flag = 0;
 %}
 
 %union {
@@ -195,6 +196,7 @@ initialize:
 destroy:
 	%empty
 	{
+
 		free_lines(scope_stack->children[0]);
 		free(scope_stack->children);
 		free(scope_stack);
@@ -443,6 +445,11 @@ body:
 	{
 		$$ = create_node_command_block($1);
 
+		if(main_flag){
+			add_iloc($$->code,create_iloc(ILOC_HALT,NULL,NULL,NULL));
+			main_flag = 0;
+		}
+
 		print_iloc_list($$->code);
 	} |
 	%empty
@@ -466,6 +473,7 @@ commands_list:
 	{
 		$$ = $1;
 		free_lexeme($2);
+
 	}|
 	commands_list command ';'
 	{

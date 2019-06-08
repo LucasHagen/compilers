@@ -119,6 +119,8 @@ char* get_op_string(int op)
         	return "cmp_GT";
         case ILOC_CMP_NE:
         	return "cmp_NE";
+        case ILOC_HALT:
+            return "halt";
     }
 
     return "";
@@ -166,6 +168,10 @@ void print_instruction(ILOC* inst)
     else if (inst->op_code == ILOC_LABEL)
     {
         printf("%s:\n", inst->param1);
+    }
+    else if (inst->op_code == ILOC_HALT)
+    {
+        printf("%s\n", get_op_string(inst->op_code));
     }
 }
 

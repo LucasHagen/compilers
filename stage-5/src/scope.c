@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern int main_flag;
 /*
 Authors:
 - Gabriel Pakulski da Silva - 00274701
@@ -110,6 +111,9 @@ ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type
     reg->num_function_args  = 0;
     reg->offset             = 0;
 
+    if(strcmp(identifier->token_value.v_string, "main") == 0){
+        main_flag = 1;
+    }
     add_function_args(reg, params);
     return reg;
 }
