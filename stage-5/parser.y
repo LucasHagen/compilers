@@ -207,7 +207,9 @@ push_scope:
 	{
 		free_lexeme($1);
 
-		push(scope_stack, create_empty_scope("rfp", 0));
+		char* reg = malloc(sizeof(char) * 4);
+		memcpy(reg, "rfp", sizeof(char) * 4);
+		push(scope_stack, create_empty_scope(reg, 0));
 	};
 
 pop_scope:
@@ -285,13 +287,15 @@ literal:
 
 		int value = $$->n_literal.literal->token_value.v_int;
 
+		char* str = int_to_char(value);
 		$$->temp = new_register();
 		$$->code = create_list(
 			create_iloc(ILOC_LOADI,
-						int_to_char(value),
+						str,
 						$$->temp,
 						NULL)
 		);
+		free(str);
 
 		//ST_LINE* l = create_literal($1, NATUREZA_LITERAL_INT);
 		//add_register(scope_stack->children[0], l);
@@ -565,12 +569,14 @@ c_declare_variable:
 		if($5 != NULL)
 		{
 			$$->code = create_empty_list();
+			char* str = int_to_char(line->offset);
 
 			add_all_end($$->code, $5->code);
 			add_iloc($$->code, create_iloc(ILOC_STOREAI,
 											$5->temp,
 											top(scope_stack)->offset_reg,
-											int_to_char(line->offset)));
+											str));
+			free(str);
 		}
 
 	};
@@ -644,6 +650,7 @@ c_attr:
 		add_all_end($$->code, $4->code);
 
 		char* reg = $4->temp;
+		char* str = int_to_char(line->offset);
 
 		if(line->token_type == BOOL && $4->val_type != BOOL)
 		{
@@ -653,7 +660,12 @@ c_attr:
 		add_iloc($$->code, create_iloc(ILOC_STOREAI,
 										reg,
 										get_offset_register(scope_stack, line->id),
-										int_to_char(line->offset)));
+										str));
+		free(str);
+		if(line->token_type == BOOL && $4->val_type != BOOL)
+		{
+			free(reg);
+		}
 
 		free_lexeme($3);
 	};
@@ -1009,7 +1021,7 @@ expression:
 	PLUS expression %prec UOP
 	{
 		$$ = create_node_un_op($1, $2);
-		$$->code = $2->code;
+		$$->code = copy_list($2->code);
 		$$->temp = $2->temp;
 	}|
 	MINUS expression %prec UOP
@@ -1040,6 +1052,7 @@ expression:
 					$2->temp,
 					zero,
 					$$->temp));
+		free(zero);
 	}|
 	'&' expression %prec UOP
 	{
@@ -1083,14 +1096,16 @@ operand:
 		$$ = $1;
 
 		ST_LINE* l = identifier_in_stack(scope_stack, $1->n_call_or_access.identifier->token_value.v_string);
+		char* str = int_to_char(l->offset);
 
 		$$->temp = new_register();
 		$$->code = create_list(
 			create_iloc(ILOC_LOADAI,
 						get_offset_register(scope_stack, l->id),
-						int_to_char(l->offset),
+						str,
 						$$->temp)
 		);
+		free(str);
 	}|
 	literal
 	{
@@ -1203,7 +1218,9 @@ void create_scope_stack() {
 	if(scope_stack == NULL)
 	{
 		scope_stack = create_empty_stack();
-		push(scope_stack, create_empty_scope("rbss", 1));
+		char* reg = malloc(sizeof(char) * 5);
+		memcpy(reg, "rbss", sizeof(char) * 5);
+		push(scope_stack, create_empty_scope(reg, 1));
 	}
 }
 
@@ -1236,6 +1253,7 @@ void free_lines(Scope* scope){
 		for(i = 0; i < scope->size; i++){
 			free_line(scope->children[i]);
 		}
+		free(scope->offset_reg);
 		free(scope->children);
 		free(scope);
 	}

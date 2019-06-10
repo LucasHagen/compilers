@@ -41,9 +41,6 @@ struct node_if {
 	struct node* condition;
 	struct node* n_true;
 	struct node* n_false;
-	ILOC*		 t;
-	ILOC* 		 f;
-	ILOC*		 next;
 };
 
 struct node_bin_op {

@@ -62,6 +62,14 @@ ILOC* create_iloc(int op_code, char* param1, char* param2, char* param3);
 ILOC* free_iloc(ILOC* iloc);
 
 /**
+ * Frees a ILOC_List and all it's items.
+ *
+ * @param iloc Pointer to the structure
+ * @return NULL
+ */
+ILOC_List* free_iloc_list(ILOC_List* list);
+
+/**
  * Creates a empty iloc list
  */
 ILOC_List* create_empty_list();
@@ -82,6 +90,14 @@ void add_iloc(ILOC_List* list, ILOC* value);
  * ILOCs are NOT deep copied
  */
 ILOC_List* concat_list(ILOC_List* left, ILOC_List* right);
+
+/**
+ * Copies the list and all it's items (deep copy)
+ *
+ * @param src Source list
+ * @return New allocated ILOC_List
+ */
+ILOC_List* copy_list(ILOC_List* src);
 
 /**
  * Adds all elements from src to the beggining of dest

@@ -72,6 +72,8 @@ void free_node(Node* node){
         printf("- Tipo: %d\n",     node->type);
         printf("- Tipo seq: %d\n", seq_type);
 #endif
+        free_iloc_list(node->code);
+        free(node->temp);
 
         switch(node->type){
           case NODE_TYPE_COMMAND_BLOCK:
@@ -833,11 +835,11 @@ void create_and_add_iloc_and(Node* node, Node* left, Node* right)
     add_iloc(list, create_iloc(ILOC_CBR, right->temp, T->param1, F->param1));
 
     add_iloc(list, T);
-    add_iloc(list, create_iloc(ILOC_LOADI, int_to_char(1), node->temp, NULL));
+    add_iloc(list, create_iloc(ILOC_LOADI, "1", node->temp, NULL));
     add_iloc(list, create_iloc(ILOC_JUMPI, next->param1, NULL, NULL));
 
     add_iloc(list, F);
-    add_iloc(list, create_iloc(ILOC_LOADI, int_to_char(0), node->temp, NULL));
+    add_iloc(list, create_iloc(ILOC_LOADI, "0", node->temp, NULL));
     add_iloc(list, next);
 }
 
@@ -860,37 +862,37 @@ void create_and_add_iloc_or(Node* node, Node* left, Node* right)
     add_iloc(list, create_iloc(ILOC_CBR, right->temp, T->param1, F->param1));
 
     add_iloc(list, T);
-    add_iloc(list, create_iloc(ILOC_LOADI, int_to_char(1), node->temp, NULL));
+    add_iloc(list, create_iloc(ILOC_LOADI, "1", node->temp, NULL));
     add_iloc(list, create_iloc(ILOC_JUMPI, next->param1, NULL, NULL));
 
     add_iloc(list, F);
-    add_iloc(list, create_iloc(ILOC_LOADI, int_to_char(0), node->temp, NULL));
+    add_iloc(list, create_iloc(ILOC_LOADI, "0", node->temp, NULL));
     add_iloc(list, next);
 }
 
 void create_and_add_iloc_if(Node* node_if, Node* expression, Node* s1, Node* s2)
 {
     ILOC_List* list = create_empty_list();
-    node_if->n_if.t = new_label();
-    node_if->n_if.f = new_label();
-    node_if->n_if.next = new_label();
+    ILOC* t = new_label();
+    ILOC* f = new_label();
+    ILOC* next = new_label();
 
     node_if->temp = new_register();
     node_if->code = list;
 
     add_all_end(list, expression->code);
 
-    add_iloc(list, create_iloc(ILOC_CBR, expression->temp, node_if->n_if.t->param1, node_if->n_if.f->param1));
-    add_iloc(list, node_if->n_if.t);
+    add_iloc(list, create_iloc(ILOC_CBR, expression->temp, t->param1, f->param1));
+    add_iloc(list, t);
     add_all_end(list, s1->code);
-    add_iloc(list, create_iloc(ILOC_JUMPI, node_if->n_if.next->param1, NULL, NULL));
+    add_iloc(list, create_iloc(ILOC_JUMPI, next->param1, NULL, NULL));
 
-    add_iloc(list, node_if->n_if.f);
+    add_iloc(list, f);
     if(s2 != NULL)
     {
         add_all_end(list, s2->code);
     }
-    add_iloc(list, node_if->n_if.next);
+    add_iloc(list, next);
 }
 
 void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1)

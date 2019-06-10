@@ -191,9 +191,9 @@ ILOC* create_iloc(int op_code, char* param1, char* param2, char* param3)
     ILOC* result = (ILOC*) malloc(sizeof(ILOC));
 
     result->op_code = op_code;
-    result->param1  = param1;
-    result->param2  = param2;
-    result->param3  = param3;
+    result->param1  = param1 == NULL ? NULL : strdup(param1);
+    result->param2  = param2 == NULL ? NULL : strdup(param2);
+    result->param3  = param3 == NULL ? NULL : strdup(param3);
 
     return result;
 }
@@ -208,6 +208,11 @@ ILOC* free_iloc(ILOC* iloc)
 {
     if(iloc != NULL)
     {
+        #ifdef COMP_DEBUG
+        printf("[%p] FREE:", iloc);
+        print_instruction(iloc);
+        #endif
+
         if(iloc->param1 != NULL)
         {
             free(iloc->param1);
@@ -221,6 +226,21 @@ ILOC* free_iloc(ILOC* iloc)
             free(iloc->param3);
         }
         free(iloc);
+    }
+
+    return NULL;
+}
+
+ILOC_List* free_iloc_list(ILOC_List* list)
+{
+    if(list != NULL)
+    {
+        for(int i = 0; i < list->count; i++)
+        {
+            list->children[i] = free_iloc(list->children[i]);
+        }
+        free(list->children);
+        free(list);
     }
 
     return NULL;
@@ -280,11 +300,23 @@ ILOC_List* concat_list(ILOC_List* left, ILOC_List* right)
 
     for(int i = 0; i < left->count; i++)
     {
-        add_iloc(result, left->children[i]);
+        add_iloc(result, copy_iloc(left->children[i]));
     }
     for(int i = 0; i < right->count; i++)
     {
-        add_iloc(result, right->children[i]);
+        add_iloc(result, copy_iloc(right->children[i]));
+    }
+
+    return result;
+}
+
+ILOC_List* copy_list(ILOC_List* src)
+{
+    ILOC_List* result = create_empty_list();
+
+    for(int i = 0; i < src->count; i++)
+    {
+        add_iloc(result, copy_iloc(src->children[i]));
     }
 
     return result;
@@ -305,7 +337,12 @@ void add_all_beg(ILOC_List* dest, ILOC_List* src)
         dest->count += src->count;
         dest->children = (ILOC**) malloc(dest->count * sizeof(ILOC*));
 
-        memcpy(dest->children, src->children, src->count * sizeof(ILOC*));
+        // memcpy(dest->children, src->children, src->count * sizeof(ILOC*));
+        for(int i = 0; i < src->count; i++)
+        {
+            dest->children[i] = copy_iloc(src->children[i]);
+        }
+
         memcpy(dest->children + src->count, old, oldSize * sizeof(ILOC*));
 
         free(old);
@@ -323,7 +360,7 @@ void add_all_end(ILOC_List* dest, ILOC_List* src)
     {
         for(int i = 0; i < src->count; i++)
         {
-            add_iloc(dest, src->children[i]);
+            add_iloc(dest, copy_iloc(src->children[i]));
         }
     }
 }
@@ -337,17 +374,17 @@ ILOC* copy_iloc(ILOC* src)
     dest->op_code = src->op_code;
 
     if(src->param1 != NULL) {
-        dest->param1 = strdup(dest->param1);
+        dest->param1 = strdup(src->param1);
     } else {
         dest->param1 = NULL;
     }
     if(src->param2 != NULL) {
-        dest->param2 = strdup(dest->param2);
+        dest->param2 = strdup(src->param2);
     } else {
         dest->param2 = NULL;
     }
     if(src->param3 != NULL) {
-        dest->param3 = strdup(dest->param3);
+        dest->param3 = strdup(src->param3);
     } else {
         dest->param3 = NULL;
     }
@@ -365,7 +402,10 @@ ILOC* new_label()
 
     sprintf(lText, "L%d", label);
 
-    return create_iloc(ILOC_LABEL, lText, NULL, NULL);
+    ILOC* iloc = create_iloc(ILOC_LABEL, lText, NULL, NULL);
+
+    free(lText);
+    return iloc;
 }
 
 /**
@@ -403,6 +443,7 @@ char* reg_convert_int_to_bool(ILOC_List* list, char* source)
                         source,
                         zero,
                         reg));
+    free(zero);
 
     return reg;
 }
