@@ -902,7 +902,6 @@ void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1)
     ILOC* t = new_label();
     ILOC* f = new_label();
 
-    node_while->temp = new_register();
     node_while->code = list;
 
     add_iloc(list, condition);
