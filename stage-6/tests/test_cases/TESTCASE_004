@@ -1,0 +1,13 @@
+x bool;
+y bool;
+z bool;
+w bool;
+
+int main (){
+    w = 0;
+    bool w;
+    x = true  || true;
+    y = false || false;
+    z = true  || false;
+    w = false || true;
+}
