@@ -4,6 +4,7 @@
 #include "lexeme.h"
 #include "defines.h"
 #include "tree.h"
+#include "stack_frame.h"
 
 /*
 Authors:

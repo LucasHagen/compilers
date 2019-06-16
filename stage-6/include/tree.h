@@ -77,6 +77,7 @@ struct node_func_decl {
 	struct node*   code;
 	struct lexeme* type;
 	int 		   is_static;
+	ILOC*		   label;
 };
 
 struct node_var_decl {
@@ -216,5 +217,5 @@ void create_and_add_iloc_and(Node* node, Node* left, Node* right);
 void create_and_add_iloc_or(Node* node, Node* left, Node* right);
 void create_and_add_iloc_if(Node* node_if, Node* expression, Node* s1, Node* s2);
 void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1);
-
+void create_and_add_iloc_func_call(Node* node_func_call, Node* parameters);
 #endif // TREE_H

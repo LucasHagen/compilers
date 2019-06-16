@@ -10,7 +10,7 @@
 #include "stack.h"
 #include "scope.h"
 #include "iloc.h"
-
+#include "stack_frame.h"
 /*
 	Authors:
 		- Gabriel Pakulski da Silva - 00274701
@@ -31,6 +31,7 @@ void add_func_params(Stack* stack, Node* function);
 void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
 
+ILOC* function_label;
 int main_flag = 0;
 %}
 
@@ -191,6 +192,15 @@ initialize:
 	%empty
 	{
 		create_scope_stack();
+		ILOC_List* iloc_list = create_empty_list();
+		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "10000", "rfp", NULL));
+		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "10000", "rsp", NULL));
+		/** TODO:
+		* rsp deve obrigatoriamente ser depois definido com o tamanho do registro de
+  		* ativação da função principal.
+		*/
+		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "1024", "rbss", NULL));
+		print_iloc_list(iloc_list);
 	};
 
 destroy:
@@ -403,8 +413,24 @@ function:
 	push_scope
 	{
 		add_func_params(scope_stack, $5);
+
+		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
+		ILOC_List* l = create_empty_list();
+
+		function_label = new_label();
+		add_iloc(l, function_label);
+		line->function_label = function_label;
+
+		print_iloc_list(l);
+		free(l);
 	}
-	body pop_scope
+	body
+	{
+		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
+		line->local_variables_size = top(scope_stack)->used_size;
+		line->frame = create_stack_frame(line);
+	}
+	pop_scope
 	{
 		$$ = create_node_func_decl(
 			$3,
@@ -413,6 +439,7 @@ function:
 			$5,
 			$10
 		);
+		$$->n_func_decl.label = function_label;
 	};
 
 function_parameters:
@@ -522,7 +549,7 @@ command:
 	c_return
 	{
 		$$ = $1;
-		throw_error(ERR_NOT_IMPLEMENTED, -1);
+		//throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_continue
 	{
@@ -722,6 +749,12 @@ c_call_func:
 
 		$$ = create_node_func_call($1, $3, l->token_type);
 
+		$$->code = create_empty_list();
+		$$->temp = new_register();
+
+		push_stack_frame($$->code,l);
+		create_and_add_iloc_func_call($$, $3);
+
 		free_lexeme($2);
 		free_lexeme($4);
 	};
@@ -781,6 +814,7 @@ c_return:
 		ST_LINE* func = get_top_register(scope_stack->children[0]);
 		can_convert(func->token_type, $$->n_io.params->val_type, $1->line_number, ERR_WRONG_PAR_RETURN);
 
+		//TODO: ver no vínculo estático onde largar o valor do return.
 		free_lexeme($1);
 	};
 

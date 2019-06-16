@@ -912,3 +912,7 @@ void create_and_add_iloc_while(Node* node_while, Node* expression, Node* s1)
     add_iloc(list, create_iloc(ILOC_JUMPI, condition->param1, NULL, NULL));
     add_iloc(list, f);
 }
+
+void create_and_add_iloc_func_call(Node* node_func_call, Node* parameters){
+    //nesse ponto já existe o jump para a função.
+}

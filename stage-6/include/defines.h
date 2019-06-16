@@ -97,4 +97,8 @@
 #define ILOC_LABEL      47  // l1:
 #define ILOC_HALT       48
 
+// Defining machine state size in bytes
+#define MACHINE_STATE_SIZE 8*4+16*8 // 8 x 32 bit registers + 16 x 64 bit registers
+
+
 #endif

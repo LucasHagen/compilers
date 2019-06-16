@@ -1,6 +1,8 @@
 #ifndef LEXEME_H
 #define LEXEME_H
 
+#include "defines.h"
+#include "iloc.h"
 /*
 	Authors:
 		- Gabriel Pakulski da Silva - 00274701
@@ -71,18 +73,34 @@ typedef struct fuction_argument{
   int is_const;
 } function_arg;
 
+typedef struct stack_frame {
+    int dynamic_link;
+    int static_link;
+    int local_variables_size;
+    function_arg* function_args;
+    int return_value;
+    int return_address;
+    char machine_state[MACHINE_STATE_SIZE]; //1 byte x Machine State Size
+    int temporary; // not sure if its really necessary
+} ST_FRAME;
+
 typedef struct line {
-  char* id;
-  int declaration_line;
-  int nature;
-  int token_type;
-  int token_size;
-  int is_static;
-  int is_const;
-  int offset;
-  Lexeme* lexeme;
-  int num_function_args;
-  function_arg* function_args;
+    char* id;
+    int declaration_line;
+    int nature;
+    int token_type;
+    int token_size;
+    int is_static;
+    int is_const;
+    int offset;
+    Lexeme* lexeme;
+    int num_function_args;
+    function_arg* function_args;
+
+    int local_variables_size;
+    ST_FRAME* frame;
+    ILOC* function_label;
 } ST_LINE;
+
 
 #endif

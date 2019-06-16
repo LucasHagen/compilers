@@ -115,6 +115,7 @@ ST_LINE* create_function_register(Lexeme* identifier, Node* params, int val_type
         main_flag = 1;
     }
     add_function_args(reg, params);
+
     return reg;
 }
 
@@ -228,6 +229,7 @@ ST_LINE* create_literal(Lexeme* lex, int nature){
             reg->token_size = SIZE_BOOL;
         break;
     }
+    reg->frame = NULL;
     return reg;
 }
 
@@ -247,6 +249,7 @@ ST_LINE* create_var_register(Node* node)
     reg->num_function_args  = 0;
     reg->function_args      = NULL;
 
+    reg->frame              = NULL;
     return reg;
 }
 
