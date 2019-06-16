@@ -1,0 +1,14 @@
+int function1(){
+    int x;
+    int y;
+}
+
+int main(){
+    int j;
+    j = function1();
+    return j;
+}
+
+int function2(int x, bool y){
+    int j;
+}
