@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern int main_flag;
+extern ILOC* main_label;
+
 ST_FRAME* create_stack_frame(ST_LINE* function_header){
     ST_FRAME* frame = (ST_FRAME *) malloc(sizeof(struct stack_frame));
     int i;

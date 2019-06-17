@@ -32,6 +32,7 @@ void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
 
 ILOC* function_label;
+ILOC* main_label;
 int main_flag = 0;
 %}
 
@@ -200,6 +201,8 @@ initialize:
   		* ativação da função principal.
 		*/
 		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "1024", "rbss", NULL));
+		main_label = new_label();
+		add_iloc(iloc_list, create_iloc(ILOC_JUMPI, main_label->param1, NULL, NULL));
 		print_iloc_list(iloc_list);
 	};
 
@@ -417,10 +420,13 @@ function:
 		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
 		ILOC_List* l = create_empty_list();
 
-		function_label = new_label();
+		if(!main_flag){
+			function_label = new_label();
+		} else{
+			function_label = main_label;
+		}
 		add_iloc(l, function_label);
 		line->function_label = function_label;
-
 		print_iloc_list(l);
 		free(l);
 	}
