@@ -34,6 +34,11 @@ ST_FRAME* create_stack_frame(ST_LINE* function_header){
  *  Link Dinâmico
  *  Parâmetros
  *  Variáveis locais
+ *
+ *  TODO:
+ *
+ *  get the link addresses and update the registers (rfp, rsp
+ *
  */
 void push_stack_frame(ILOC_List* code, ST_LINE* function_header){
     int dl_address              = function_header->frame->local_variables_size;
@@ -41,8 +46,6 @@ void push_stack_frame(ILOC_List* code, ST_LINE* function_header){
     int return_value_address    = function_header->frame->local_variables_size+2*SIZE_INT;
     int return_address          = function_header->frame->local_variables_size+3*SIZE_INT;
     int machine_state_address   = function_header->frame->local_variables_size+4*SIZE_INT;
-
-    //manipular rfp.
 
     add_iloc(code,create_iloc(ILOC_JUMPI,function_header->function_label->param1, "NULL", "NULL"));
 }
@@ -59,4 +62,33 @@ int get_frame_size(ST_FRAME* frame){
     size+=frame->return_address;
     size+=MACHINE_STATE_SIZE;
     return size;
+}
+
+void adjust_main_rsp(ST_LINE* main_register, ILOC_List* code){
+    ILOC_List* new_code = create_empty_list();
+
+    int size = get_frame_size(main_register->frame);
+    add_iloc(new_code,create_iloc(ILOC_ADDI,"rfp",int_to_char(size),"rsp"));
+    add_all_beg(code,new_code);
+
+    free(new_code);
+}
+
+/**
+ *  TODO:
+ *
+ *  adjust the frame values main_register->frame
+ *  and write them trough ILOC instructions
+ *
+ */
+void define_main_frame(ST_LINE* main_register, ILOC_List* code){
+    ILOC_List* new_code = create_empty_list();
+
+    int dl_address              = main_register->frame->local_variables_size;
+    int sl_address              = main_register->frame->local_variables_size+SIZE_INT;
+    int return_value_address    = main_register->frame->local_variables_size+2*SIZE_INT;
+    int return_address          = main_register->frame->local_variables_size+3*SIZE_INT;
+    int machine_state_address   = main_register->frame->local_variables_size+4*SIZE_INT;
+
+    free(new_code);
 }

@@ -5,6 +5,7 @@ int function1(){
 
 int main(){
     int j;
+    j = 2;
     j = function1();
     return j;
 }

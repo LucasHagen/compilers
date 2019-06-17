@@ -418,23 +418,25 @@ function:
 		add_func_params(scope_stack, $5);
 
 		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
-		ILOC_List* l = create_empty_list();
+		ILOC_List* code = create_empty_list();
 
-		if(!main_flag){
-			function_label = new_label();
-		} else{
+		if(main_flag){
 			function_label = main_label;
+		} else{
+			function_label = new_label();
 		}
-		add_iloc(l, function_label);
+		add_iloc(code, function_label);
 		line->function_label = function_label;
-		print_iloc_list(l);
-		free(l);
+		print_iloc_list(code);
+		free(code);
 	}
 	body
 	{
 		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
-		line->local_variables_size = top(scope_stack)->used_size;
-		line->frame = create_stack_frame(line);
+		if(!line->frame){
+			line->local_variables_size = top(scope_stack)->used_size;
+			line->frame = create_stack_frame(line);
+		}
 	}
 	pop_scope
 	{
@@ -482,7 +484,16 @@ body:
 	{
 		$$ = create_node_command_block($1);
 
+		//	Now that all comands in main have been added, the frame is created.
+		//	This is done here just to be able to adjust the rsp value at the main function beginning.
 		if(main_flag){
+			ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), "main");
+			if(line) {
+				line->local_variables_size = top(scope_stack)->used_size;
+				line->frame = create_stack_frame(line);
+			}
+			adjust_main_rsp(line,$$->code);
+
 			add_iloc($$->code,create_iloc(ILOC_HALT,NULL,NULL,NULL));
 			main_flag = 0;
 		}
