@@ -1,5 +1,6 @@
 import subprocess
 import csv
+import re
 from pathlib import Path
 from os import listdir
 from os.path import isdir, isfile
@@ -26,8 +27,30 @@ def getResult(main_exe, sim_exe, dir, file):
     sim_cmd = [sim_exe, script_path + "/../ilocsim.py", "-x", "--data", "10000", "--stack", "20000", "-m"]
     input = readFile(dir, file).encode('utf-8')
     result = subprocess.run(cmd, stdout=subprocess.PIPE, input=input)
-    result2 = subprocess.run(sim_cmd, stdout=subprocess.PIPE, input=result.stdout)
-    return result2.stdout.decode('utf-8')
+    if result.returncode == 0:
+        result2 = subprocess.run(sim_cmd, stdout=subprocess.PIPE, input=result.stdout)
+        return result2.stdout.decode('utf-8')
+    return None
+
+def isValid(result, gold):
+    result_map = extractMemory(result)
+    gold_map   = extractMemory(gold)
+
+    for k,v in gold_map.items():
+        if result_map[k] != v:
+            return False
+
+    return True
+
+mem_re = re.compile("(\\d{8}) (-?\\d+)")
+def extractMemory(output):
+    result = {}
+    matches = mem_re.findall(output)
+    for match in matches:
+        result[match[0]] = match[1]
+
+    return result
+
 
 """
     ==========    MAIN SCRIPT    ==========
@@ -60,7 +83,7 @@ for test in cases:
         print(' - ', test, ': ', "GOLD NOT FOUND", sep='')
     else:
         result = getResult(main_exe, sim_exe, dir, test)
-        if result == gold:
+        if result != None and isValid(result, gold):
             passed.append(test)
             print(' - ', test, ': ', "PASS", sep='')
         else:

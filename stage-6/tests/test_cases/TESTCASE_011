@@ -1,15 +1,21 @@
-int function1(){
-    int x;
-    int y;
+x int;
+y int;
+
+int function1() {
+    return 100;
 }
 
-int main(){
+int main() {
     int j;
     j = 2;
     j = function1();
+    function2(5,3);
     return j;
 }
 
-int function2(int x, bool y){
-    int j;
+int function2(int w, bool z){
+    x = function1() / 10;
+    y = z * w;
+
+    return 0;
 }

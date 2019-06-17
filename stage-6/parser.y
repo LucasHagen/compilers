@@ -556,7 +556,6 @@ command:
 	c_call_func
 	{
 		$$ = $1;
-		throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_shift
 	{
@@ -566,7 +565,6 @@ command:
 	c_return
 	{
 		$$ = $1;
-		//throw_error(ERR_NOT_IMPLEMENTED, -1);
 	}|
 	c_continue
 	{
