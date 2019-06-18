@@ -5,17 +5,17 @@ int function1() {
     return 100;
 }
 
+int function2(int w, bool z){
+    x = function1() / 10;
+    y = z * w;
+
+    return 0;
+}
+
 int main() {
     int j;
     j = 2;
     j = function1();
     function2(5,3);
     return j;
-}
-
-int function2(int w, bool z){
-    x = function1() / 10;
-    y = z * w;
-
-    return 0;
 }

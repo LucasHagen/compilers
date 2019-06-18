@@ -47,7 +47,13 @@ void push_stack_frame(ILOC_List* code, ST_LINE* function_header){
     int return_address          = function_header->frame->local_variables_size+3*SIZE_INT;
     int machine_state_address   = function_header->frame->local_variables_size+4*SIZE_INT;
 
+    add_iloc(code, create_iloc(ILOC_LOAD,"rfp","rsp",NULL));
+    add_iloc(code, create_iloc( ILOC_ADDI,
+                                "rfp",
+                                int_to_char(get_frame_size(function_header->frame)),
+                                "rfp"));
     add_iloc(code,create_iloc(ILOC_JUMPI,function_header->function_label->param1, "NULL", "NULL"));
+    define_function_frame(function_header, code);
 }
 
 void pop_stack_frame(ST_FRAME* frame){
@@ -71,6 +77,8 @@ void adjust_main_rsp(ST_LINE* main_register, ILOC_List* code){
     add_iloc(new_code,create_iloc(ILOC_ADDI,"rfp",int_to_char(size),"rsp"));
     add_all_beg(code,new_code);
 
+    define_function_frame(main_register, code);
+
     free(new_code);
 }
 
@@ -80,15 +88,20 @@ void adjust_main_rsp(ST_LINE* main_register, ILOC_List* code){
  *  adjust the frame values main_register->frame
  *  and write them trough ILOC instructions
  *
+ *  figure out a way to get the return_address
+ *  and what to do with return_value
  */
-void define_main_frame(ST_LINE* main_register, ILOC_List* code){
+void define_function_frame(ST_LINE* function_register, ILOC_List* code){
     ILOC_List* new_code = create_empty_list();
 
-    int dl_address              = main_register->frame->local_variables_size;
-    int sl_address              = main_register->frame->local_variables_size+SIZE_INT;
-    int return_value_address    = main_register->frame->local_variables_size+2*SIZE_INT;
-    int return_address          = main_register->frame->local_variables_size+3*SIZE_INT;
-    int machine_state_address   = main_register->frame->local_variables_size+4*SIZE_INT;
+    int dl_address              = function_register->frame->local_variables_size;
+    int sl_address              = function_register->frame->local_variables_size+SIZE_INT;
+    int return_value_address    = function_register->frame->local_variables_size+2*SIZE_INT;
+    int return_address          = function_register->frame->local_variables_size+3*SIZE_INT;
+    int machine_state_address   = function_register->frame->local_variables_size+4*SIZE_INT;
 
+    add_iloc(new_code,create_iloc(ILOC_STOREA0,"rfp","rfp",int_to_char(dl_address)));
+    add_iloc(new_code,create_iloc(ILOC_STOREA0,"rfp","rfp",int_to_char(sl_address)));
+    add_all_beg(code,new_code);
     free(new_code);
 }
