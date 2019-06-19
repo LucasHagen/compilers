@@ -40,7 +40,7 @@ def isValid(result, gold):
     gold_map   = extractMemory(gold)
 
     for k,v in gold_map.items():
-        if result_map[k] != v:
+        if not (k in result_map) or result_map[k] != v:
             return False
 
     return True
