@@ -771,7 +771,7 @@ c_call_func:
 		$$->code = create_empty_list();
 		$$->temp = new_register();
 
-		push_stack_frame($$->code,l);
+		push_stack_frame($$->code, l);
 		create_and_add_iloc_func_call($$, $3);
 
 		free_lexeme($2);

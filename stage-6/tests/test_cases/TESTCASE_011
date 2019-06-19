@@ -1,9 +1,15 @@
 x int;
+y int;
 
-int func() {
-    x = 0;
+int func1() {
+    x = 1010;
+}
+
+int func2() {
+    y = 2020;
+    func1();
 }
 
 int main() {
-    func();
+    func2();
 }
