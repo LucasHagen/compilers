@@ -381,6 +381,8 @@ struct node* create_node_func_decl(Lexeme* identifier, Lexeme* type, int is_stat
     node->n_func_decl.type        = type;
     node->n_func_decl.is_static   = is_static;
 
+    node->code = copy_list(code->code);
+
     return node;
 }
 

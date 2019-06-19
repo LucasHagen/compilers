@@ -179,12 +179,32 @@ int main_flag = 0;
 %%
 
 programa:
-	initialize big_list destroy
+	initialize big_list
 	{
 		$$ = $2;
 		arvore = $$;
+
+		ILOC_List* iloc_list = create_empty_list();
+		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "20000", "rfp", NULL));
+		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "20000", "rsp", NULL));
+		/** TODO:
+		* rsp deve obrigatoriamente ser depois definido com o tamanho do registro de
+  		* ativação da função principal.
+		*/
+		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "10000", "rbss", NULL));
+
+		ST_LINE* main = identifier_in_scope(scope_stack->children[0], "main");
+		if(main == NULL)
+		{
+			throw_error(ERR_UNDECLARED, 0);
+		}
+
+		add_iloc(iloc_list, create_iloc(ILOC_JUMPI, main->function_label->param1, NULL, NULL));
+
+		add_all_beg($$->code, iloc_list);
+
 	}|
-	initialize destroy
+	initialize
 	{
 		$$ = NULL;
 	};
@@ -193,26 +213,6 @@ initialize:
 	%empty
 	{
 		create_scope_stack();
-		ILOC_List* iloc_list = create_empty_list();
-		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "10000", "rfp", NULL));
-		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "10000", "rsp", NULL));
-		/** TODO:
-		* rsp deve obrigatoriamente ser depois definido com o tamanho do registro de
-  		* ativação da função principal.
-		*/
-		add_iloc(iloc_list, create_iloc(ILOC_LOADI, "1024", "rbss", NULL));
-		main_label = new_label();
-		add_iloc(iloc_list, create_iloc(ILOC_JUMPI, main_label->param1, NULL, NULL));
-		print_iloc_list(iloc_list);
-	};
-
-destroy:
-	%empty
-	{
-
-		free_lines(scope_stack->children[0]);
-		free(scope_stack->children);
-		free(scope_stack);
 	};
 
 push_scope:
@@ -238,11 +238,15 @@ big_list:
 	{
 		$$ = $2;
 		$$->seq = $1;
+
+		add_all_beg($$->code, $1->code);
 	}|
 	big_list function
 	{
 		$$ = $2;
 		$$->seq = $1;
+
+		add_all_beg($$->code, $1->code);
 	}|
 	function
 	{
@@ -408,6 +412,7 @@ function:
 		}
 
 		ST_LINE* line = create_function_register($3, $5, get_type_id($2), $1);
+		line->function_label = new_label();
 
 		add_register(top(scope_stack), line, top(scope_stack));
 		free_lexeme($4);
@@ -416,19 +421,6 @@ function:
 	push_scope
 	{
 		add_func_params(scope_stack, $5);
-
-		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
-		ILOC_List* code = create_empty_list();
-
-		if(main_flag){
-			function_label = main_label;
-		} else{
-			function_label = new_label();
-		}
-		add_iloc(code, function_label);
-		line->function_label = function_label;
-		print_iloc_list(code);
-		free(code);
 	}
 	body
 	{
@@ -447,7 +439,14 @@ function:
 			$5,
 			$10
 		);
-		$$->n_func_decl.label = function_label;
+
+		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
+		ILOC_List* code = create_empty_list();
+
+		$$->n_func_decl.label = line->function_label;
+
+		add_iloc(code, copy_iloc(line->function_label));
+		add_all_beg($$->code, code);
 	};
 
 function_parameters:
@@ -492,13 +491,18 @@ body:
 				line->local_variables_size = top(scope_stack)->used_size;
 				line->frame = create_stack_frame(line);
 			}
-			adjust_main_rsp(line,$$->code);
 
-			add_iloc($$->code,create_iloc(ILOC_HALT,NULL,NULL,NULL));
+			add_iloc($$->code, create_iloc(ILOC_HALT, NULL, NULL, NULL));
 			main_flag = 0;
 		}
-
-		print_iloc_list($$->code);
+		else
+		{
+			char* return_addr = new_register();
+			add_iloc($$->code, create_iloc(ILOC_LOAD, "rfp", return_addr, NULL));
+			add_iloc($$->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL));
+			add_iloc($$->code, create_iloc(ILOC_LOADAI, "rfp", "8", "rfp"));
+			add_iloc($$->code, create_iloc(ILOC_JUMP, return_addr, NULL, NULL));
+		}
 	} |
 	%empty
 	{
@@ -1240,14 +1244,11 @@ void yyerror (char const *s){
 void descompila (void *arvore) {
 	if(arvore != NULL)
 	{
-		// Node* tree = (Node*) arvore;
-		// if(tree->code != NULL)
-		// {
-		// 	for(int i = 0; i < tree->code->count; i++)
-		// 	{
-		// 		print_instruction(tree->code->children[i]);
-		// 	}
-		// }
+		Node* tree = (Node*) arvore;
+		if(tree->code != NULL)
+		{
+			print_iloc_list(tree->code);
+		}
 	}
 }
 
@@ -1257,6 +1258,9 @@ void descompila (void *arvore) {
  * @param arvore AST Pointer
  */
 void libera (void *tree) {
+	free_lines(scope_stack->children[0]);
+	free(scope_stack->children);
+	free(scope_stack);
 	free_tree((Node*) tree);
 }
 
