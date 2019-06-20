@@ -27,9 +27,9 @@ def getResult(main_exe, sim_exe, dir, file):
     sim_cmd = [sim_exe, script_path + "/../ilocsim.py", "-x", "--data", "10000", "--stack", "20000", "-m"]
     input = readFile(dir, file).encode('utf-8')
     try:
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, input=input, timeout=2)
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=input, timeout=2)
         if result.returncode == 0:
-            result2 = subprocess.run(sim_cmd, stdout=subprocess.PIPE, input=result.stdout, timeout=2)
+            result2 = subprocess.run(sim_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=result.stdout, timeout=2)
             return result2.stdout.decode('utf-8')
     except:
         return None
