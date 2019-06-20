@@ -836,7 +836,8 @@ c_return:
 
 		$$->code = create_empty_list();
 		$$->temp = new_register();
-
+		
+		add_all_end($$->code, $2->code);
 		add_iloc($$->code, create_iloc(ILOC_LOAD, $2->temp, $$->temp, NULL));
 		return_flag = get_last_register_number();
 
