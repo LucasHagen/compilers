@@ -31,6 +31,10 @@ void add_func_params(Stack* stack, Node* function);
 void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
 
+
+Scope scope_list[1000];
+int scope_list_size = 0;
+
 ILOC* function_label;
 ILOC* main_label;
 int main_flag = 0;
@@ -202,6 +206,7 @@ programa:
 		add_iloc(iloc_list, create_iloc(ILOC_JUMPI, main->function_label->param1, NULL, NULL));
 
 		add_all_beg($$->code, iloc_list);
+
 
 	}|
 	initialize
@@ -421,17 +426,22 @@ function:
 	push_scope
 	{
 		add_func_params(scope_stack, $5);
+		top(scope_stack)->name = strdup($3->token_value.v_string);
 	}
 	body
 	{
 		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
 		if(!line->frame){
 			line->local_variables_size = top(scope_stack)->used_size;
+			printf("Local Variables Size: %d\n",line->local_variables_size);
 			line->frame = create_stack_frame(line);
 		}
+		scope_list[scope_list_size] = copy_scope(top(scope_stack));
+		scope_list_size++;
 	}
 	pop_scope
 	{
+
 		$$ = create_node_func_decl(
 			$3,
 			$2,
@@ -771,8 +781,9 @@ c_call_func:
 		$$->code = create_empty_list();
 		$$->temp = new_register();
 
-		push_stack_frame($$->code, l);
-		create_and_add_iloc_func_call($$, $3);
+		print_parameters_code($$->code,$3);
+		push_stack_frame($$->code, l, $3);
+		//create_and_add_iloc_func_call($$, $3);
 
 		free_lexeme($2);
 		free_lexeme($4);
@@ -1287,14 +1298,14 @@ void add_func_params(Stack* stack, Node* params){
 
 		while(aux->seq != NULL){
 			aux = aux->seq;
-
 			if(identifier_in_scope(top(stack), aux->n_var_decl.identifier->token_value.v_string))
 			{
 				throw_error(ERR_DECLARED, aux->n_var_decl.identifier->line_number);
 			}
-
-			line = create_var_register(aux);
-			add_register(top(stack), line, top(stack));
+			if(aux != NULL){
+				line = create_var_register(aux);
+				add_register(top(stack), line, top(stack));
+			}
 		}
 
 	}

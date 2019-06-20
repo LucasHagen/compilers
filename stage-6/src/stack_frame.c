@@ -1,11 +1,12 @@
 #include "stack_frame.h"
-#include "iloc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 extern int main_flag;
 extern ILOC* main_label;
+extern Scope* scope_list;
+extern int scope_list_size;
 
 ST_FRAME* create_stack_frame(ST_LINE* function_header){
     ST_FRAME* frame = (ST_FRAME *) malloc(sizeof(struct stack_frame));
@@ -40,7 +41,7 @@ ST_FRAME* create_stack_frame(ST_LINE* function_header){
  *  get the link addresses and update the registers (rfp, rsp
  *
  */
-void push_stack_frame(ILOC_List* code, ST_LINE* function_header){
+void push_stack_frame(ILOC_List* code, ST_LINE* function_header, Node* parameters){
     int dl_address              = function_header->frame->local_variables_size;
     int sl_address              = function_header->frame->local_variables_size+SIZE_INT;
     int return_value_address    = function_header->frame->local_variables_size+2*SIZE_INT;
@@ -66,6 +67,8 @@ void push_stack_frame(ILOC_List* code, ST_LINE* function_header){
     // INCREMENT RFP AND RSP
     add_iloc(code, create_iloc(ILOC_I2I,  "rsp", "rfp", NULL));
     add_iloc(code, create_iloc(ILOC_ADDI, "rsp", "12", "rsp"));
+
+    copy_parameters(code, function_header, parameters);
 
     add_iloc(code,create_iloc(ILOC_JUMPI, function_header->function_label->param1, NULL, NULL));
     define_function_frame(function_header, code);
@@ -119,4 +122,40 @@ void define_function_frame(ST_LINE* function_register, ILOC_List* code){
     add_iloc(new_code, create_iloc(ILOC_STOREAI, "rfp", "rfp", int_to_char(sl_address)));
     add_all_beg(code,new_code);
     free(new_code);
+}
+
+void copy_parameters(ILOC_List* code, ST_LINE* function_register, Node* parameters){
+    ST_LINE* line;
+    int i;
+    Node* aux = parameters;
+
+    for(i=0;i<function_register->num_function_args;i++){
+        add_iloc(code,create_iloc(ILOC_STOREAI,
+                                    aux->temp,
+                                    "rfp",
+                                    int_to_char(get_parameter_address(function_register,i))));
+        aux = aux->seq;
+    }
+}
+
+int get_parameter_address(ST_LINE* function_register, int argument_number){
+    int local_variables_size = function_register->local_variables_size;
+    int i;
+    for(i=0;i<=argument_number;i++){
+        if(function_register->function_args[i].type == INT)
+            local_variables_size -= SIZE_INT;
+        else if(function_register->function_args[i].type == BOOL){
+            local_variables_size -= SIZE_BOOL;
+        }
+    }
+    return local_variables_size;
+}
+
+void print_parameters_code(ILOC_List* code, Node* parameters){
+    int i;
+    Node* aux = parameters;
+    for(i=0;i<count_params(parameters);i++){
+        add_all_end(code,aux->code);
+        aux=aux->seq;
+    }
 }

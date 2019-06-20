@@ -296,3 +296,34 @@ int match_decl_with_call(ST_LINE* decl, Node* params, int line){
 
     return 0;
 }
+
+
+Scope get_scope(Scope scope_list[], char* id, int tam){
+    printf("\nGet scope %s\n",id);
+    for(int i = 0; i < tam; i++){
+        if(strcmp(scope_list[i].name,id) == 0){
+            printf("found on %d\n",i);
+            return scope_list[i];
+        }
+    }
+}
+
+
+void print_scope(Scope* scope){
+    if(scope){
+        printf("\n-----------------------------------\n");
+        printf("Scope: %s\n",scope->name);
+        printf("Max_Size: %d\nSize: %d\nOffset Reg: %s\n",scope->max_size,scope->size,scope->offset_reg);
+        printf("Is Global Scope: %d\nUsed Size: %d\n",scope->is_global_scope,scope->used_size);
+        printf("-----------------------------------\n\n");
+    }
+    else{
+        printf("***********************\nNULL SCOPE\n***********************\n");
+    }
+}
+
+Scope copy_scope(Scope* src){
+    Scope scope;
+    memcpy(&scope,src,sizeof(Scope));
+    return scope;
+}

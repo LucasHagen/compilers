@@ -4,7 +4,7 @@
 #include "lexeme.h"
 #include "defines.h"
 #include "tree.h"
-#include "stack_frame.h"
+//#include "stack_frame.h"
 
 /*
 Authors:
@@ -22,7 +22,10 @@ typedef struct scope_struct {
     int       is_global_scope;
     int       used_size;
 
+    char*     name;
 } Scope;
+
+void print_scope(Scope* scope);
 
 /**
  * Creates a empty scope
@@ -62,4 +65,8 @@ int get_lexeme_type(Lexeme* keyword);
 *       ERR_WRONG_TYPE_ARGS
 */
 int match_decl_with_call(ST_LINE* decl, Node* params, int line);
+int count_params(Node* params);
+
+Scope get_scope(Scope scope_list[], char* id, int tam);
+Scope copy_scope(Scope* src);
 #endif
