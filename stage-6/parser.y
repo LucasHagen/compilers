@@ -30,7 +30,7 @@ void add_func_params(Stack* stack, Node* function);
 
 void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
-
+void store_return_address(ILOC_List* code, ST_LINE* line);
 
 Scope scope_list[1000];
 int scope_list_size = 0;
@@ -38,6 +38,7 @@ int scope_list_size = 0;
 ILOC* function_label;
 ILOC* main_label;
 int main_flag = 0;
+int return_flag = 0;
 %}
 
 %union {
@@ -461,6 +462,7 @@ function:
 
 		add_iloc(code, copy_iloc(line->function_label));
 		add_all_beg($$->code, code);
+
 	};
 
 function_parameters:
@@ -830,7 +832,14 @@ c_return:
 		ST_LINE* func = get_top_register(scope_stack->children[0]);
 		can_convert(func->token_type, $$->n_io.params->val_type, $1->line_number, ERR_WRONG_PAR_RETURN);
 
-		//TODO: ver no vínculo estático onde largar o valor do return.
+		printf("RETURN FUNC: %s\n",func->id);
+
+		$$->code = create_empty_list();
+		$$->temp = new_register();
+
+		add_iloc($$->code, create_iloc(ILOC_LOAD, $2->temp, $$->temp, NULL));
+		return_flag = get_last_register_number();
+
 		free_lexeme($1);
 	};
 
@@ -1318,5 +1327,14 @@ void free_line(ST_LINE* line)
 			free(line->function_args);
 		}
 		free(line);
+	}
+}
+void store_return_address(ILOC_List* code, ST_LINE* line){
+	if(return_flag != 0){
+		add_iloc(code, create_iloc(ILOC_CSTOREAI,
+						get_return_register(return_flag),
+						"rfp",
+						int_to_char(line->frame->local_variables_size+2*SIZE_INT)));
+		return_flag = 0;
 	}
 }

@@ -150,4 +150,13 @@ char* int_to_char(int number);
  */
 char* reg_convert_int_to_bool(ILOC_List* list, char* source);
 
+/**
+ * Gets the return register assuming that the return command is in the register r_num.
+ */
+char* get_return_register (int num);
+
+/**
+ * Returns the number of the last register allocated.
+ */
+int get_last_register_number();
 #endif

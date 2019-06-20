@@ -1,0 +1,9 @@
+x int;
+
+int func(int x) {
+    return x;
+}
+
+int main() {
+    x = func(999);
+}

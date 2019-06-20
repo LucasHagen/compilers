@@ -472,3 +472,16 @@ char* reg_convert_int_to_bool(ILOC_List* list, char* source)
 
     return reg;
 }
+
+char* get_return_register (int num){
+    int reg = num;
+    char* rText = (char*) malloc(sizeof(char) * 16);
+
+    sprintf(rText, "r%d", reg);
+
+    return rText;
+}
+
+int get_last_register_number(){
+    return next_iloc_register-1;
+}
