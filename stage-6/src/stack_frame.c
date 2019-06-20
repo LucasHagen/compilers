@@ -61,20 +61,21 @@ void push_stack_frame(ILOC_List* code, ST_LINE* function_header, Node* parameter
     add_iloc(code, create_iloc(ILOC_LOADI, "0", zero, NULL));
 
     // estado
+    int hops = 7 + function_header->num_function_args;
     // Return Address
-    add_iloc(code, create_iloc(ILOC_ADDI, "rpc", "7", temp_rpc));
-    add_iloc(code, create_iloc(ILOC_STOREAI, temp_rpc, "rsp", "0"));
+    add_iloc(code, create_iloc(ILOC_ADDI, "rpc", int_to_char(hops), temp_rpc));
+    add_iloc(code, create_iloc(ILOC_STOREAI, temp_rpc, "rsp", int_to_char(return_address)));
     // Static Link
-    add_iloc(code, create_iloc(ILOC_STOREAI,  zero, "rsp", "4"));
+    add_iloc(code, create_iloc(ILOC_STOREAI,  zero, "rsp", int_to_char(sl_address)));
     // Dynamic Link
-    add_iloc(code, create_iloc(ILOC_STOREAI, "rfp", "rsp", "8"));
+    add_iloc(code, create_iloc(ILOC_STOREAI, "rfp", "rsp", int_to_char(dl_address)));
     // param
 
     // locals
 
     // INCREMENT RFP AND RSP
     add_iloc(code, create_iloc(ILOC_I2I,  "rsp", "rfp", NULL));
-    add_iloc(code, create_iloc(ILOC_ADDI, "rsp", "12", "rsp"));
+    add_iloc(code, create_iloc(ILOC_ADDI, "rsp", int_to_char(get_frame_size(function_header->frame)), "rsp"));
 
     copy_parameters(code, function_header, parameters);
 
@@ -186,16 +187,19 @@ void stack_func_exit(Node* function)
         ST_LINE* line = identifier_in_scope(scope_stack->children[0], function->n_func_decl.identifier->token_value.v_string);
         if(return_flag != 0){
     		add_iloc(function->code,
-                    create_iloc(ILOC_CSTOREAI,
+                    create_iloc(ILOC_STOREAI,
     					        get_return_register(return_flag),
     					        "rfp",
     					        int_to_char(line->frame->local_variables_size+2*SIZE_INT)));
     		return_flag = 0;
     	}
+        int dl_address = line->frame->local_variables_size;
+        int return_address = line->frame->local_variables_size + 3 * SIZE_INT;
         char* return_addr = new_register();
-        add_iloc(function->code, create_iloc(ILOC_LOAD, "rfp", return_addr, NULL));
-        add_iloc(function->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL));
-        add_iloc(function->code, create_iloc(ILOC_LOADAI, "rfp", "8", "rfp"));
+
+        add_iloc(function->code, create_iloc(ILOC_LOADAI, "rfp", int_to_char(return_address), return_addr)); //obtém o valor do endereço de retorno
+        add_iloc(function->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL)); //obtém o antigo RSP
+        add_iloc(function->code, create_iloc(ILOC_LOADAI, "rfp", int_to_char(dl_address), "rfp")); //obtém o antigo RFP
         add_iloc(function->code, create_iloc(ILOC_JUMP, return_addr, NULL, NULL));
     }
 }
