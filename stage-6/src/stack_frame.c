@@ -10,6 +10,7 @@
 #include "stack.h"
 
 extern int main_flag;
+extern int return_flag;
 extern Stack* scope_stack;
 extern ILOC* main_label;
 extern Scope* scope_list;
@@ -182,6 +183,16 @@ void stack_func_exit(Node* function)
     }
     else
     {
+        ST_LINE* line = identifier_in_scope(scope_stack->children[0], function->n_func_decl.identifier->token_value.v_string);
+        if(return_flag != 0){
+            printf("added return;\n");
+    		add_iloc(function->code,
+                    create_iloc(ILOC_CSTOREAI,
+    					        get_return_register(return_flag),
+    					        "rfp",
+    					        int_to_char(line->frame->local_variables_size+2*SIZE_INT)));
+    		return_flag = 0;
+    	}
         char* return_addr = new_register();
         add_iloc(function->code, create_iloc(ILOC_LOAD, "rfp", return_addr, NULL));
         add_iloc(function->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL));
