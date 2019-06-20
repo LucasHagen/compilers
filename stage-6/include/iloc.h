@@ -80,9 +80,14 @@ ILOC_List* create_empty_list();
 ILOC_List* create_list(ILOC* value);
 
 /**
- * Adds a value to the ILOC_List
+ * Adds a value to the end of a ILOC_List
  */
 void add_iloc(ILOC_List* list, ILOC* value);
+
+/**
+ * Adds a value to the beginning ILOC_List
+ */
+void add_iloc_beg(ILOC_List* list, ILOC* value);
 
 /**
  * Creates a new ILOC_List containing all ILOCs from left + right

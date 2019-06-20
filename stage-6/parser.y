@@ -202,6 +202,10 @@ programa:
 		{
 			throw_error(ERR_UNDECLARED, 0);
 		}
+		else if(main->nature != NATUREZA_FUNCAO)
+		{
+			throw_error(ERR_WRONG_TYPE, main->declaration_line);
+		}
 
 		add_iloc(iloc_list, create_iloc(ILOC_JUMPI, main->function_label->param1, NULL, NULL));
 
@@ -430,10 +434,10 @@ function:
 	}
 	body
 	{
-		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
+		ST_LINE* line = identifier_in_scope(scope_stack->children[0], $3->token_value.v_string);
 		if(!line->frame){
 			line->local_variables_size = top(scope_stack)->used_size;
-			printf("Local Variables Size: %d\n",line->local_variables_size);
+			//printf("Local Variables Size: %d\n",line->local_variables_size);
 			line->frame = create_stack_frame(line);
 		}
 		scope_list[scope_list_size] = copy_scope(top(scope_stack));
@@ -441,7 +445,6 @@ function:
 	}
 	pop_scope
 	{
-
 		$$ = create_node_func_decl(
 			$3,
 			$2,
@@ -450,7 +453,8 @@ function:
 			$10
 		);
 
-		ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), $3->token_value.v_string);
+		stack_func_exit($$);
+		ST_LINE* line = identifier_in_scope(scope_stack->children[0], $3->token_value.v_string);
 		ILOC_List* code = create_empty_list();
 
 		$$->n_func_decl.label = line->function_label;
@@ -495,24 +499,6 @@ body:
 
 		//	Now that all comands in main have been added, the frame is created.
 		//	This is done here just to be able to adjust the rsp value at the main function beginning.
-		if(main_flag){
-			ST_LINE* line = identifier_in_scope(*(scope_stack[0].children), "main");
-			if(line) {
-				line->local_variables_size = top(scope_stack)->used_size;
-				line->frame = create_stack_frame(line);
-			}
-
-			add_iloc($$->code, create_iloc(ILOC_HALT, NULL, NULL, NULL));
-			main_flag = 0;
-		}
-		else
-		{
-			char* return_addr = new_register();
-			add_iloc($$->code, create_iloc(ILOC_LOAD, "rfp", return_addr, NULL));
-			add_iloc($$->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL));
-			add_iloc($$->code, create_iloc(ILOC_LOADAI, "rfp", "8", "rfp"));
-			add_iloc($$->code, create_iloc(ILOC_JUMP, return_addr, NULL, NULL));
-		}
 	} |
 	%empty
 	{

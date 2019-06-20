@@ -16,4 +16,14 @@ void define_function_frame(ST_LINE* function_register, ILOC_List* code);
 void print_parameters_code(ILOC_List* code, Node* parameters);
 void copy_parameters(ILOC_List* code, ST_LINE* function_register, Node* parameters);
 int get_parameter_address(ST_LINE* function_register, int argument_number);
+
+
+void stack_func_call();
+
+void stack_func_entered();
+
+void stack_func_exit(Node* function);
+
+void stack_func_returned();
+
 #endif

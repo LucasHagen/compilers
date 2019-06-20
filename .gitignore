@@ -49,3 +49,6 @@ stage-3/etapa3
 stage-4/etapa4
 stage-5/etapa5
 stage-6/etapa6
+
+# Git
+*.orig

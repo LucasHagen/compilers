@@ -1,9 +1,16 @@
 #include "stack_frame.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "tree.h"
+#include "iloc.h"
+#include "scope.h"
+#include "stack.h"
+
 extern int main_flag;
+extern Stack* scope_stack;
 extern ILOC* main_label;
 extern Scope* scope_list;
 extern int scope_list_size;
@@ -157,5 +164,28 @@ void print_parameters_code(ILOC_List* code, Node* parameters){
     for(i=0;i<count_params(parameters);i++){
         add_all_end(code,aux->code);
         aux=aux->seq;
+    }
+}
+
+
+void stack_func_exit(Node* function)
+{
+    if(main_flag){
+        ST_LINE* line = identifier_in_scope(scope_stack->children[0], "main");
+        if(line) {
+            line->local_variables_size = top(scope_stack)->used_size;
+            line->frame = create_stack_frame(line);
+        }
+
+        add_iloc(function->code, create_iloc(ILOC_HALT, NULL, NULL, NULL));
+        main_flag = 0;
+    }
+    else
+    {
+        char* return_addr = new_register();
+        add_iloc(function->code, create_iloc(ILOC_LOAD, "rfp", return_addr, NULL));
+        add_iloc(function->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL));
+        add_iloc(function->code, create_iloc(ILOC_LOADAI, "rfp", "8", "rfp"));
+        add_iloc(function->code, create_iloc(ILOC_JUMP, return_addr, NULL, NULL));
     }
 }

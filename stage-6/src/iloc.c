@@ -294,6 +294,31 @@ void add_iloc(ILOC_List* list, ILOC* value)
     list->children[list->count - 1] = value;
 }
 
+/**
+ * Adds a value to the beginning ILOC_List
+ */
+void add_iloc_beg(ILOC_List* list, ILOC* value)
+{
+    if(list->count == 0)
+    {
+        list->count = 1;
+        list->children = (ILOC**) malloc(sizeof(ILOC*));
+        list->children[list->count - 1] = value;
+    }
+    else
+    {
+        ILOC** old = list->children;
+
+        list->count++;
+        list->children = (ILOC**) malloc(list->count * sizeof(ILOC*));
+
+        list->children[0] = copy_iloc(value);
+        memcpy(list->children + 1, old, (list->count - 1) * sizeof(ILOC*));
+
+        free(old);
+    }
+}
+
 ILOC_List* concat_list(ILOC_List* left, ILOC_List* right)
 {
     ILOC_List* result = create_empty_list();
