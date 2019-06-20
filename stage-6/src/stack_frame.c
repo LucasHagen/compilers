@@ -185,7 +185,6 @@ void stack_func_exit(Node* function)
     {
         ST_LINE* line = identifier_in_scope(scope_stack->children[0], function->n_func_decl.identifier->token_value.v_string);
         if(return_flag != 0){
-            printf("added return;\n");
     		add_iloc(function->code,
                     create_iloc(ILOC_CSTOREAI,
     					        get_return_register(return_flag),
