@@ -30,7 +30,8 @@ void add_func_params(Stack* stack, Node* function);
 
 void free_lines(Scope* scope);
 void free_line(ST_LINE* line);
-void store_return_address(ILOC_List* code, ST_LINE* line);
+
+void get_return_value(ST_LINE* func, ILOC_List* code, char* reg);
 
 Scope scope_list[1000];
 int scope_list_size = 0;
@@ -771,8 +772,7 @@ c_call_func:
 
 		print_parameters_code($$->code,$3);
 		push_stack_frame($$->code, l, $3);
-		//create_and_add_iloc_func_call($$, $3);
-
+		get_return_value(l,$$->code, $$->temp);
 		free_lexeme($2);
 		free_lexeme($4);
 	};
@@ -1329,12 +1329,11 @@ void free_line(ST_LINE* line)
 		free(line);
 	}
 }
-void store_return_address(ILOC_List* code, ST_LINE* line){
-	if(return_flag != 0){
-		add_iloc(code, create_iloc(ILOC_CSTOREAI,
-						get_return_register(return_flag),
-						"rfp",
-						int_to_char(line->frame->local_variables_size+2*SIZE_INT)));
-		return_flag = 0;
-	}
+
+void get_return_value(ST_LINE* func, ILOC_List* code, char* reg)
+{
+	add_iloc(code,create_iloc(ILOC_LOADAI,
+								"rsp",
+								int_to_char(func->frame->local_variables_size + 2 * SIZE_INT),
+								reg));
 }
