@@ -1,6 +1,6 @@
-a int; // 10000 13
-b int; // 10004 10
-c int; // 10008  0
+a int; // 10000 25
+b int; // 10004 9
+c int; // 10008 15
 
 int func(int x, int y){
     x = x + 1;

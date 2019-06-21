@@ -453,6 +453,10 @@ function:
 			$5,
 			$10
 		);
+		if(main_flag){
+			adjust_main_rsp(identifier_in_scope(scope_stack->children[0], "main"),$$->code);
+			main_flag = 1;
+		}
 
 		stack_func_exit($$);
 		ST_LINE* line = identifier_in_scope(scope_stack->children[0], $3->token_value.v_string);
@@ -498,7 +502,6 @@ body:
 	commands_list
 	{
 		$$ = create_node_command_block($1);
-
 		//	Now that all comands in main have been added, the frame is created.
 		//	This is done here just to be able to adjust the rsp value at the main function beginning.
 	} |

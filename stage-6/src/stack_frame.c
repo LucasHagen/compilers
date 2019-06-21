@@ -41,13 +41,8 @@ ST_FRAME* create_stack_frame(ST_LINE* function_header){
  *  Valor de Retorno
  *  Link Estático
  *  Link Dinâmico
- *  Parâmetros
  *  Variáveis locais
- *
- *  TODO:
- *
- *  get the link addresses and update the registers (rfp, rsp
- *
+ *  Parâmetros
  */
 void push_stack_frame(ILOC_List* code, ST_LINE* function_header, Node* parameters){
     int dl_address              = function_header->frame->local_variables_size;
@@ -90,9 +85,9 @@ int get_frame_size(ST_FRAME* frame){
     int size = 0;
     size+=sizeof(frame->dynamic_link);
     size+=sizeof(frame->static_link);
-    size+=frame->local_variables_size;
-    size+=frame->return_value;
-    size+=frame->return_address;
+    size+=sizeof(frame->local_variables_size);
+    size+=sizeof(frame->return_value);
+    size+=sizeof(frame->return_address);
     size+=MACHINE_STATE_SIZE;
     return size;
 }
@@ -104,7 +99,7 @@ void adjust_main_rsp(ST_LINE* main_register, ILOC_List* code){
     add_iloc(new_code,create_iloc(ILOC_ADDI,"rfp",int_to_char(size),"rsp"));
     add_all_beg(code,new_code);
 
-    define_function_frame(main_register, code);
+    //define_function_frame(main_register, code);
 
     free(new_code);
 }
@@ -127,8 +122,8 @@ void define_function_frame(ST_LINE* function_register, ILOC_List* code){
     int return_address          = function_register->frame->local_variables_size + 3 * SIZE_INT;
     int machine_state_address   = function_register->frame->local_variables_size + 4 * SIZE_INT;
 
-    add_iloc(new_code, create_iloc(ILOC_STOREAI, "rfp", "rfp", int_to_char(dl_address)));
-    add_iloc(new_code, create_iloc(ILOC_STOREAI, "rfp", "rfp", int_to_char(sl_address)));
+    //add_iloc(new_code, create_iloc(ILOC_STOREAI, "rfp", "rfp", int_to_char(dl_address)));
+    //add_iloc(new_code, create_iloc(ILOC_STOREAI, "rfp", "rfp", int_to_char(sl_address)));
     add_all_beg(code,new_code);
     free(new_code);
 }
@@ -147,17 +142,32 @@ void copy_parameters(ILOC_List* code, ST_LINE* function_register, Node* paramete
     }
 }
 
-int get_parameter_address(ST_LINE* function_register, int argument_number){
-    int local_variables_size = function_register->local_variables_size;
-    int i;
-    for(i=0;i<=argument_number;i++){
+int get_parameters_size(ST_LINE* function_register){
+    int size = 0;
+    for(int i = 0; i < function_register->local_variables_size; i++){
         if(function_register->function_args[i].type == INT)
-            local_variables_size -= SIZE_INT;
+            size += SIZE_INT;
         else if(function_register->function_args[i].type == BOOL){
-            local_variables_size -= SIZE_BOOL;
+            size += SIZE_BOOL;
         }
     }
-    return local_variables_size;
+    return size;
+}
+
+int get_parameter_address(ST_LINE* function_register, int argument_number){
+    //int local_variables_size = function_register->local_variables_size;
+    //int parameters_size = get_parameters_size(function_register);
+    int address = 0;
+    for(int i=0;i<=argument_number;i++){
+        if(i>0){
+            if(function_register->function_args[i-1].type == INT)
+                address += SIZE_INT;
+            else if(function_register->function_args[i-1].type == BOOL){
+                address += SIZE_BOOL;
+            }
+        }
+    }
+    return address;
 }
 
 void print_parameters_code(ILOC_List* code, Node* parameters){

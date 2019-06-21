@@ -1,5 +1,3 @@
-x int;
-
 int mult (int z, int w)
 {
   int x;
@@ -9,7 +7,10 @@ int mult (int z, int w)
 
 int main()
 {
+  int x;
   int y;
-  x = 2;
+  int z;
+  x = 3;
   y = mult(x, x);
+  z = mult(y, 3);
 }
