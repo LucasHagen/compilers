@@ -835,7 +835,7 @@ c_return:
 		$$->temp = new_register();
 
 		add_all_end($$->code, $2->code);
-		add_iloc($$->code, create_iloc(ILOC_LOAD, $2->temp, $$->temp, NULL));
+		add_iloc($$->code, create_iloc(ILOC_I2I, $2->temp, $$->temp, NULL));
 		return_flag = get_last_register_number();
 
 		free_lexeme($1);
