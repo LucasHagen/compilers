@@ -1,0 +1,24 @@
+one int;    // 1
+two int;    // 2
+three int;  // 3
+four int;   // 5
+five int;   // 8
+
+int fib(int i){
+    if(i == 0 || i == 1) then
+    {
+        return 1;
+    }
+    else
+    {
+        return fib(i - 2) + fib(i - 1);
+    };
+ }
+
+int main(){
+    one   = fib(1);
+    two   = fib(2);
+    three = fib(3);
+    four  = fib(4);
+    five  = fib(5);
+ }

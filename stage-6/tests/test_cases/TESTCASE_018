@@ -1,0 +1,24 @@
+one int;    // 1
+two int;    // 2
+three int;  // 3
+four int;   // 5
+five int;   // 8
+
+int fat(int i){
+    int result <= 1;
+
+    if(i > 1) then
+    {
+        result = i * fat(i - 1);
+    };
+
+    return result;
+ }
+
+int main(){
+    one   = fat(1);
+    two   = fat(2);
+    three = fat(3);
+    four  = fat(4);
+    five  = fat(5);
+ }
