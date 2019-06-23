@@ -9,4 +9,4 @@ int main(){
     var = 10;
     int result;
     result = func(var);
- }
+}

@@ -453,10 +453,17 @@ function:
 			$5,
 			$10
 		);
+		/*
 		if(main_flag){
 			adjust_main_rsp(identifier_in_scope(scope_stack->children[0], "main"),$$->code);
 			main_flag = 1;
 		}
+		else{
+			adjust_main_rsp(identifier_in_scope(scope_stack->children[0], $3->token_value.v_string), $$->code);
+		}
+		*/
+
+		adjust_main_rsp(identifier_in_scope(scope_stack->children[0], $3->token_value.v_string), $$->code);
 
 		stack_func_exit($$);
 		ST_LINE* line = identifier_in_scope(scope_stack->children[0], $3->token_value.v_string);
