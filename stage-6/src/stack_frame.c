@@ -182,8 +182,9 @@ void print_parameters_code(ILOC_List* code, Node* parameters){
 
 void stack_func_exit(Node* function)
 {
+    ST_LINE* line = identifier_in_scope(scope_stack->children[0], function->n_func_decl.identifier->token_value.v_string);
+    add_iloc(function->code, line->exit_label);
     if(main_flag){
-        ST_LINE* line = identifier_in_scope(scope_stack->children[0], "main");
         if(line) {
             line->local_variables_size = top(scope_stack)->used_size;
             line->frame = create_stack_frame(line);
@@ -194,13 +195,12 @@ void stack_func_exit(Node* function)
     }
     else
     {
-        ST_LINE* line = identifier_in_scope(scope_stack->children[0], function->n_func_decl.identifier->token_value.v_string);
         if(return_flag != 0){
     		add_iloc(function->code,
                     create_iloc(ILOC_STOREAI,
-    					        get_return_register(return_flag),
+    					        line->return_reg,
     					        "rfp",
-    					        int_to_char(line->frame->local_variables_size+2*SIZE_INT)));
+    					        int_to_char(line->frame->local_variables_size + 2 * SIZE_INT)));
     		return_flag = 0;
     	}
         int dl_address = line->frame->local_variables_size;

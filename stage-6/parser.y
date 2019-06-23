@@ -869,11 +869,11 @@ c_return:
 		can_convert(func->token_type, $$->n_io.params->val_type, $1->line_number, ERR_WRONG_PAR_RETURN);
 
 		$$->code = create_empty_list();
-		$$->temp = new_register();
 
 		add_all_end($$->code, $2->code);
-		add_iloc($$->code, create_iloc(ILOC_I2I, $2->temp, $$->temp, NULL));
-		return_flag = get_last_register_number();
+		add_iloc($$->code, create_iloc(ILOC_I2I, $2->temp, func->return_reg, NULL));
+		add_iloc($$->code, create_iloc(ILOC_JUMPI, func->exit_label->param1, NULL, NULL));
+		return_flag = 1;
 
 		free_lexeme($1);
 	};

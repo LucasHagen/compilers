@@ -100,6 +100,8 @@ typedef struct line {
     int local_variables_size;
     ST_FRAME* frame;
     ILOC* function_label;
+    ILOC* exit_label;
+    char* return_reg;
 } ST_LINE;
 
 
