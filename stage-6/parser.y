@@ -11,6 +11,7 @@
 #include "scope.h"
 #include "iloc.h"
 #include "stack_frame.h"
+
 /*
 	Authors:
 		- Gabriel Pakulski da Silva - 00274701
@@ -33,13 +34,12 @@ void free_line(ST_LINE* line);
 
 void get_return_value(ST_LINE* func, ILOC_List* code, char* reg);
 
-Scope scope_list[1000];
-int scope_list_size = 0;
-
 ILOC* function_label;
 ILOC* main_label;
 int main_flag = 0;
 int return_flag = 0;
+int local_variables_size = 0;
+ST_LINE* function_reg;
 %}
 
 %union {
@@ -426,13 +426,18 @@ function:
 		line->function_label = new_label();
 
 		add_register(top(scope_stack), line, top(scope_stack));
+		function_reg = line;
 		free_lexeme($4);
 		free_lexeme($6);
 	}
 	push_scope
 	{
-		add_func_params(scope_stack, $5);
+		local_variables_size = 0;
 		top(scope_stack)->name = strdup($3->token_value.v_string);
+		add_func_params(scope_stack, $5);
+
+		function_reg->local_variables_size = local_variables_size;
+
 	}
 	body
 	{
@@ -441,8 +446,6 @@ function:
 			line->local_variables_size = top(scope_stack)->used_size;
 			line->frame = create_stack_frame(line);
 		}
-		scope_list[scope_list_size] = copy_scope(top(scope_stack));
-		scope_list_size++;
 	}
 	pop_scope
 	{
@@ -472,6 +475,7 @@ function:
 		$$->n_func_decl.label = line->function_label;
 
 		add_iloc(code, copy_iloc(line->function_label));
+
 		add_all_beg($$->code, code);
 
 	};
@@ -617,8 +621,15 @@ c_declare_variable:
 			$2,
 			$5
 		);
+
 		ST_LINE* line = create_var_register($$);
 		add_register(top(scope_stack), line, scope_stack->children[1]);
+
+		if($$->val_type == INT)
+			local_variables_size += SIZE_INT;
+		else if($$->val_type == BOOL){
+			local_variables_size += SIZE_BOOL;
+		}
 
 		if($5 != NULL)
 		{
@@ -780,6 +791,22 @@ c_call_func:
 		$$->temp = new_register();
 
 		print_parameters_code($$->code,$3);
+
+		l->local_variables_size = local_variables_size;
+		if(!l->frame)
+			l->frame = create_stack_frame(l);
+		/*
+		printf("Register: %s\n",l->id);
+		printf("Nature: %d\n",l->nature);
+		printf("Token Type: %d\n",l->token_type);
+		printf("Token Size: %d\n",l->token_size);
+		printf("Is static: %d\n",l->is_static);
+		printf("Is const: %d\n",l->is_const);
+		printf("Offset: %d\n",l->offset);
+		printf("Lexeme tk type: %d\n",l->lexeme->token_type);
+		printf("Num Function Args: %d\n",l->num_function_args);
+		printf("Local Variables Size: %d\n",l->local_variables_size);
+		*/
 		push_stack_frame($$->code, l, $3);
 		get_return_value(l,$$->code, $$->temp);
 		free_lexeme($2);
@@ -1292,12 +1319,17 @@ void create_scope_stack() {
 }
 
 void add_func_params(Stack* stack, Node* params){
-
 	if(params != NULL){
 
 		Node* aux = params;
     	ST_LINE* line = create_var_register(aux);
 		add_register(top(stack), line, top(stack));
+
+		if(params->val_type == INT)
+            local_variables_size += SIZE_INT;
+        else if(params->val_type == BOOL){
+            local_variables_size += SIZE_BOOL;
+        }
 
 		while(aux->seq != NULL){
 			aux = aux->seq;
