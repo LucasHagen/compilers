@@ -1,0 +1,29 @@
+one int;    // 10
+two int;    // 20
+three int;  // 30
+four int;   // 4
+five int;   // 5
+six int;    // 6
+
+
+int times10(int i){
+    int x <= 10;
+
+    if(i <= 3) then
+    {
+        return i * x;
+    }
+    else
+    {
+        return i;
+    };
+}
+
+int main(){
+    one   = times10(1);
+    two   = times10(2);
+    three = times10(3);
+    four  = times10(4);
+    five  = times10(5);
+    six   = times10(6);
+}
