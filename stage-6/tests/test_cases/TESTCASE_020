@@ -1,0 +1,11 @@
+x int;
+
+int func(int i){
+    return i;
+    int h;
+    return h;
+}
+
+int main(){
+    x = func(1864);
+}
