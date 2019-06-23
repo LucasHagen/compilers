@@ -36,6 +36,7 @@ void get_return_value(ST_LINE* func, ILOC_List* code, char* reg);
 
 ILOC* function_label;
 ILOC* main_label;
+int start_reg = -1;
 int main_flag = 0;
 int return_flag = 0;
 int local_variables_size = 0;
@@ -438,6 +439,7 @@ function:
 
 		function_reg->local_variables_size = local_variables_size;
 
+		start_reg = get_last_register_number();
 	}
 	body
 	{
@@ -456,15 +458,6 @@ function:
 			$5,
 			$10
 		);
-		/*
-		if(main_flag){
-			adjust_main_rsp(identifier_in_scope(scope_stack->children[0], "main"),$$->code);
-			main_flag = 1;
-		}
-		else{
-			adjust_main_rsp(identifier_in_scope(scope_stack->children[0], $3->token_value.v_string), $$->code);
-		}
-		*/
 
 		adjust_main_rsp(identifier_in_scope(scope_stack->children[0], $3->token_value.v_string), $$->code);
 
@@ -477,7 +470,6 @@ function:
 		add_iloc(code, copy_iloc(line->function_label));
 
 		add_all_beg($$->code, code);
-
 	};
 
 function_parameters:

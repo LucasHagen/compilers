@@ -96,6 +96,7 @@
 #define ILOC_CMP_NE		46	// r1, r2  ->  r3      ( r3 = true se r1 \ne r2, senão r3 = false )
 #define ILOC_LABEL      47  // l1:
 #define ILOC_HALT       48
+#define ILOC_COMMENT    49
 
 // Defining machine state size in bytes
 #define MACHINE_STATE_SIZE 8*4+16*8 // 8 x 32 bit registers + 16 x 64 bit registers

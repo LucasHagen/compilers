@@ -10,6 +10,7 @@
 #include "stack.h"
 
 extern int main_flag;
+extern int start_reg;
 extern int return_flag;
 extern Stack* scope_stack;
 extern ILOC* main_label;
@@ -93,15 +94,12 @@ int get_frame_size(ST_FRAME* frame){
 }
 
 void adjust_main_rsp(ST_LINE* main_register, ILOC_List* code){
-    ILOC_List* new_code = create_empty_list();
-
     int size = get_frame_size(main_register->frame);
-    add_iloc(new_code,create_iloc(ILOC_ADDI,"rfp",int_to_char(size),"rsp"));
-    add_all_beg(code,new_code);
-
-    //define_function_frame(main_register, code);
-
-    free(new_code);
+    if(!main_flag)
+    {
+        add_all_beg(code, save_registers(start_reg, get_last_register_number() + 1));
+    }
+    add_iloc_beg(code, create_iloc(ILOC_ADDI, "rfp", int_to_char(size),"rsp"));
 }
 
 /**
@@ -206,6 +204,8 @@ void stack_func_exit(Node* function)
         int dl_address = line->frame->local_variables_size;
         int return_address = line->frame->local_variables_size + 3 * SIZE_INT;
         char* return_addr = new_register();
+
+        add_all_end(function->code, load_registers(start_reg, get_last_register_number()));
 
         add_iloc(function->code, create_iloc(ILOC_LOADAI, "rfp", int_to_char(return_address), return_addr)); //obtém o valor do endereço de retorno
         add_iloc(function->code, create_iloc(ILOC_I2I,  "rfp", "rsp", NULL)); //obtém o antigo RSP

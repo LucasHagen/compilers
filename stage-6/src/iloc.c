@@ -173,6 +173,10 @@ void print_instruction(ILOC* inst)
     {
         printf("%s\n", get_op_string(inst->op_code));
     }
+    else if (inst->op_code == ILOC_COMMENT)
+    {
+        printf("// %s\n", inst->param1);
+    }
 }
 
 void print_iloc_list(ILOC_List* list)
@@ -484,4 +488,35 @@ char* get_return_register (int num){
 
 int get_last_register_number(){
     return next_iloc_register-1;
+}
+
+ILOC_List* save_registers(int start, int end)
+{
+    ILOC_List* list = create_empty_list();
+
+    char reg[100];
+
+    for(int i = start; i <= end; i++)
+    {
+        sprintf(reg, "r%d", i);
+        add_iloc(list, create_iloc(ILOC_STORE, reg, "rsp", NULL));
+        add_iloc(list, create_iloc(ILOC_ADDI, "rsp", "1", "rsp"));
+    }
+
+    return list;
+}
+
+ILOC_List* load_registers(int start, int end)
+{
+    ILOC_List* list = create_empty_list();
+    char reg[100];
+
+    for(int i = end; i >= start; i--)
+    {
+        sprintf(reg, "r%d", i);
+        add_iloc(list, create_iloc(ILOC_SUBI, "rsp", "1", "rsp"));
+        add_iloc(list, create_iloc(ILOC_LOAD, "rsp", reg, NULL));
+    }
+
+    return list;
 }

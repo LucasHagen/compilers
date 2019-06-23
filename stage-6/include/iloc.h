@@ -159,4 +159,8 @@ char* get_return_register (int num);
  * Returns the number of the last register allocated.
  */
 int get_last_register_number();
+
+ILOC_List* save_registers(int start, int end);
+
+ILOC_List* load_registers(int start, int end);
 #endif
