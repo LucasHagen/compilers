@@ -19,7 +19,6 @@ extern int scope_list_size;
 
 ST_FRAME* create_stack_frame(ST_LINE* function_header){
     ST_FRAME* frame = (ST_FRAME *) malloc(sizeof(struct stack_frame));
-    int i;
 
     frame->dynamic_link         = -1;
     frame->static_link          = -1;
@@ -47,10 +46,9 @@ ST_FRAME* create_stack_frame(ST_LINE* function_header){
  */
 void push_stack_frame(ILOC_List* code, ST_LINE* function_header, Node* parameters){
     int dl_address              = function_header->frame->local_variables_size;
-    int sl_address              = function_header->frame->local_variables_size+SIZE_INT;
-    int return_value_address    = function_header->frame->local_variables_size+2*SIZE_INT;
-    int return_address          = function_header->frame->local_variables_size+3*SIZE_INT;
-    int machine_state_address   = function_header->frame->local_variables_size+4*SIZE_INT;
+    int sl_address              = function_header->frame->local_variables_size + SIZE_INT;
+    int return_value_address    = function_header->frame->local_variables_size + 2 * SIZE_INT;
+    int return_address          = function_header->frame->local_variables_size + 3 * SIZE_INT;
 
     char* temp_rpc = new_register();
     char* zero = new_register();
@@ -84,12 +82,13 @@ void pop_stack_frame(ST_FRAME* frame){
 
 int get_frame_size(ST_FRAME* frame){
     int size = 0;
-    size+=sizeof(frame->dynamic_link);
-    size+=sizeof(frame->static_link);
-    size+=sizeof(frame->local_variables_size);
-    size+=sizeof(frame->return_value);
-    size+=sizeof(frame->return_address);
-    size+=MACHINE_STATE_SIZE;
+    size += sizeof(frame->dynamic_link);
+    size += sizeof(frame->static_link);
+    size += sizeof(frame->local_variables_size);
+    size += sizeof(frame->return_value);
+    size += sizeof(frame->return_address);
+    size += MACHINE_STATE_SIZE;
+    size += scope_stack->children[scope_stack->size - 1]->used_size;
     return size;
 }
 

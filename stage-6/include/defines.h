@@ -99,7 +99,7 @@
 #define ILOC_COMMENT    49
 
 // Defining machine state size in bytes
-#define MACHINE_STATE_SIZE 8*4+16*8 // 8 x 32 bit registers + 16 x 64 bit registers
+#define MACHINE_STATE_SIZE 4 // 1 int
 
 
 #endif

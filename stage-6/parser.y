@@ -41,6 +41,9 @@ int main_flag = 0;
 int return_flag = 0;
 int local_variables_size = 0;
 ST_LINE* function_reg;
+
+Node* temp_node = NULL;
+
 %}
 
 %union {
@@ -448,10 +451,8 @@ function:
 			line->local_variables_size = top(scope_stack)->used_size;
 			line->frame = create_stack_frame(line);
 		}
-	}
-	pop_scope
-	{
-		$$ = create_node_func_decl(
+
+		temp_node = create_node_func_decl(
 			$3,
 			$2,
 			$1,
@@ -459,8 +460,13 @@ function:
 			$10
 		);
 
-		adjust_main_rsp(identifier_in_scope(scope_stack->children[0], $3->token_value.v_string), $$->code);
-
+		adjust_main_rsp(identifier_in_scope(scope_stack->children[0], $3->token_value.v_string), temp_node->code);
+	}
+	pop_scope
+	{
+		$$ = temp_node;
+		temp_node = NULL;
+		
 		stack_func_exit($$);
 		ST_LINE* line = identifier_in_scope(scope_stack->children[0], $3->token_value.v_string);
 		ILOC_List* code = create_empty_list();
