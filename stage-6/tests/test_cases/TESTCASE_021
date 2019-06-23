@@ -1,0 +1,11 @@
+x int;
+
+int func(int i){
+    x = 10;
+    return i;
+    x = 99999;
+}
+
+int main(){
+    func(1);
+}
